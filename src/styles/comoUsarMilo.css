@@ -1,10 +1,69 @@
 :root {
-  --primary-bg-color: #1a152d;
-  --secondary-bg-color: #2c2744;
-  --text-color: #ffffff;
+  --primary-bg-color: #0f0d1b;
+  --secondary-bg-color: #1a152d;
+  --tertiary-bg-color: #2c2744;
+  --text-color: #f0f0f0;
+  --text-secondary-color: #a0a0a0;
   --highlight-color: #9b59b6;
-  --card-hover-shadow: rgba(0, 0, 0, 0.3);
-  --navbar-height: 80px;
+  --highlight-light-color: #c48ed4;
+  /* Inputs & Controles */
+  --input-bg-color: var(--tertiary-bg-color);
+  --input-border-color: #4a4563;
+  --input-focus-shadow: 0 0 0 3px rgba(155, 89, 182, 0.5);
+  --button-primary: var(--highlight-color);
+  --button-success: #28a745;
+  --button-danger: #dc3545;
+  --button-cancel: #6c757d;
+  --button-text-color: #ffffff;
+  --cta-button-hover-bg: var(--highlight-light-color);
+  --profile-icon-hover-bg: #3a3551;
+  --dropdown-bg: var(--secondary-bg-color);
+  --dropdown-hover-bg: #3a3551;
+  --card-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+  --card-hover-shadow: 0 12px 25px rgba(0, 0, 0, 0.6);
+  --transition-speed: 0.3s;
+  --navbar-height: 60px;
+  --card-bg-color-alpha: rgba(26,
+      21,
+      45,
+      0.85);
+  --card-bg-color-alpha-hover: rgba(26, 21, 45, 0.7);
+  --card-border-color-alpha: rgba(255, 255, 255, 0.15);
+  --card-text-secondary: var(--text-secondary-color);
+  --back-button-bg-alpha: rgba(26, 21, 45, 0.7);
+  --back-button-border-alpha: rgba(255, 255, 255, 0.1);
+}
+
+body.light-mode {
+  --primary-bg-color: #fcfcfc;
+  --secondary-bg-color: #ffffff;
+  --tertiary-bg-color: #f0f0f0;
+  --text-color: #1a1a1a;
+  --text-secondary-color: #555555;
+  --highlight-color: #9b59b6;
+  --highlight-light-color: #c48ed4;
+  --input-bg-color: var(--tertiary-bg-color);
+  --input-border-color: #cccccc;
+  --input-focus-shadow: 0 0 0 3px rgba(155, 89, 182, 0.3);
+  --profile-icon-hover-bg: #e0e0e0;
+  --cta-button-hover-bg: var(--highlight-light-color);
+  --dropdown-bg: var(--secondary-bg-color);
+  --dropdown-hover-bg: #e0e0e0;
+  --card-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  --card-hover-shadow: 0 8px 18px rgba(0, 0, 0, 0.15);
+
+  --card-bg-color-alpha: rgba(255, 255, 255, 0.85);
+  --card-bg-color-alpha-hover: rgba(255, 255, 255, 0.7);
+  --card-border-color-alpha: rgba(0, 0, 0, 0.15);
+  --card-text-secondary: var(--text-secondary-color);
+  --back-button-bg-alpha: rgba(255, 255, 255, 0.7);
+  --back-button-border-alpha: rgba(0, 0, 0, 0.1);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
@@ -12,7 +71,27 @@ body {
   background-color: var(--primary-bg-color);
   color: var(--text-color);
   line-height: 1.6;
+  min-height: 100vh;
+  transition: background-color var(--transition-speed);
 }
+
+h1,
+h2,
+h3 {
+  font-weight: 700;
+  color: var(--text-color);
+}
+
+a {
+  color: var(--highlight-color);
+  text-decoration: none;
+  transition: color var(--transition-speed);
+}
+
+a:hover {
+  color: var(--highlight-light-color);
+}
+
 
 .how-to-use-container {
   padding: 40px 5%;
@@ -40,7 +119,7 @@ body {
 
 .intro-section-how-to p {
   font-size: clamp(1em, 2.5vw, 1.1em);
-  opacity: 0.9;
+  color: var(--text-secondary-color);
 }
 
 .features-grid {
@@ -52,26 +131,28 @@ body {
 
 .feature-card {
   position: relative;
-  background: rgba(44, 39, 68, 0.9); /* Antes 0.55 → más sólido */
-  backdrop-filter: blur(8px); /* Antes 12px → menos blur */
-  border: 1px solid rgba(255, 255, 255, 0.2); /* Antes 0.1 → borde más visible */
+  background: var(--card-bg-color-alpha);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--card-border-color-alpha);
   border-radius: 15px;
   padding: 35px 30px;
   text-align: center;
   overflow: hidden;
-  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  transition: transform var(--transition-speed),
+    box-shadow var(--transition-speed);
   transform-style: preserve-3d;
+  box-shadow: var(--card-shadow);
 }
 
 .feature-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--card-hover-shadow);
   --mouse-x: 50%;
   --mouse-y: 50%;
-  background: radial-gradient(
-      350px circle at var(--mouse-x) var(--mouse-y),
+  background: radial-gradient(350px circle at var(--mouse-x) var(--mouse-y),
       rgba(155, 89, 182, 0.25),
-      transparent 50%
-    ),
-    rgba(44, 39, 68, 0.55);
+      transparent 50%),
+    var(--card-bg-color-alpha-hover);
 }
 
 .feature-card::before {
@@ -82,11 +163,9 @@ body {
   width: 250%;
   height: 250%;
   z-index: -1;
-  background: conic-gradient(
-    transparent,
-    var(--highlight-color),
-    transparent 20%
-  );
+  background: conic-gradient(transparent,
+      var(--highlight-color),
+      transparent 20%);
   transform: translate(-50%, -50%);
   animation: rotate 4s linear infinite;
   opacity: 0;
@@ -113,7 +192,7 @@ body {
 
 .feature-card:hover .icon {
   transform: scale(1.1);
-  color: #fff;
+  color: var(--text-color);
   text-shadow: 0 0 25px var(--highlight-color);
 }
 
@@ -124,24 +203,24 @@ body {
 
 .feature-card p {
   font-size: 0.95em;
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--card-text-secondary);
   line-height: 1.7;
 }
 
 .back-button {
   position: absolute;
-  top: 95px;
+  top: calc(var(--navbar-height) + 35px);
   left: 5%;
-  background: rgba(44, 39, 68, 0.7);
+  background: var(--back-button-bg-alpha);
   backdrop-filter: blur(5px);
   color: var(--text-color);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--back-button-border-alpha);
   text-decoration: none;
   padding: 8px 18px;
   border-radius: 50px;
   cursor: pointer;
   z-index: 10;
-  transition: all 0.3s ease;
+  transition: all var(--transition-speed);
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -152,18 +231,23 @@ body {
   background-color: var(--highlight-color);
   border-color: transparent;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 12px rgba(155, 89, 182, 0.4);
 }
 
+/*(MEDIA QUERIES) */
 @media (max-width: 768px) {
   .intro-section-how-to h1 {
     font-size: 2.2em;
   }
+
   .features-grid {
     grid-template-columns: 1fr;
   }
+
   .back-button {
-    top: 120px;
+    top: calc(var(--navbar-height) + 20px);
     left: 15px;
+    padding: 6px 14px;
+    font-size: 0.9em;
   }
 }

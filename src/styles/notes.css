@@ -1,15 +1,41 @@
 :root {
+  /*  Colores base */
   --primary-bg-color: #1a152d;
   --secondary-bg-color: #2c2744;
   --text-color: #ffffff;
   --highlight-color: #9b59b6;
+  /*  Inputs */
   --input-bg-color: #4a4563;
   --input-border-color: #7b758d;
+  /*  Botones */
   --button-primary: #9b59b6;
   --button-success: #9b59b6;
   --button-danger: #dc3545;
   --button-cancel: #6c757d;
+  /*  Otros */
   --navbar-height: 60px;
+  --sidebar-hover-bg: #3a3551;
+  --note-item-pre-color: #c0c0c0;
+  --toast-success: #4caf50;
+  --toast-error: #f44336;
+  --toast-info: #2196f3;
+  --empty-notes-color: #c0c0c0;
+}
+
+body.light-mode {
+  --primary-bg-color: #fcfcfc;
+  --secondary-bg-color: #ffffff;
+  --text-color: #1a1a1a;
+  --highlight-color: #9b59b6;
+  --input-bg-color: #e0e0e0;
+  --input-border-color: #cccccc;
+  --button-primary: #9b59b6;
+  --button-success: #9b59b6;
+  --button-danger: #dc3545;
+  --button-cancel: #6c757d;
+  --sidebar-hover-bg: #e0e0e0;
+  --note-item-pre-color: #555555;
+  --empty-notes-color: #777777;
 }
 
 * {
@@ -71,7 +97,7 @@ body {
 }
 
 .sidebar-button:hover {
-  background-color: #3a3551;
+  background-color: var(--sidebar-hover-bg);
 }
 
 .sidebar-button.active {
@@ -90,7 +116,7 @@ body {
   font-family: "Poppins", sans-serif;
   font-size: 15px;
   background-color: var(--secondary-bg-color);
-  color: white;
+  color: var(--text-color);
   border: 1px solid var(--input-border-color);
   border-radius: 8px;
   display: flex;
@@ -211,7 +237,7 @@ body {
 }
 
 .note-item-content pre {
-  color: #c0c0c0;
+  color: var(--note-item-pre-color);
   white-space: pre-wrap;
   word-wrap: break-word;
 }
@@ -252,18 +278,20 @@ body {
 }
 
 .toast.success {
-  background-color: #4caf50;
+  background-color: var(--toast-success);
 }
+
 .toast.error {
-  background-color: #f44336;
+  background-color: var(--toast-error);
 }
+
 .toast.info {
-  background-color: #2196f3;
+  background-color: var(--toast-info);
 }
 
 .empty-notes {
   text-align: center;
-  color: #c0c0c0;
+  color: var(--empty-notes-color);
   margin-top: 30px;
 }
 

@@ -1,0 +1,426 @@
+.reminders-app-container {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 20px;
+    font-family: "Poppins", sans-serif, -apple-system, BlinkMacSystemFont;
+    background-color: var(--secondary-bg-color);
+    border-radius: 12px;
+    box-shadow: var(--card-shadow);
+    color: var(--text-color);
+}
+
+.app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    margin-bottom: 20px;
+    color: var(--text-color);
+}
+
+.list-title {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--highlight-color);
+}
+
+.pending-count {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--text-secondary-color);
+}
+
+
+.new-reminder-input {
+    display: flex;
+    align-items: center;
+    padding: 12px 0;
+
+    border-bottom: 1px solid var(--input-border-color);
+    margin-bottom: 10px;
+}
+
+.new-reminder-input input {
+    flex-grow: 1;
+    border: none;
+    padding: 0 10px;
+    font-size: 17px;
+    outline: none;
+    background: transparent;
+    color: var(--text-color);
+}
+
+.add-icon {
+    font-size: 30px;
+    color: var(--highlight-color);
+    cursor: pointer;
+    line-height: 1;
+    margin-right: 10px;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+.reminder-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--input-border-color);
+    transition: background-color 0.2s;
+}
+
+.reminder-item:last-child {
+    border-bottom: none;
+}
+
+.reminder-content {
+    flex-grow: 1;
+    margin-left: 10px;
+}
+
+.reminder-title {
+    font-size: 17px;
+    font-weight: 400;
+    color: var(--text-color);
+    line-height: 1.4;
+    transition: color 0.3s;
+    display: flex;
+    align-items: center;
+}
+
+/* (Fecha/Ubicación) */
+.reminder-details-chips {
+    display: flex;
+    gap: 8px;
+    margin-top: 2px;
+}
+
+.reminder-info-chip {
+    font-size: 13px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: var(--button-text-color);
+    font-weight: 500;
+    line-height: 1.4;
+    white-space: nowrap;
+}
+
+.date-chip {
+    background-color: var(--button-success);
+}
+
+.location-chip {
+    background-color: #6c757d;
+}
+
+.reminder-item.completed .reminder-title {
+    color: var(--text-secondary-color);
+    text-decoration: line-through;
+    opacity: 0.6;
+}
+
+.reminder-item.completed .reminder-info-chip {
+    opacity: 0.5;
+}
+
+.checkbox-circle {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid var(--text-secondary-color);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: border-color 0.2s, background-color 0.2s;
+}
+
+.checkbox-circle.checked {
+    border-color: var(--highlight-color);
+    background-color: var(--highlight-color);
+}
+
+.checkmark-icon {
+    font-size: 20px;
+    color: var(--button-text-color);
+}
+
+/* Indicadores de Prioridad*/
+.priority-flag {
+    font-size: 18px;
+    margin-right: 5px;
+    line-height: 1;
+    color: var(--text-secondary-color);
+}
+
+.priority-flag.low {
+    color: #ff9500;
+}
+
+.priority-flag.medium {
+
+    color: #ffcc00;
+}
+
+.priority-flag.high {
+    color: var(--button-danger);
+}
+
+/* Botón de Opciones (...) */
+.options-button {
+    background: none;
+    border: none;
+    color: var(--text-secondary-color);
+    font-size: 24px;
+    cursor: pointer;
+    padding: 0 5px;
+    margin-left: 10px;
+    line-height: 1;
+    opacity: 0.8;
+    transition: opacity 0.2s, color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.options-button:hover {
+    opacity: 1;
+    color: var(--text-color);
+}
+
+.edit-input {
+    font-size: 17px;
+    font-weight: 400;
+    color: var(--text-color);
+    border: 1px solid var(--highlight-color);
+    padding: 1px 4px;
+    margin: -1px -4px;
+    border-radius: 4px;
+    outline: none;
+    width: 100%;
+    background-color: var(--secondary-bg-color);
+}
+
+
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: var(--secondary-bg-color);
+    border-radius: 12px;
+    width: 90%;
+    max-width: 450px;
+    box-shadow: var(--card-shadow);
+    display: flex;
+    flex-direction: column;
+    max-height: 90vh;
+    overflow: hidden;
+    font-family: "Poppins", sans-serif;
+    position: relative;
+    color: var(--text-color);
+}
+
+.modal-header {
+    padding: 16px;
+    border-bottom: 1px solid var(--input-border-color);
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.modal-header h2 {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.modal-close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 28px;
+    color: var(--text-secondary-color);
+    cursor: pointer;
+    padding: 5px;
+    line-height: 1;
+    transition: color 0.2s;
+}
+
+.modal-close-button:hover {
+    color: var(--text-color);
+}
+
+.modal-body {
+    padding: 15px 20px;
+    overflow-y: auto;
+    flex-grow: 1;
+}
+
+.modal-section {
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--tertiary-bg-color);
+}
+
+.modal-section h3 {
+    font-size: 15px;
+    color: var(--text-secondary-color);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.modal-section .apple-input,
+.modal-section .apple-select {
+    width: 100%;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+    border: 1px solid var(--input-border-color);
+    border-radius: 8px;
+    font-size: 16px;
+    color: var(--text-color);
+    box-sizing: border-box;
+    background-color: var(--input-bg-color);
+}
+
+.modal-section input.apple-input.large {
+    font-size: 20px;
+    font-weight: 600;
+    border: none;
+
+    background: var(--secondary-bg-color);
+    padding-left: 0;
+    padding-top: 0;
+    margin-bottom: 0;
+}
+
+
+.date-time-section {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.date-time-section h3 {
+    width: 100%;
+}
+
+.date-time-section input {
+    flex-grow: 1;
+    width: 48%;
+}
+
+
+.clear-button {
+    background: none;
+    border: none;
+    color: var(--button-danger);
+    font-size: 14px;
+    cursor: pointer;
+    padding: 5px 0;
+    width: 100%;
+    text-align: left;
+    margin-top: -5px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+
+.modal-footer {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 20px;
+    border-top: 1px solid var(--input-border-color);
+    flex-shrink: 0;
+}
+
+.modal-button {
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: background-color 0.1s;
+    color: var(--text-color);
+
+}
+
+.modal-button.save {
+    color: var(--button-text-color);
+    background-color: var(--button-primary);
+    font-weight: 600;
+}
+
+.modal-button.save:hover {
+    background-color: var(--highlight-light-color);
+}
+
+.modal-button.delete {
+    color: var(--button-danger);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    justify-content: center;
+}
+
+.modal-button.cancel {
+    color: var(--text-secondary-color);
+}
+
+.modal-button.cancel:hover {
+    background-color: var(--tertiary-bg-color);
+}
+
+
+/*MEDIA QUERIES */
+@media (max-width: 480px) {
+    .modal-footer {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
+
+    .modal-button {
+        width: 100%;
+        text-align: center;
+        background-color: var(--tertiary-bg-color);
+        justify-content: center;
+    }
+
+    .modal-button.save {
+        color: var(--button-text-color);
+        background-color: var(--button-primary);
+    }
+
+    .modal-button.delete {
+        background-color: var(--tertiary-bg-color);
+    }
+
+    .modal-button.cancel {
+        background-color: var(--tertiary-bg-color);
+        color: var(--text-color);
+    }
+
+    .date-time-section input {
+        width: 100%;
+        margin-right: 0;
+    }
+}

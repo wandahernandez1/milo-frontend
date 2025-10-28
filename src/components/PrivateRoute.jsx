@@ -1,12 +1,15 @@
 import { Navigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import SplashScreen from "../components/SplashScreen";
 
 export default function PrivateRoute({ children }) {
-    const token = localStorage.getItem("token");
+  const { currentUser, loading } = useAuth();
 
-    if (!token) {
-        // Si no hay token, redirige al login
-        return <Navigate to="/login" replace />;
-    }
+  // Mientras verificamos token, mostramos splash
+  if (loading) return <SplashScreen />;
 
-    return children; // Si hay token, renderiza el contenido
+  // Si no hay usuario, redirigimos al login
+  if (!currentUser) return <Navigate to="/login" replace />;
+
+  return children;
 }

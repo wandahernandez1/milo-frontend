@@ -3,8 +3,31 @@
   --secondary-bg-color: #2c2744;
   --text-color: #ffffff;
   --highlight-color: #9b59b6;
-  --card-hover-shadow: rgba(0, 0, 0, 0.3);
+  --card-bg-color-alpha: rgba(44,
+      39,
+      68,
+      0.85);
+  /* Fondo de la tarjeta con transparencia */
+  --card-bg-color-alpha-hover: rgba(44, 39, 68, 0.55);
+  --card-border-color-alpha: rgba(255, 255, 255, 0.1);
+  --card-text-secondary: rgba(255, 255, 255, 0.8);
   --navbar-height: 80px;
+  --back-button-bg-alpha: rgba(44, 39, 68, 0.7);
+  --back-button-border-alpha: rgba(255, 255, 255, 0.1);
+}
+
+body.light-mode {
+  --primary-bg-color: #fcfcfc;
+  /* Blanco roto (suave) */
+  --secondary-bg-color: #f5f5f7;
+  --text-color: #1a1a1a;
+  --highlight-color: #9b59b6;
+  --card-bg-color-alpha: rgba(255, 255, 255, 0.85);
+  --card-bg-color-alpha-hover: rgba(255, 255, 255, 0.75);
+  --card-border-color-alpha: rgba(0, 0, 0, 0.1);
+  --card-text-secondary: rgba(26, 26, 26, 0.7);
+  --back-button-bg-alpha: rgba(255, 255, 255, 0.7);
+  --back-button-border-alpha: rgba(0, 0, 0, 0.1);
 }
 
 body {
@@ -52,9 +75,9 @@ body {
 
 .feature-card {
   position: relative;
-  background: rgba(44, 39, 68, 0.85);
+  background: var(--card-bg-color-alpha);
   backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--card-border-color-alpha);
   border-radius: 15px;
   padding: 35px 30px;
   text-align: center;
@@ -66,12 +89,10 @@ body {
 .feature-card:hover {
   --mouse-x: 50%;
   --mouse-y: 50%;
-  background: radial-gradient(
-      350px circle at var(--mouse-x) var(--mouse-y),
+  background: radial-gradient(350px circle at var(--mouse-x) var(--mouse-y),
       rgba(155, 89, 182, 0.25),
-      transparent 50%
-    ),
-    rgba(44, 39, 68, 0.55);
+      transparent 50%),
+    var(--card-bg-color-alpha-hover);
 }
 
 .feature-card::before {
@@ -82,11 +103,9 @@ body {
   width: 250%;
   height: 250%;
   z-index: -1;
-  background: conic-gradient(
-    transparent,
-    var(--highlight-color),
-    transparent 20%
-  );
+  background: conic-gradient(transparent,
+      var(--highlight-color),
+      transparent 20%);
   transform: translate(-50%, -50%);
   animation: rotate 4s linear infinite;
   opacity: 0;
@@ -113,7 +132,7 @@ body {
 
 .feature-card:hover .icon {
   transform: scale(1.1);
-  color: #fff;
+  color: var(--text-color);
   text-shadow: 0 0 25px var(--highlight-color);
 }
 
@@ -124,7 +143,7 @@ body {
 
 .feature-card p {
   font-size: 0.95em;
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--card-text-secondary);
   line-height: 1.7;
 }
 
@@ -132,10 +151,10 @@ body {
   position: absolute;
   top: 95px;
   left: 5%;
-  background: rgba(44, 39, 68, 0.7);
+  background: var(--back-button-bg-alpha);
   backdrop-filter: blur(5px);
   color: var(--text-color);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--back-button-border-alpha);
   text-decoration: none;
   padding: 8px 18px;
   border-radius: 50px;
@@ -159,9 +178,11 @@ body {
   .intro-section-how-to h1 {
     font-size: 2.2em;
   }
+
   .features-grid {
     grid-template-columns: 1fr;
   }
+
   .back-button {
     top: 120px;
     left: 15px;

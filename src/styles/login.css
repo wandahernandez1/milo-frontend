@@ -1,16 +1,45 @@
 :root {
+  /*  Colores base */
   --primary-bg-color: #1a152d;
   --secondary-bg-color: #2c2744;
   --card-bg-color: #2c2744;
   --left-panel-bg: #f8f8f8;
+  /*  Tipografía y textos */
   --text-color: #ffffff;
   --dark-text-color: #333333;
+  --link-color: #c0c0c0;
+  /*  Colores destacados */
   --highlight-color: #9b59b6;
   --button-bg-color: #9b59b6;
+  --button-hover-color: #8c4bb5;
+  /*  Inputs */
   --input-bg-color: #4a4563;
   --input-border-color: #7b758d;
-  --link-color: #c0c0c0;
+  /*  Otros */
   --navbar-height: 60px;
+  --border-radius: 10px;
+  --transition: all 0.3s ease;
+  --profile-icon-hover-bg: #4a4563;
+  --dropdown-bg: #4d4055;
+  --dropdown-hover-bg: #3a3360;
+}
+
+body.light-mode {
+  --primary-bg-color: #fcfcfc;
+  --secondary-bg-color: #f5f5f7;
+  --card-bg-color: #ffffff;
+  --left-panel-bg: #f0f0f4;
+  --text-color: #1a1a1a;
+  --dark-text-color: #1a1a1a;
+  --link-color: #666666;
+  --highlight-color: #9b59b6;
+  --button-bg-color: #9b59b6;
+  --button-hover-color: #8c4bb5;
+  --input-bg-color: #e0e0e0;
+  --input-border-color: #cccccc;
+  --profile-icon-hover-bg: #e0e0e0;
+  --dropdown-bg: var(--secondary-bg-color);
+  --dropdown-hover-bg: #e0e0e0;
 }
 
 * {
@@ -27,8 +56,10 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  transition: background-color 0.4s ease;
 }
 
+/*  NAVBAR */
 .navbar {
   display: flex;
   justify-content: space-between;
@@ -37,6 +68,9 @@ body {
   height: var(--navbar-height);
   background-color: var(--primary-bg-color);
   width: 100%;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  position: relative;
+  z-index: 10;
 }
 
 .navbar-left {
@@ -51,7 +85,7 @@ body {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background-color: #fff;
+  background-color: var(--text-color);
 }
 
 .navbar-right ul {
@@ -72,6 +106,7 @@ body {
   color: var(--highlight-color);
 }
 
+/* 👤 Perfil */
 .profile-icon {
   display: flex;
   align-items: center;
@@ -80,11 +115,11 @@ body {
   padding: 8px 15px;
   border-radius: 20px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: var(--transition);
 }
 
 .profile-icon:hover {
-  background-color: #4a4563;
+  background-color: var(--profile-icon-hover-bg);
 }
 
 .profile-icon .avatar {
@@ -100,6 +135,7 @@ body {
   color: var(--text-color);
 }
 
+/* Login */
 .login-container {
   flex-grow: 1;
   display: flex;
@@ -117,8 +153,14 @@ body {
   max-width: 900px;
   width: 90%;
   height: 500px;
+  transition: transform 0.3s ease;
 }
 
+.login-card:hover {
+  transform: scale(1.01);
+}
+
+/* Panel izquierdo */
 .left-panel {
   flex: 1;
   background-color: var(--left-panel-bg);
@@ -152,13 +194,13 @@ body {
   color: #555555;
 }
 
+/* Panel derecho */
 .right-panel {
   flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: center;
   padding: 40px;
-  background-color: var(--card-bg-color);
   text-align: center;
 }
 
@@ -184,12 +226,12 @@ body {
   width: 100%;
   padding: 12px 15px;
   border: 1px solid var(--input-border-color);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   background-color: var(--input-bg-color);
   color: var(--text-color);
   font-size: 1em;
   outline: none;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  transition: var(--transition);
 }
 
 .input-group input:focus {
@@ -199,21 +241,21 @@ body {
 
 .login-button {
   background-color: var(--button-bg-color);
-  color: var(--button-text-color);
+  color: #fff;
   border: none;
   padding: 12px 30px;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-size: 1.1em;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+  transition: var(--transition);
   width: 100%;
   margin-top: 20px;
   margin-bottom: 25px;
 }
 
 .login-button:hover {
-  background-color: #8c4bb5;
+  background-color: var(--button-hover-color);
   transform: translateY(-1px);
 }
 
@@ -232,80 +274,7 @@ body {
   color: var(--highlight-color);
 }
 
-@media (max-width: 900px) {
-  .login-card {
-    flex-direction: column;
-    height: auto;
-    max-width: 450px;
-  }
-
-  .left-panel {
-    padding: 20px;
-  }
-
-  .left-panel .panel-avatar {
-    width: 120px;
-    height: 120px;
-    margin-bottom: 20px;
-  }
-
-  .right-panel {
-    padding: 30px;
-  }
-}
-
-@media (max-width: 768px) {
-  .navbar {
-    flex-direction: column;
-    height: auto;
-    padding: 15px 5%;
-  }
-
-  .navbar-right ul {
-    flex-direction: column;
-    gap: 15px;
-    margin-top: 15px;
-  }
-
-  .profile-icon {
-    margin-top: 10px;
-  }
-}
-
-@media (max-width: 550px) {
-  .navbar {
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 10px;
-    height: auto;
-    padding: 10px;
-  }
-  .navbar-left,
-  .navbar-right {
-    width: 100%;
-    justify-content: center;
-  }
-  .navbar-right {
-    gap: 10px;
-    margin-top: 5px;
-  }
-  .login-card {
-    width: 95%;
-  }
-  .right-panel h2 {
-    font-size: 1.8em;
-  }
-  .input-group label,
-  .input-group input,
-  .login-button {
-    font-size: 0.9em;
-  }
-  .forgot-password,
-  .register-link {
-    font-size: 0.85em;
-  }
-}
-
+/*  Register */
 .register-card {
   display: flex;
   flex-direction: row;
@@ -404,23 +373,7 @@ body {
   text-decoration: underline;
 }
 
-@media (max-width: 768px) {
-  .register-card {
-    flex-direction: column;
-    min-height: auto;
-  }
-  .register-card .left-panel,
-  .register-card .right-panel {
-    width: 100%;
-  }
-  .register-card .left-panel {
-    padding: 20px;
-  }
-  .register-card .right-panel {
-    padding: 30px 20px;
-  }
-}
-
+/*  Mensajes */
 #messageDiv {
   position: fixed;
   top: 20px;
@@ -437,6 +390,7 @@ body {
   min-width: 250px;
 }
 
+/* Menú de perfil */
 .profile-menu-container {
   position: relative;
   padding: 0 10px;
@@ -460,7 +414,6 @@ body {
   background-color: rgba(255, 255, 255, 0.2);
 }
 
-/* Estilo del avatar  */
 .profile-menu-container .avatar {
   width: 30px;
   height: 30px;
@@ -472,28 +425,26 @@ body {
   align-items: center;
   font-weight: bold;
   font-size: 0.9em;
-  flex-shrink: 0; /* no se encoje */
+  flex-shrink: 0;
 }
 
-/* estilo del nombre de usuario */
 .profile-menu-container span {
-  color: rgb(255, 255, 255);
-  font-weight: 600;
-  white-space: nowrap; /* evita que el nombre se rompa en varias lineas */
+  color: #fff;
+  font-weight: 200;
+  white-space: nowrap;
 }
 
-/* estilo de la flecha del desplegable */
 .profile-menu-container .dropdown-arrow {
-  color: white;
+  color: rgb(179, 171, 171);
   margin-left: 5px;
   font-size: 0.8em;
 }
 
-/* contenido del menu desplegable */
+/* Contenido desplegable */
 .dropdown-content {
   display: none;
   position: absolute;
-  background-color: #4d4055;
+  background-color: var(--dropdown-bg);
   min-width: 160px;
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   z-index: 1;
@@ -503,9 +454,8 @@ body {
   overflow: hidden;
 }
 
-/* estilo de los enlaces dentro del menu desplegable */
 .dropdown-content a {
-  color: #333;
+  color: var(--text-color);
   padding: 12px 16px;
   text-decoration: none;
   display: block;
@@ -514,24 +464,73 @@ body {
 }
 
 .dropdown-content a:hover {
-  background-color: #ddd;
+  background-color: var(--dropdown-hover-bg);
 }
 
-/* Responsividad para la barra de navegación y el menu de perfil */
-@media (max-width: 768px) {
+/* RESPONSIVE NAVBAR FIX  */
+@media (max-width: 900px) {
+  .navbar {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 5%;
+    height: auto;
+    background-color: var(--primary-bg-color);
+  }
+
+  .navbar-left {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .navbar-left .logo {
+    width: 35px;
+    height: 35px;
+  }
+
+  .navbar-left span {
+    font-size: 1.1em;
+    white-space: nowrap;
+  }
+
+  .navbar-right {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 15px;
+  }
+
   .navbar-right ul {
-    flex-direction: column;
-    align-items: flex-end;
-    width: 100%;
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+    align-items: center;
   }
 
   .profile-menu-container {
+    margin: 0;
+  }
+}
+
+@media (max-width: 500px) {
+  .navbar-left {
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
     width: auto;
-    margin-top: 10px;
+    text-align: center;
   }
 
-  .profile-menu-container .dropdown-content {
-    right: 0;
-    left: auto;
+  .navbar-left .logo {
+    width: 35px;
+    height: 35px;
+  }
+
+  .navbar-left span {
+    font-size: 1em;
+    white-space: nowrap;
   }
 }
