@@ -37,7 +37,7 @@ export default function Home() {
       {/* Contenido principal */}
       <main className="hero-section">
         <img
-          src={currentMiloAvatar} // 🚨 ¡Aquí está el cambio clave!
+          src={currentMiloAvatar}
           alt="MiloAssistant Avatar"
           className="hero-avatar"
         />

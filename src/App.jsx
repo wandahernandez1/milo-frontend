@@ -23,9 +23,6 @@ const ConfigPage = () => <h1>Opciones de Configuración</h1>;
 function App() {
   return (
     <ThemeProvider>
-      {/* Toggle de tema fijo y memoizado */}
-      <ThemeToggle />
-
       {/* Rutas de la app */}
       <Routes>
         {/* Rutas públicas */}

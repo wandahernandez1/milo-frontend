@@ -1,0 +1,147 @@
+/* 📝 Estilos ESPECÍFICOS para la Tarjeta de Registro */
+
+.register-card {
+    display: flex;
+    flex-direction: row;
+    background-color: var(--card-bg-color);
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+    width: 90%;
+    max-width: 950px;
+    min-height: 520px;
+    transition: transform 0.3s ease;
+}
+
+/* 📐 Ajuste de la distribución de los paneles */
+.register-card .left-panel {
+    flex: 0.8;
+    /* Hacemos el panel izquierdo más pequeño */
+    padding: 20px;
+    /* Reducimos el padding interno */
+}
+
+/* Ajustes de tamaño del Avatar y texto para que quepa */
+.register-card .left-panel .panel-avatar {
+    width: 150px;
+    height: 150px;
+    margin-bottom: 20px;
+}
+
+.register-card .left-panel .panel-title,
+.register-card .left-panel .panel-tagline {
+    font-size: 1.2em;
+    margin-bottom: 10px;
+}
+
+
+.register-card .right-panel {
+    flex: 1.2;
+    padding: 25px 40px;
+    /* Padding interno reducido */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Ajuste de márgenes del formulario para ser compacto */
+.register-card form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.register-card h2 {
+    margin-bottom: 15px;
+    font-size: 1.8em;
+}
+
+.register-card .input-group {
+    margin-bottom: 15px;
+    /* Margen reducido entre inputs */
+    width: 100%;
+    max-width: 350px;
+}
+
+.register-card .login-button {
+    margin-top: 10px;
+    max-width: 350px;
+}
+
+.register-card p {
+    font-size: 0.9em;
+    margin-top: 10px;
+}
+
+
+/* 💻 Media Query para Laptops (1366px - 1400px) */
+/* Optimizamos para 1366x768 para evitar el scroll y mantener el avatar */
+@media (max-width: 1400px) {
+    .register-card {
+        max-width: 720px;
+        min-height: 460px;
+    }
+
+    .register-card .left-panel {
+        flex: 0.9;
+        padding: 15px;
+    }
+
+    .register-card .left-panel .panel-avatar {
+        width: 130px;
+        height: 130px;
+        margin-bottom: 15px;
+    }
+
+    .register-card .right-panel {
+        flex: 1.1;
+        padding: 20px 25px;
+    }
+
+    .register-card h2 {
+        font-size: 1.6em;
+        margin-bottom: 10px;
+    }
+
+    .register-card .input-group {
+        margin-bottom: 12px;
+    }
+
+    .register-card .login-button {
+        margin-top: 8px;
+        padding: 10px 20px;
+    }
+
+    .register-card p {
+        font-size: 0.85em;
+        margin-top: 8px;
+    }
+}
+
+/* 📱 Media Query para Móviles */
+@media (max-width: 768px) {
+    .register-card {
+        flex-direction: column;
+        max-width: 400px;
+        min-height: auto;
+    }
+
+    .register-card .left-panel,
+    .register-card .right-panel {
+        flex: none;
+        width: 100%;
+        padding: 20px;
+    }
+
+    .register-card .left-panel .panel-avatar {
+        width: 100px;
+        height: 100px;
+        margin-bottom: 10px;
+    }
+
+    .register-card .input-group {
+        margin-bottom: 10px;
+    }
+}

@@ -1,27 +1,43 @@
-import React from "react";
+import React, { useEffect } from "react";
+import {
+  FaCheckCircle,
+  FaTimesCircle,
+  FaInfoCircle,
+  FaExclamationTriangle,
+} from "react-icons/fa";
 
-export default function Message({ message, type, onClose }) {
-    if (!message) return null;
+const iconMap = {
+  success: <FaCheckCircle className="icon success-icon" />,
+  error: <FaTimesCircle className="icon error-icon" />,
+  info: <FaInfoCircle className="icon info-icon" />,
+  warning: <FaExclamationTriangle className="icon warning-icon" />,
+};
 
-    return (
-        <div
-            style={{
-                position: "fixed",
-                top: 20,
-                left: "50%",
-                transform: "translateX(-50%)",
-                padding: "15px 30px",
-                borderRadius: 8,
-                color: "white",
-                backgroundColor:
-                    type === "success" ? "#4CAF50" :
-                        type === "error" ? "#F44336" :
-                            "#2196F3",
-                zIndex: 1000,
-            }}
-        >
-            {message}
-            <button onClick={onClose} style={{ marginLeft: 10 }}>X</button>
-        </div>
-    );
+export default function Message({
+  message,
+  type = "info",
+  onClose,
+  duration = 4000,
+}) {
+  useEffect(() => {
+    if (!message) return;
+    const timer = setTimeout(() => onClose?.(), duration);
+    return () => clearTimeout(timer);
+  }, [message, duration, onClose]);
+
+  if (!message) return null;
+
+  return (
+    <div className={`toast-message ${type}`}>
+      <span className="toast-icon">{iconMap[type] || iconMap.info}</span>
+      <span className="toast-text">{message}</span>
+      <button
+        className="close-btn"
+        onClick={onClose}
+        aria-label="Cerrar notificación"
+      >
+        &times;
+      </button>
+    </div>
+  );
 }

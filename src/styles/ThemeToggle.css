@@ -1,73 +1,26 @@
-/* ===== MODO CLARO / OSCURO ===== */
-body.light-mode {
-  background-color: #ffffff;
-  color: #111111;
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-body.dark-mode {
-  background-color: #0f0d1b;
-  color: #f5f5f5;
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-/* ===== BOTÓN DE CAMBIO DE TEMA ===== */
 .theme-toggle-btn {
-  position: fixed;
-  top: 0.7rem;
-  right: 1rem;
-  z-index: 1000;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: transparent;
+  border: none;
   border-radius: 50%;
-  padding: 10px;
+  padding: 8px;
   cursor: pointer;
-
+  transition: transform 0.3s ease, background-color 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-
-  backdrop-filter: blur(6px);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
-  transition: background 0.3s ease, transform 0.25s ease, box-shadow 0.3s ease;
 }
 
-/* Hover más elegante */
 .theme-toggle-btn:hover {
-  background: rgba(255, 255, 255, 0.18);
-  transform: scale(1.05);
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.35);
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: rotate(10deg);
 }
 
-/* ===== ICONO ===== */
 .theme-icon {
-  font-size: 1.25rem;
-  color: var(--text-color, #dcdcdc);
-  opacity: 0.9;
-  transition: transform 0.3s ease, opacity 0.3s ease, color 0.3s ease;
+  font-size: 1.2rem;
+  color: var(--text-color);
+  transition: color 0.3s ease, transform 0.3s ease;
 }
 
-/* Animación de rotación */
 .theme-icon.animating {
   transform: rotate(180deg);
-  opacity: 1;
-}
-
-/* AJUSTES VISUALES PARA CADA MODO  */
-body.light-mode .theme-toggle-btn {
-  background: rgba(0, 0, 0, 0.05);
-  border-color: rgba(0, 0, 0, 0.1);
-}
-
-body.light-mode .theme-icon {
-  color: #333;
-}
-
-body.dark-mode .theme-toggle-btn {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.1);
-}
-
-body.dark-mode .theme-icon {
-  color: #f1f1f1;
 }

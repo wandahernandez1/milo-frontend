@@ -1,19 +1,17 @@
-import React, { useState, memo } from "react";
+// src/components/ThemeToggle.jsx
+import React, { useState } from "react";
+import { FaMoon, FaSun } from "react-icons/fa";
 import { useTheme } from "../context/ThemeContext";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faMoon as faRegMoon,
-  faSun as faRegSun,
-} from "@fortawesome/free-regular-svg-icons";
+import "../styles/ThemeToggle.css";
 
-const ThemeToggle = () => {
+export default function ThemeToggle() {
   const { isDarkMode, toggleTheme } = useTheme();
   const [animating, setAnimating] = useState(false);
 
   const handleClick = () => {
     setAnimating(true);
     toggleTheme();
-    setTimeout(() => setAnimating(false), 300);
+    setTimeout(() => setAnimating(false), 400);
   };
 
   return (
@@ -22,12 +20,17 @@ const ThemeToggle = () => {
       onClick={handleClick}
       title="Cambiar tema"
     >
-      <FontAwesomeIcon
-        icon={isDarkMode ? faRegMoon : faRegSun}
-        className={`theme-icon ${animating ? "animating" : ""}`}
-      />
+      {isDarkMode ? (
+        <FaSun
+          className={`theme-icon ${animating ? "animating" : ""}`}
+          aria-label="Modo claro"
+        />
+      ) : (
+        <FaMoon
+          className={`theme-icon ${animating ? "animating" : ""}`}
+          aria-label="Modo oscuro"
+        />
+      )}
     </button>
   );
-};
-
-export default memo(ThemeToggle);
+}

@@ -6,27 +6,23 @@ import {
   useCallback,
 } from "react";
 import SplashScreen from "../components/SplashScreen";
+import { MessageProvider } from "./MessageContext";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const API_URL = "http://localhost:3000/api";
   const [currentUser, setCurrentUser] = useState(null);
-  const [loading, setLoading] = useState(true); // indica si estamos verificando token
+  const [loading, setLoading] = useState(true);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [showSplash, setShowSplash] = useState(true);
 
-  // Verifica token y obtiene usuario
   const fetchUser = useCallback(async () => {
     setLoading(true);
-    const MIN_SPLASH_TIME = 1500; // tiempo mínimo visible del splash
-    const start = Date.now();
-
     const token = localStorage.getItem("token");
+
     if (!token) {
       setCurrentUser(null);
-      const elapsed = Date.now() - start;
-      const remaining = MIN_SPLASH_TIME - elapsed;
-      if (remaining > 0) await new Promise((r) => setTimeout(r, remaining));
       setLoading(false);
       return;
     }
@@ -48,25 +44,23 @@ export const AuthProvider = ({ children }) => {
       localStorage.removeItem("token");
       setCurrentUser(null);
     } finally {
-      const elapsed = Date.now() - start;
-      const remaining = MIN_SPLASH_TIME - elapsed;
-      if (remaining > 0) await new Promise((r) => setTimeout(r, remaining));
       setLoading(false);
     }
   }, [API_URL]);
 
   useEffect(() => {
     fetchUser();
+    const splashDelay = setTimeout(() => setShowSplash(false), 3000); // splash 3s
+    return () => clearTimeout(splashDelay);
   }, [fetchUser]);
 
-  // LOGIN
   const login = async (email, password) => {
     setLoading(true);
     try {
       const res = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email: email.trim(), password }),
       });
       const data = await res.json();
 
@@ -74,46 +68,42 @@ export const AuthProvider = ({ children }) => {
         localStorage.setItem("token", data.access_token);
         setCurrentUser(data.user);
 
-        // Pequeño delay visual para transición suave
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        setShowSplash(true);
+        setTimeout(() => {
+          setShowSplash(false);
+        }, 2500);
 
         return { success: true, user: data.user };
-      } else {
-        return {
-          success: false,
-          message: data.message || "Credenciales incorrectas",
-        };
       }
+
+      return { success: false, message: data?.message || "Error de login" };
     } catch (err) {
-      console.error(err);
-      return { success: false, message: "Error de conexión con el servidor." };
+      return { success: false, message: "Error de conexión" };
     } finally {
       setLoading(false);
     }
   };
 
-  //  LOGOUT
   const logout = async () => {
     setIsLoggingOut(true);
-    setLoading(true);
-
-    // Delay leve para animación de salida del splash
-    await new Promise((resolve) => setTimeout(resolve, 300));
-
     localStorage.removeItem("token");
     setCurrentUser(null);
-
     setIsLoggingOut(false);
-    setLoading(false);
   };
 
   return (
     <AuthContext.Provider
       value={{ currentUser, loading, login, logout, isLoggingOut }}
     >
-      {loading ? <SplashScreen /> : children}
+      <MessageProvider>
+        {showSplash || loading ? (
+          <SplashScreen show={true} onFinish={() => setShowSplash(false)} />
+        ) : (
+          children
+        )}
+      </MessageProvider>
     </AuthContext.Provider>
   );
 };
-// Hook de acceso rápido
+
 export const useAuth = () => useContext(AuthContext);

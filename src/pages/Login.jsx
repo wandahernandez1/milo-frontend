@@ -1,89 +1,88 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import miloAvatar from "../assets/milo-avatar.png";
 import "../styles/login.css";
 
 import { useAuth } from "../context/AuthContext";
-import { useMessages } from "../hooks/useMessage";
-import Message from "../components/Message";
+import { useMessages } from "../context/MessageContext";
 import SplashScreen from "../components/SplashScreen";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
 
-  const { currentUser, loading, login } = useAuth();
-  const { message, type, showMessage } = useMessages();
+  const { login, loading: globalLoading } = useAuth();
+  const { showMessage } = useMessages();
   const navigate = useNavigate();
 
-  // Redirige al dashboard si ya hay usuario
-  useEffect(() => {
-    if (!loading && currentUser) {
-      navigate("/dashboard", { replace: true });
-    }
-  }, [loading, currentUser]);
+  const handleLogin = async () => {
+    setIsLoggingIn(true);
+    try {
+      const result = await login(email, password);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+      if (!result.success) {
+        showMessage(result.message, "error");
+        setIsLoggingIn(false);
+      } else {
+        showMessage("¡Inicio de sesión exitoso!", "success");
 
-    const result = await login(email, password);
-
-    if (!result.success) {
-      showMessage(result.message || "Credenciales incorrectas", "error");
-    } else {
-      showMessage("¡Inicio de sesión exitoso!", "success");
-      // Navegación se maneja en useEffect
+        setTimeout(() => {
+          navigate("/dashboard", { replace: true });
+        }, 1800);
+      }
+    } catch (err) {
+      showMessage("Error de conexión con el servidor.", "error");
+      setIsLoggingIn(false);
     }
   };
 
-  // Mientras cargamos usuario o hacemos login, mostramos splash
-  if (loading) return <SplashScreen />;
+  if (globalLoading || isLoggingIn) return <SplashScreen />;
 
   return (
     <div>
       <Navbar />
       <main className="login-container">
         <div className="login-card">
-          {/* Panel izquierdo */}
           <div className="left-panel">
             <h2 className="panel-title">MiloAssistant</h2>
             <img src={miloAvatar} alt="Avatar" className="panel-avatar" />
             <p className="panel-tagline">Tu asistente personal</p>
           </div>
 
-          {/* Panel derecho */}
           <div className="right-panel">
             <h2>Iniciar Sesión</h2>
-            <form onSubmit={handleSubmit}>
-              <div className="input-group">
-                <input
-                  type="email"
-                  id="email"
-                  placeholder=" "
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
-                <label htmlFor="email">Correo electrónico</label>
-              </div>
 
-              <div className="input-group">
-                <input
-                  type="password"
-                  id="password"
-                  placeholder=" "
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
-                <label htmlFor="password">Contraseña</label>
-              </div>
+            <div className="input-group">
+              <input
+                type="email"
+                placeholder=" "
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+              <label>Correo electrónico</label>
+            </div>
 
-              <button type="submit" className="login-button">
-                Ingresar
-              </button>
-            </form>
+            <div className="input-group">
+              <input
+                type="password"
+                placeholder=" "
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+              <label>Contraseña</label>
+            </div>
+
+            <button
+              type="button"
+              className="login-button"
+              onClick={handleLogin}
+            >
+              Ingresar
+            </button>
 
             <a href="/forgot-password" className="forgot-password">
               ¿Olvidaste tu contraseña?
@@ -93,9 +92,6 @@ export default function Login() {
             </p>
           </div>
         </div>
-
-        {/* Toast de mensajes */}
-        <Message message={message} type={type} onClose={() => {}} />
       </main>
     </div>
   );

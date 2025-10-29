@@ -1,35 +1,70 @@
 import React, { useEffect, useState } from "react";
-import miloAvatar from "../assets/milo-avatar.png";
+import { useTheme } from "../context/ThemeContext";
+import miloLight from "../assets/milo-light.png";
+import miloDark from "../assets/milo-avatar.png";
 import "../styles/SplashScreen.css";
 
-export default function SplashScreen() {
+export default function SplashScreen({ show, onFinish }) {
   const [progress, setProgress] = useState(0);
+  const [isDone, setIsDone] = useState(false);
+
+  let isDarkMode = false;
+  try {
+    const themeContext = useTheme();
+    if (themeContext) isDarkMode = themeContext.isDarkMode;
+  } catch {
+    isDarkMode = false;
+  }
+
+  const imageSrc = isDarkMode ? miloDark : miloLight;
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setProgress((prev) => {
-        if (prev < 100) return prev + 2;
-        clearInterval(interval);
-        return 100;
-      });
-    }, 20);
+    if (!show) return;
 
-    return () => clearInterval(interval);
-  }, []);
+    const totalTime = 1800; // 18s
+    const intervalTime = 50; // cada 50ms
+    const step = 100 / (totalTime / intervalTime); // incremento suave
+
+    const timer = setInterval(() => {
+      setProgress((prev) => {
+        const next = prev + step;
+        if (next >= 100) {
+          clearInterval(timer);
+          setProgress(100);
+          setTimeout(() => {
+            setIsDone(true);
+            setTimeout(() => {
+              if (onFinish) onFinish();
+            }, 1200); // fade-out
+          }, 1200); // mantener 100% visible
+        }
+        return next;
+      });
+    }, intervalTime);
+
+    return () => clearInterval(timer);
+  }, [show, onFinish]);
+
+  if (!show) return null;
 
   return (
-    <div className="splash-container">
+    <div className={`splash-container ${isDone ? "fade-out" : ""}`}>
       <div className="splash-content">
-        <img src={miloAvatar} alt="Milo" className="splash-logo" />
-        <h1 className="splash-title">Milo Assistant</h1>
-        <p className="splash-text">CARGANDO...</p>
-
+        <img src={imageSrc} alt="Milo" className="splash-logo" />
+        <h1 className="splash-title">
+          Milo<span>Assistant</span>
+        </h1>
         <div className="progress-bar">
           <div
-            className="progress-fill"
+            className="progress-fill shimmer"
             style={{ width: `${progress}%` }}
           ></div>
         </div>
+        <p className="splash-text">
+          {progress < 100
+            ? `Cargando... (${Math.round(progress)}%)`
+            : "¡Listo!"}
+        </p>
       </div>
     </div>
   );

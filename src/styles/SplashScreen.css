@@ -5,17 +5,24 @@
   justify-content: center;
   align-items: center;
   background-color: var(--primary-bg-color);
+  color: var(--text-color);
   z-index: 9999;
   flex-direction: column;
-  color: var(--text-color);
   text-align: center;
+  transition: opacity 1.2s ease;
+}
+
+.splash-container.fade-out {
+  opacity: 0;
+  pointer-events: none;
 }
 
 .splash-content {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 20px;
+  gap: 25px;
+  animation: fadeIn 1s ease forwards;
 }
 
 .splash-logo {
@@ -23,41 +30,125 @@
   height: 140px;
   border-radius: 50%;
   object-fit: cover;
-  box-shadow: 0 0 25px rgba(155, 89, 182, 0.3);
+  box-shadow: 0 0 25px var(--highlight-light-color);
   animation: float 3s ease-in-out infinite;
 }
 
 .splash-title {
-  font-size: 3.5rem;
+  font-family: "Poppins", sans-serif;
+  font-size: 3rem;
   font-weight: 700;
   letter-spacing: 2px;
-  color: var(--highlight-color);
+  color: var(--text-color);
+  animation: titleFade 1.2s ease-in-out 0.5s forwards;
 }
 
-.splash-text {
-  font-size: 1.2rem;
-  opacity: 0.8;
-  margin-bottom: 15px;
+/* Milo / Assistant con degradados diferentes */
+.splash-title span {
+  background: linear-gradient(90deg,
+      var(--highlight-color),
+      var(--highlight-light-color));
+  /* Assistant: degradado azul/violeta metálico */
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .progress-bar {
-  width: 280px;
+  width: 320px;
   height: 12px;
-  background-color: var(--secondary-bg-color);
-  border-radius: 20px;
+  background: var(--tertiary-bg-color);
+  border-radius: 50px;
   overflow: hidden;
-  box-shadow: 0 0 10px rgba(155, 89, 182, 0.2);
+  box-shadow: 0 0 20px var(--highlight-light-color);
+  position: relative;
 }
 
 .progress-fill {
   height: 100%;
-  background-color: var(--highlight-color);
-  transition: width 0.2s ease;
-  border-radius: 20px;
+  border-radius: 50px;
+  background: linear-gradient(90deg,
+      var(--highlight-color),
+      var(--highlight-light-color));
+  box-shadow: 0 0 18px var(--highlight-light-color);
+  transition: width 0.4s ease-out;
+  position: relative;
 }
 
+.progress-fill.shimmer::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -60px;
+  height: 100%;
+  width: 60px;
+  background: rgba(255, 255, 255, 0.3);
+  filter: blur(8px);
+  animation: shimmer 1.5s infinite;
+}
+
+.splash-text {
+  font-size: 1.2rem;
+  color: var(--text-color);
+  opacity: 0;
+  margin-top: 8px;
+  animation: textFade 1s ease-in-out 1s forwards;
+}
+
+/* Animaciones */
 @keyframes float {
-  0% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
-  100% { transform: translateY(0); }
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes titleFade {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes textFade {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 0.8;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    left: -60px;
+  }
+
+  100% {
+    left: 100%;
+  }
 }

@@ -1,14 +1,16 @@
 import { Link } from "react-router-dom";
 import ProfileMenu from "./ProfileMenu";
 import FunctionalitiesMenu from "./FunctionalitiesMenu";
-
+import ThemeToggle from "./ThemeToggle";
 import "../styles/ThemeToggle.css";
+
 export default function Navbar({ showProfile, onLogout }) {
   return (
     <header className="navbar">
       <div className="navbar-left">
         <span>MiloAssistant</span>
       </div>
+
       <nav className="navbar-right">
         <ul className="nav-links">
           <li>
@@ -20,6 +22,10 @@ export default function Navbar({ showProfile, onLogout }) {
           <li>
             <Link to="/novedades">Novedades</Link>
           </li>
+          <li>
+            <ThemeToggle />
+          </li>
+
           {showProfile && (
             <li className="profile-menu-wrapper">
               <ProfileMenu onLogout={onLogout} />
