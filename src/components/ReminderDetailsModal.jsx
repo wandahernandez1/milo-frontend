@@ -128,7 +128,7 @@ export default function ReminderDetailsModal({
               onClose();
             }}
           >
-            <IoIosTrash /> Eliminar Recordatorio
+            <IoIosTrash />
           </button>
           <button className="modal-button save" onClick={handleSave}>
             Guardar
