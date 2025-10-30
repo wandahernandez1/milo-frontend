@@ -145,7 +145,7 @@ export default function PanelLayout() {
           <div className="sidebar-header">
             <button
               className="back-button-sidebar-card"
-              onClick={() => navigate(-1)}
+              onClick={() => navigate("/dashboard")}
             >
               <FontAwesomeIcon icon={faArrowLeft} /> Volver
             </button>
