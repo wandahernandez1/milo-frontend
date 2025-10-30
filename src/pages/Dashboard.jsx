@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Chat from "../components/Chat";
@@ -10,17 +10,27 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const { logout, isLoggingOut } = useAuth();
   const [chatActive, setChatActive] = useState(false);
+  const [showSplash, setShowSplash] = useState(true);
 
-  // Definir la función de logout que manejará todo
+  useEffect(() => {
+    //  Revisamos si hay flag en sessionStorage
+    const skipSplash = sessionStorage.getItem("skipDashboardSplash") === "true";
+
+    if (skipSplash) {
+      setShowSplash(false);
+      sessionStorage.removeItem("skipDashboardSplash");
+    } else {
+      const timer = setTimeout(() => setShowSplash(false), 2000);
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
   const handleLogout = async () => {
     await logout();
     navigate("/login", { replace: true });
   };
 
-  // Si estamos haciendo logout, mostramos el splash
-  if (isLoggingOut) {
-    return <SplashScreen />;
-  }
+  if (isLoggingOut || showSplash) return <SplashScreen show={true} />;
 
   return (
     <>

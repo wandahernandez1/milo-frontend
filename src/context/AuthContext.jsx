@@ -5,7 +5,6 @@ import {
   useEffect,
   useCallback,
 } from "react";
-import SplashScreen from "../components/SplashScreen";
 import { MessageProvider } from "./MessageContext";
 
 const AuthContext = createContext();
@@ -15,12 +14,10 @@ export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
-  const [showSplash, setShowSplash] = useState(true);
 
   const fetchUser = useCallback(async () => {
     setLoading(true);
     const token = localStorage.getItem("token");
-
     if (!token) {
       setCurrentUser(null);
       setLoading(false);
@@ -40,7 +37,7 @@ export const AuthProvider = ({ children }) => {
         setCurrentUser(null);
       }
     } catch (err) {
-      console.error("Error al obtener usuario:", err);
+      console.error(err);
       localStorage.removeItem("token");
       setCurrentUser(null);
     } finally {
@@ -50,8 +47,6 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     fetchUser();
-    const splashDelay = setTimeout(() => setShowSplash(false), 3000); // splash 3s
-    return () => clearTimeout(splashDelay);
   }, [fetchUser]);
 
   const login = async (email, password) => {
@@ -60,24 +55,16 @@ export const AuthProvider = ({ children }) => {
       const res = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email.trim(), password }),
+        body: JSON.stringify({ email, password }),
       });
       const data = await res.json();
-
       if (res.ok && data.access_token) {
         localStorage.setItem("token", data.access_token);
         setCurrentUser(data.user);
-
-        setShowSplash(true);
-        setTimeout(() => {
-          setShowSplash(false);
-        }, 2500);
-
         return { success: true, user: data.user };
       }
-
       return { success: false, message: data?.message || "Error de login" };
-    } catch (err) {
+    } catch {
       return { success: false, message: "Error de conexión" };
     } finally {
       setLoading(false);
@@ -95,13 +82,7 @@ export const AuthProvider = ({ children }) => {
     <AuthContext.Provider
       value={{ currentUser, loading, login, logout, isLoggingOut }}
     >
-      <MessageProvider>
-        {showSplash || loading ? (
-          <SplashScreen show={true} onFinish={() => setShowSplash(false)} />
-        ) : (
-          children
-        )}
-      </MessageProvider>
+      <MessageProvider>{children}</MessageProvider>
     </AuthContext.Provider>
   );
 };

@@ -13,7 +13,7 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [isLoggingIn, setIsLoggingIn] = useState(false);
 
-  const { login, loading: globalLoading } = useAuth();
+  const { login } = useAuth();
   const { showMessage } = useMessages();
   const navigate = useNavigate();
 
@@ -27,10 +27,8 @@ export default function Login() {
         setIsLoggingIn(false);
       } else {
         showMessage("¡Inicio de sesión exitoso!", "success");
-
-        setTimeout(() => {
-          navigate("/dashboard", { replace: true });
-        }, 1800);
+        // Redirigimos al Dashboard sin splash
+        navigate("/dashboard", { replace: true, state: { fromLogin: true } });
       }
     } catch (err) {
       showMessage("Error de conexión con el servidor.", "error");
@@ -38,7 +36,8 @@ export default function Login() {
     }
   };
 
-  if (globalLoading || isLoggingIn) return <SplashScreen />;
+  // Mostramos splash mientras hace login
+  if (isLoggingIn) return <SplashScreen show={true} />;
 
   return (
     <div>
