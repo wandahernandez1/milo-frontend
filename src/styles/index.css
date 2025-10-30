@@ -403,12 +403,13 @@ textarea:focus {
   transform: rotate(180deg);
 }
 
+
 .dropdown-content {
   position: absolute;
   top: 110%;
   right: 0;
   background-color: var(--dropdown-bg);
-  min-width: 220px;
+  min-width: 190px;
   border-radius: 8px;
   overflow: hidden;
   display: flex;
