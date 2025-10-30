@@ -36,6 +36,7 @@ export function useAuth() {
   useEffect(() => {
     fetchUser();
   }, [fetchUser]);
+
   const login = async (email, password) => {
     try {
       const res = await fetch(`${API_URL}/auth/login`, {
@@ -44,21 +45,17 @@ export function useAuth() {
         body: JSON.stringify({ email, password }),
       });
 
-      let data = {};
-      try {
-        data = await res.json();
-      } catch (err) {
-        console.warn("No se pudo parsear JSON del error", err);
-      }
+      const data = await res.json();
 
       if (res.ok && data.access_token) {
         localStorage.setItem("token", data.access_token);
         setCurrentUser(data.user);
         return { success: true, user: data.user };
       } else {
-        // Si el backend no envía message, usamos un default
-        const message = data?.message || "Email o contraseña incorrectos";
-        return { success: false, message };
+        return {
+          success: false,
+          message: data.message || "Email o contraseña incorrectos",
+        };
       }
     } catch (err) {
       console.error("Login failed:", err);
@@ -96,5 +93,71 @@ export function useAuth() {
     setCurrentUser(null);
   };
 
-  return { login, register, logout, currentUser, loading };
+  // Metodos para actualizar el perfil
+  const updateUser = async (updatedData) => {
+    const token = localStorage.getItem("token");
+    if (!token) return { success: false, message: "No autenticado" };
+
+    try {
+      const res = await fetch(`${API_URL}/users/me`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(updatedData),
+      });
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        setCurrentUser(data.user);
+        return { success: true, user: data.user };
+      } else {
+        return {
+          success: false,
+          message: data.message || "Error al actualizar perfil",
+        };
+      }
+    } catch (err) {
+      console.error("Update user failed:", err);
+      return { success: false, message: "Error de conexión con el servidor." };
+    }
+  };
+
+  const deleteUser = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) return { success: false, message: "No autenticado" };
+
+    try {
+      const res = await fetch(`${API_URL}/users/me`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        localStorage.removeItem("token");
+        setCurrentUser(null);
+        return { success: true, message: data.message };
+      } else {
+        return {
+          success: false,
+          message: data.message || "Error al eliminar cuenta",
+        };
+      }
+    } catch (err) {
+      console.error("Delete user failed:", err);
+      return { success: false, message: "Error de conexión con el servidor." };
+    }
+  };
+
+  return {
+    login,
+    register,
+    logout,
+    currentUser,
+    loading,
+    updateUser,
+    deleteUser,
+  };
 }

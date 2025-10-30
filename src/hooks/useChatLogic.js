@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { getWeather, getLocalNews, askGemini } from "../services/api";
 import { useNotes } from "./useNotes";
+import { useTasks } from "./useTasks";
+import { useNavigate } from "react-router-dom";
 
 export function useChatLogic(setChatActive) {
   const [messages, setMessages] = useState([]);
@@ -9,23 +11,19 @@ export function useChatLogic(setChatActive) {
   const [conversationStep, setConversationStep] = useState(null);
   const [tempData, setTempData] = useState({});
   const { createNote } = useNotes();
+  const { createTask } = useTasks();
+  const navigate = useNavigate();
 
   const addMessage = (sender, text, isHtml = false, buttons = null) => {
     let safeText = "";
-
-    if (typeof text === "string") {
-      safeText = text;
-    } else if (Array.isArray(text)) {
+    if (typeof text === "string") safeText = text;
+    else if (Array.isArray(text))
       safeText = text
         .map((item) =>
           typeof item === "string" ? item : JSON.stringify(item, null, 2)
         )
         .join("\n");
-    } else if (typeof text === "object" && text !== null) {
-      safeText = JSON.stringify(text, null, 2);
-    } else {
-      safeText = String(text);
-    }
+    else safeText = JSON.stringify(text, null, 2);
 
     setMessages((prev) => [
       ...prev,
@@ -40,7 +38,6 @@ export function useChatLogic(setChatActive) {
 
   const handleDirectActions = async (userMsg) => {
     const lowerMsg = userMsg.toLowerCase();
-
     const keywords = {
       weather: ["clima", "temperatura", "lluvia", "sol", "qué tiempo hace"],
       news: [
@@ -83,7 +80,6 @@ export function useChatLogic(setChatActive) {
       addMessage("milo", newsReply, true);
       return true;
     }
-
     return false;
   };
 
@@ -100,6 +96,7 @@ export function useChatLogic(setChatActive) {
     try {
       if (conversationStep) {
         switch (conversationStep) {
+          // ---------- NOTAS ----------
           case "nota_titulo":
             setTempData({ title: userMsg });
             addMessage(
@@ -110,12 +107,15 @@ export function useChatLogic(setChatActive) {
             break;
 
           case "nota_contenido":
-            const { title } = tempData;
-            const newNote = await createNote({ title, content: userMsg });
+            const { title: nTitle } = tempData;
+            const newNote = await createNote({
+              title: nTitle,
+              content: userMsg,
+            });
             addMessage(
               "milo",
               newNote
-                ? `¡Nota "${title}" creada exitosamente! 📝`
+                ? `¡Nota "${nTitle}" creada exitosamente! 📝`
                 : "No se pudo guardar la nota.",
               false,
               newNote
@@ -125,6 +125,7 @@ export function useChatLogic(setChatActive) {
             resetFlow();
             break;
 
+          // ---------- RECORDATORIOS ----------
           case "recordatorio_titulo":
             setTempData({ title: userMsg });
             addMessage(
@@ -137,31 +138,37 @@ export function useChatLogic(setChatActive) {
           case "recordatorio_fecha":
             const { title: rTitle } = tempData;
             const dateText = userMsg;
+
+            // Guarda en localStorage
             const storedReminders = JSON.parse(
               localStorage.getItem("reminders") || "[]"
             );
+            const newReminder = {
+              id: Date.now(),
+              title: rTitle,
+              description: "",
+              dateText,
+            };
             localStorage.setItem(
               "reminders",
-              JSON.stringify([...storedReminders, { title: rTitle, dateText }])
+              JSON.stringify([...storedReminders, newReminder])
             );
-            if ("Notification" in window) {
-              Notification.requestPermission().then((permission) => {
-                if (permission === "granted") {
-                  new Notification(`Recordatorio: ${rTitle}`, {
-                    body: `Para: ${dateText}`,
-                  });
-                }
-              });
-            }
+
             addMessage(
               "milo",
               `⏰ Recordatorio "${rTitle}" programado para ${dateText}.`,
               false,
-              { label: "Ir a mi calendario", route: "/panel/calendario" }
+              {
+                label: "Ir a mis recordatorios",
+                route: "/panel/recordatorios",
+                state: { newReminder },
+              }
             );
+
             resetFlow();
             break;
 
+          // ---------- TAREAS ----------
           case "tarea_titulo":
             setTempData({ title: userMsg });
             addMessage("milo", "¿Quieres agregar una descripción?");
@@ -172,44 +179,30 @@ export function useChatLogic(setChatActive) {
             setTempData((prev) => ({ ...prev, description: userMsg }));
             addMessage(
               "milo",
-              "¿Tiene fecha límite? (ej: 30/09/2025) o escribí 'no'"
+              "Buenisimo!. La tarea estará disponible sin fecha límite."
             );
-            setConversationStep("tarea_fecha");
-            break;
-
-          case "tarea_fecha":
-            const dueDate = userMsg.toLowerCase() === "no" ? null : userMsg;
-            setTempData((prev) => ({ ...prev, dueDate }));
-            addMessage("milo", "¿Prioridad alta, media o baja?");
             setConversationStep("tarea_prioridad");
             break;
 
           case "tarea_prioridad":
-            const priority = ["alta", "media", "baja"].includes(
-              userMsg.toLowerCase()
-            )
-              ? userMsg.toLowerCase()
-              : "media";
-            const { title: tTitle, description, dueDate: tDueDate } = tempData;
-            const storedTasks = JSON.parse(
-              localStorage.getItem("tasks") || "[]"
-            );
-            localStorage.setItem(
-              "tasks",
-              JSON.stringify([
-                ...storedTasks,
-                { title: tTitle, description, dueDate: tDueDate, priority },
-              ])
-            );
-            addMessage(
-              "milo",
-              `✅ Tarea "${tTitle}" creada${
-                tDueDate ? ` para ${tDueDate}` : ""
-              } con prioridad ${priority}.`,
-              false,
-              { label: "Ir a mis tareas", route: "/panel/tareas" }
-            );
-            resetFlow();
+            const { title: tTitle, description } = tempData;
+            const newTask = await createTask({ title: tTitle, description });
+
+            if (newTask) {
+              addMessage(
+                "milo",
+                `✅ Tarea "${tTitle}" creada exitosamente.`,
+                false,
+                { label: "Ir a mis tareas", route: "/panel/tareas" }
+              );
+              resetFlow();
+            } else {
+              addMessage(
+                "milo",
+                "No se pudo crear la tarea. Intenta nuevamente.",
+                "error"
+              );
+            }
             break;
         }
         setIsLoading(false);
@@ -228,11 +221,9 @@ export function useChatLogic(setChatActive) {
       ].slice(-10);
       const response = await askGemini(userMsg, historyToSend);
 
-      if (response.reply) {
-        addMessage("milo", response.reply);
-      } else {
+      if (response.reply) addMessage("milo", response.reply);
+      else
         addMessage("milo", "Lo siento, no pude obtener una respuesta válida.");
-      }
     } catch (err) {
       console.error("Error en handleSend:", err);
       addMessage(

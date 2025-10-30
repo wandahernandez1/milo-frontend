@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export const useReminders = () => {
-  const [reminders, setReminders] = useState([
+  const defaultReminders = [
     {
       id: 1,
       title: "Llamar al médico",
@@ -22,7 +22,25 @@ export const useReminders = () => {
       time: "14:30",
       location: "Tienda principal",
     },
-  ]);
+  ];
+
+  const [reminders, setReminders] = useState([]);
+
+  // Cargar recordatorios desde localStorage o usar los por defecto
+  useEffect(() => {
+    const stored = JSON.parse(localStorage.getItem("reminders") || "null");
+    if (stored && stored.length > 0) {
+      setReminders(stored);
+    } else {
+      setReminders(defaultReminders);
+      localStorage.setItem("reminders", JSON.stringify(defaultReminders));
+    }
+  }, []);
+
+  const saveToStorage = (updatedReminders) => {
+    setReminders(updatedReminders);
+    localStorage.setItem("reminders", JSON.stringify(updatedReminders));
+  };
 
   const addReminder = (title, description) => {
     if (!title.trim()) return;
@@ -30,39 +48,42 @@ export const useReminders = () => {
     const newReminder = {
       id: Date.now(),
       title: title.trim(),
-      description: description.trim() || "",
+      description: description?.trim() || "",
       completed: false,
       priority: "Ninguna",
       date: null,
       time: null,
       location: null,
     };
-    setReminders([newReminder, ...reminders]);
+
+    saveToStorage([newReminder, ...reminders]);
   };
 
   const toggleComplete = (id) => {
-    setReminders(
-      reminders.map((r) =>
-        r.id === id ? { ...r, completed: !r.completed } : r
-      )
+    const updated = reminders.map((r) =>
+      r.id === id ? { ...r, completed: !r.completed } : r
     );
+    saveToStorage(updated);
   };
 
   const deleteReminder = (id) => {
-    setReminders(reminders.filter((r) => r.id !== id));
+    const updated = reminders.filter((r) => r.id !== id);
+    saveToStorage(updated);
   };
 
   const updateReminderTitle = (id, newTitle) => {
     if (!newTitle.trim()) return;
-    setReminders(
-      reminders.map((r) => (r.id === id ? { ...r, title: newTitle.trim() } : r))
+    const updated = reminders.map((r) =>
+      r.id === id ? { ...r, title: newTitle.trim() } : r
     );
+    saveToStorage(updated);
   };
 
   const updateReminderDetails = (id, details) => {
-    setReminders(
-      reminders.map((r) => (r.id === id ? { ...r, ...details } : r))
+    const updated = reminders.map((r) =>
+      r.id === id ? { ...r, ...details } : r
     );
+    saveToStorage(updated);
   };
 
   const pendingCount = reminders.filter((r) => !r.completed).length;
