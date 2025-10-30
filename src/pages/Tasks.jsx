@@ -73,6 +73,7 @@ export default function Tasks() {
       <div className="section-header">
         <h2>Tus Tareas</h2>
         <button
+          className="add-task-button"
           onClick={() => {
             setEditingId(null);
             setTitle("");
@@ -80,23 +81,27 @@ export default function Tasks() {
             setShowInput(true);
           }}
         >
-          <FontAwesomeIcon icon={faPlus} /> Nueva tarea
+          <FontAwesomeIcon icon={faPlus} /> Nueva Tarea
         </button>
       </div>
+
       {showInput && (
         <div className="task-input-card">
           <input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Título (obligatorio)"
+            maxLength={100}
           />
           <textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            placeholder="Descripción"
+            placeholder="Descripción (opcional)"
+            rows={2}
           />
-          <div>
+          <div className="input-actions">
             <button
+              className="cancel-button"
               onClick={() => {
                 setShowInput(false);
                 setTitle("");
@@ -106,48 +111,52 @@ export default function Tasks() {
             >
               Cancelar
             </button>
-            <button onClick={handleSave}>
+            <button className="save-button" onClick={handleSave}>
               {editingId ? "Actualizar" : "Guardar"}
             </button>
           </div>
         </div>
       )}
+
       <div className="tasks-list-container">
         {loading ? (
-          <p>Cargando tareas...</p>
+          <p className="loading-message">Cargando tareas...</p>
         ) : tasks.length === 0 ? (
-          <p>No hay tareas aún. ¡Crea una!</p>
+          <p className="empty-message"> ¡No hay tareas aún! Crea una.</p>
         ) : (
           tasks.map((task) => (
             <div
               key={task.id}
               className={`task-item-card ${task.completed ? "completed" : ""}`}
             >
-              <input
-                type="checkbox"
-                checked={task.completed}
-                onChange={() => toggleComplete(task)}
-              />
+              <label className="task-checkbox-container">
+                <input
+                  type="checkbox"
+                  checked={task.completed}
+                  onChange={() => toggleComplete(task)}
+                />
+                <span className="checkmark"></span>
+              </label>
+
               <div className="task-content">
-                <h3
-                  style={{
-                    textDecoration: task.completed ? "line-through" : "none",
-                  }}
-                >
-                  {task.title}
-                </h3>
-                {task.description && <p>{task.description}</p>}
+                <h3 className="task-title">{task.title}</h3>
+                {task.description && (
+                  <p className="task-description">{task.description}</p>
+                )}
               </div>
+
               <div className="task-actions">
                 <button
                   className="icon-button edit-button"
                   onClick={() => handleEdit(task)}
+                  title="Editar Tarea"
                 >
                   <FontAwesomeIcon icon={faEdit} />
                 </button>
                 <button
                   className="icon-button delete-button"
                   onClick={() => handleDelete(task.id)}
+                  title="Eliminar Tarea"
                 >
                   <FontAwesomeIcon icon={faTrash} />
                 </button>
@@ -156,6 +165,7 @@ export default function Tasks() {
           ))
         )}
       </div>
+
       {toast.message && (
         <div className={`toast ${toast.type}`}>{toast.message}</div>
       )}
