@@ -1,10 +1,9 @@
 // src/components/ProfileMenu.jsx
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "../../hooks/useAuth";
 
 export default function ProfileMenu() {
-  // Obtenemos 'logout' del AuthContext
   const { currentUser, logout } = useAuth();
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
@@ -12,6 +11,10 @@ export default function ProfileMenu() {
   if (!currentUser) {
     return null;
   }
+
+  const firstInitial = currentUser.name.charAt(0).toUpperCase();
+  // Obtener el color guardado o usar un valor por defecto
+  const avatarColor = currentUser.avatarColor || "#6c757d";
 
   const handleLogout = async () => {
     setOpen(false); // Cierra el menú
@@ -22,7 +25,24 @@ export default function ProfileMenu() {
   return (
     <div className="profile-menu-container">
       <div className="profile-button" onClick={() => setOpen(!open)}>
-        <div className="avatar">{currentUser.name.charAt(0).toUpperCase()}</div>
+        {/* Avatar con lógica de foto/color */}
+        <div
+          className="avatar"
+          style={{
+            backgroundColor: currentUser.photoURL ? "transparent" : avatarColor,
+          }}
+        >
+          {currentUser.photoURL ? (
+            <img
+              src={currentUser.photoURL}
+              alt="Avatar"
+              className="profile-image-small"
+            />
+          ) : (
+            firstInitial
+          )}
+        </div>
+
         <span className="profile-name">{currentUser.name}</span>
         <i
           className={`fas fa-caret-down dropdown-arrow ${open ? "open" : ""}`}

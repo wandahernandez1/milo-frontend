@@ -1,12 +1,12 @@
 :root {
-  /*  Colores base */
+  /* Colores base */
   --primary-bg-color: #1a152d;
   --secondary-bg-color: #2c2744;
   --card-bg-color: #2c2744;
-  /*  Tipografía y textos */
+  /* Tipografía y textos */
   --text-color: #ffffff;
   --highlight-text-secondary: #ccc;
-  /*  Colores destacados */
+  /* Colores destacados */
   --highlight-color: #9b59b6;
   --highlight-gradient-start: #9b59b6;
   --highlight-gradient-end: #8328a7;
@@ -15,13 +15,17 @@
   --danger-gradient-end: #c0392b;
   --success-bg-alpha: rgba(155, 89, 182, 0.2);
   --error-bg-alpha: rgba(231, 76, 60, 0.2);
-  /*  Inputs */
+  /* Inputs */
   --input-bg-color: #4a4563;
   --input-border-color: #7b758d;
-  /*  Otros */
+  /* Otros */
   --border-radius: 10px;
   --transition: all 0.3s ease;
   --avatar-border-color: #3a3360;
+  --secondary-btn-bg: #4a4563;
+  /* Nuevo color para botones secundarios */
+  --secondary-btn-hover: #5d587a;
+  /* Nuevo hover para botones secundarios */
 }
 
 body.light-mode {
@@ -34,7 +38,13 @@ body.light-mode {
   --input-bg-color: #e0e0e0;
   --input-border-color: #cccccc;
   --avatar-border-color: #f5f5f7;
+  --secondary-btn-bg: #e0e0e0;
+  --secondary-btn-hover: #ccc;
 }
+
+/* ================================================================= */
+/* ESTRUCTURA Y BASE                            */
+/* ================================================================= */
 
 /* Contenedor principal */
 .edit-profile-container {
@@ -60,15 +70,14 @@ body.light-mode {
   display: flex;
   align-items: center;
   gap: 8px;
-  transition: color 0.3s ease;
+  transition: color 0.3s ease, transform 0.3s ease;
+  /* Transiciones más limpias */
 }
 
 .back-button:hover {
-  background-color: var(--highlight-color);
-  border-color: transparent;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-
+  color: var(--highlight-color);
+  transform: translateX(-3px);
+  /* Movimiento simple, sin sombra ni fondo */
 }
 
 /* Card principal */
@@ -91,23 +100,6 @@ body.light-mode {
   box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
 }
 
-/* Avatar */
-.profile-avatar {
-  width: 90px;
-  height: 90px;
-  border-radius: 50%;
-  background-color: var(--highlight-color);
-  color: #fff;
-  font-size: 2em;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: -10px auto 10px auto;
-  border: 4px solid var(--avatar-border-color);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-}
-
 /* Header */
 .profile-header h2 {
   font-size: 2em;
@@ -122,6 +114,118 @@ body.light-mode {
   text-align: center;
   margin-bottom: 15px;
 }
+
+/* ================================================================= */
+/* AVATAR Y EDICIÓN                           */
+/* ================================================================= */
+
+/* Avatar (Placeholder o Contenedor de Imagen) */
+.profile-avatar {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  /* El color de fondo será definido inline por JS */
+  color: #fff;
+  font-size: 2em;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: -10px auto 10px auto;
+  border: 4px solid var(--avatar-border-color);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  /* Importante para la imagen */
+  transition: background-color 0.3s ease;
+}
+
+/* Estilo para la imagen real dentro del avatar */
+.profile-avatar .profile-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Asegura que la imagen cubra todo el círculo */
+}
+
+/* Controles de personalización del avatar */
+.avatar-customization-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  margin-top: -5px;
+  /* Ajuste visual */
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--input-border-color);
+}
+
+.color-selector-group {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  font-size: 0.9em;
+}
+
+.color-input {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 3px solid var(--highlight-color);
+  /* Borde para destacarlo */
+  cursor: pointer;
+  border-radius: 50%;
+  overflow: hidden;
+  transition: transform 0.2s;
+}
+
+.color-input:hover {
+  transform: scale(1.05);
+}
+
+.file-upload-actions {
+  display: flex;
+  gap: 10px;
+}
+
+/* Estilo para botones pequeños */
+.btn.small {
+  padding: 8px 15px;
+  font-size: 0.85em;
+  border-radius: 8px;
+}
+
+.tertiary-btn {
+  background: none;
+  color: var(--danger-color);
+  border: 1px solid var(--danger-color);
+  box-shadow: none;
+}
+
+.tertiary-btn:hover {
+  background-color: var(--danger-color);
+  color: var(--text-color);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(231, 76, 60, 0.2);
+}
+
+/* Botón secundario para subir/cambiar foto */
+.secondary-btn {
+  background-color: var(--secondary-btn-bg);
+  color: var(--text-color);
+  border: 1px solid var(--input-border-color);
+  box-shadow: none;
+}
+
+.secondary-btn:hover {
+  background-color: var(--secondary-btn-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* ================================================================= */
+/* FORMULARIO                             */
+/* ================================================================= */
 
 /* Mensajes */
 .message-box {
@@ -221,7 +325,7 @@ body.light-mode {
   color: var(--highlight-color);
 }
 
-/* Botones */
+/* Botones principales */
 .form-actions,
 .delete-account-section {
   display: flex;
@@ -279,6 +383,10 @@ body.light-mode {
   margin-bottom: 12px;
 }
 
+/* ================================================================= */
+/* MODAL Y RESPONSIVIDAD                     */
+/* ================================================================= */
+
 /* Responsividad */
 @media (max-width: 768px) {
   .edit-profile-card {
@@ -289,6 +397,22 @@ body.light-mode {
 @media (max-width: 480px) {
   .edit-profile-card {
     padding: 30px 20px 20px 20px;
+  }
+
+  /* Ajustar controles de avatar para pantallas pequeñas */
+  .avatar-customization-controls {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .file-upload-actions {
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .file-upload-actions .btn {
+    width: 100%;
   }
 
   .profile-header h2 {
@@ -308,6 +432,7 @@ body.light-mode {
   }
 }
 
+/* Modal overlay */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -327,7 +452,8 @@ body.light-mode {
   padding: 2rem;
   border-radius: 12px;
   width: 90%;
-  max-width: 600px;
+  max-width: 450px;
+  /* Tamaño ligeramente reducido para el modal */
   box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2);
   transition: background 0.3s, color 0.3s;
 }
@@ -337,7 +463,8 @@ body.light-mode {
 }
 
 .modal p {
-  color: var(--text-secondary-color, #555);
+  color: var(--highlight-text-secondary);
+  /* Usar variable para consistencia */
   font-size: 0.9rem;
 }
 
@@ -352,14 +479,17 @@ body.light-mode {
 .modal .input-group input {
   width: 100%;
   padding: 0.6rem 0.75rem;
-  border: 1px solid var(--border-color, #ccc);
+  /* Usar variables existentes para inputs */
+  border: 1px solid var(--input-border-color);
   border-radius: 8px;
-  background-color: var(--input-bg-color, #fff);
-  color: var(--text-color, #333);
+  background-color: var(--input-bg-color);
+  color: var(--text-color);
+  font-size: 1em;
+  /* Ajuste para evitar conflictos */
 }
 
 .modal .input-group input:focus {
-  border-color: var(--primary-color, #1e90ff);
+  border-color: var(--highlight-color);
 }
 
 /* ------------------ Botones del modal ------------------ */
@@ -372,7 +502,8 @@ body.light-mode {
 
 .modal .modal-actions .btn {
   padding: 0.55rem 1.2rem;
-  font-weight: 500;
+  font-weight: 600;
+  /* Coherente con otros botones */
   border-radius: 10px;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -382,35 +513,25 @@ body.light-mode {
 
 /* Botón Cancelar */
 .modal .modal-actions .btn.cancel-btn {
-  background-color: var(--secondary-btn-bg, #eee);
-  color: var(--text-color, #333);
-  border: 1px solid var(--border-color, #ccc);
+  background-color: var(--secondary-btn-bg);
+  color: var(--text-color);
+  border: 1px solid var(--input-border-color);
+  box-shadow: none;
 }
 
 .modal .modal-actions .btn.cancel-btn:hover {
-  background-color: var(--secondary-btn-hover, #ddd);
-}
-
-/* Botón Eliminar */
-.modal .modal-actions .btn.danger-btn {
-  background-color: #ff4d4f;
-  color: #fff;
-  border: 1px solid #e04445;
-}
-
-.modal .modal-actions .btn.danger-btn:hover {
-  background-color: #e04445;
+  background-color: var(--secondary-btn-hover);
   transform: translateY(-1px);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
-/* Ajuste modo oscuro */
-[data-theme="dark"] .modal .modal-actions .btn.cancel-btn {
-  background-color: #444;
-  color: #eee;
-  border: 1px solid #666;
+/* Botón Eliminar (Ya usas danger-btn, lo ajustamos para el modal) */
+.modal .modal-actions .btn.danger-btn {
+  /* Usar las variables de gradiente ya definidas */
+  background: linear-gradient(135deg,
+      var(--danger-gradient-start),
+      var(--danger-gradient-end));
+  color: #fff;
+  border: none;
 }
 
-[data-theme="dark"] .modal .modal-actions .btn.cancel-btn:hover {
-  background-color: #555;
-}
+/* Fin del CSS acomodado */

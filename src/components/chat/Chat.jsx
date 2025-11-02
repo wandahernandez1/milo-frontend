@@ -2,9 +2,9 @@ import React, { useRef, useEffect } from "react"; // <-- Importado
 import ChatInput from "./ChatInput";
 import ChatMessage from "./ChatMessage";
 import ActionCards from "./ActionCards";
-import { useChatLogic } from "../hooks/useChatLogic";
-import miloAvatar from "../assets/milo2.jpg";
-import "../styles/dashboard.css";
+import { useChatLogic } from "../../hooks/useChatLogic";
+import miloAvatar from "../../assets/milo2.jpg";
+import "../../styles/dashboard.css";
 
 export default function Chat({ chatActive, setChatActive }) {
   const {

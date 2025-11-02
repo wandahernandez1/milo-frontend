@@ -1,4 +1,4 @@
-import Navbar from "../components/Navbar";
+import Navbar from "../components/layout/NavBar";
 import Threads from "../components/Threads";
 import miloAvatarDark from "../assets/milo2.jpg";
 import miloAvatarLight from "../assets/milo-light.png";

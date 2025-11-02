@@ -1,0 +1,235 @@
+.eventos-section {
+    padding: 1.5rem 2rem;
+    width: 100%;
+    box-sizing: border-box;
+    transition: var(--transition);
+    animation: fadeIn 0.4s ease-in-out;
+    background-color: var(--primary-bg-color);
+    color: var(--text-color);
+}
+
+.eventos-header {
+    text-align: center;
+    margin-bottom: 1.8rem;
+}
+
+.eventos-header h1 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text-color);
+    margin: 0;
+}
+
+.eventos-header p {
+    color: var(--link-color);
+    font-size: 0.95rem;
+    margin-top: 0.4rem;
+}
+
+.eventos-loading,
+.eventos-no-conectado {
+    text-align: center;
+    padding: 3rem;
+    color: var(--text-color);
+}
+
+.eventos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1.2rem;
+    transition: var(--transition);
+}
+
+.evento-card {
+    background: var(--card-bg-color);
+    border-radius: 20px;
+    padding: 1.1rem 1.3rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+}
+
+.evento-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+}
+
+.evento-icon {
+    background: var(--secondary-bg-color);
+    border-radius: 14px;
+    padding: 0.9rem;
+    font-size: 1.3rem;
+    color: var(--highlight-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.evento-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.evento-info h3 {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--text-color);
+    margin: 0;
+}
+
+.evento-fecha,
+.evento-lugar,
+.evento-descripcion {
+    font-size: 0.9rem;
+    color: var(--link-color);
+    margin-top: 0.3rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.evento-descripcion {
+    font-style: italic;
+    opacity: 0.8;
+}
+
+.no-eventos {
+    text-align: center;
+    color: var(--link-color);
+    margin-top: 2rem;
+    font-size: 1rem;
+}
+
+/* -------- Botón actualizar -------- */
+
+.reload-button {
+    background-color: var(--button-bg-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.reload-button:hover {
+    background-color: var(--button-hover-color);
+}
+
+.reload-button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+/* -------- Estados de carga / error -------- */
+
+.eventos-loading,
+.eventos-no-conectado {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    background-color: var(--card-bg-color);
+    border-radius: 20px;
+    margin: 2rem auto;
+    max-width: 500px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.eventos-no-conectado h1 {
+    color: #ff5b5b;
+}
+
+.eventos-loading p {
+    color: var(--highlight-color);
+    font-weight: 600;
+}
+
+/* -------- Responsividad -------- */
+
+@media (max-width: 1024px) {
+    .eventos-section {
+        padding: 1.2rem;
+    }
+
+    .eventos-header h1 {
+        font-size: 1.5rem;
+    }
+
+    .eventos-grid {
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    }
+
+    .evento-card {
+        padding: 1rem;
+    }
+
+    .evento-info h3 {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .eventos-header {
+        text-align: left;
+        margin-bottom: 1.2rem;
+    }
+
+    .eventos-header h1 {
+        font-size: 1.3rem;
+    }
+
+    .eventos-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .evento-card {
+        flex-direction: row;
+        align-items: center;
+        border-radius: 16px;
+    }
+
+    .evento-icon {
+        padding: 0.8rem;
+        font-size: 1.2rem;
+    }
+
+    .evento-info h3 {
+        font-size: 1rem;
+    }
+}
+
+.ubicacion-actual {
+    background-color: var(--secondary-bg-color);
+    color: var(--text-color);
+    border-radius: var(--border-radius);
+    padding: 0.8rem 1rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    justify-content: center;
+    font-size: 0.95rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+
+/* -------- Animación -------- */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

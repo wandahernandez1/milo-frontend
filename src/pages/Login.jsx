@@ -1,12 +1,16 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import Navbar from "../components/Navbar";
+import Navbar from "../components/layout/NavBar";
 import miloAvatar from "../assets/milo-avatar.png";
 import "../styles/login.css";
 
 import { useAuth } from "../context/AuthContext";
 import { useMessages } from "../context/MessageContext";
-import SplashScreen from "../components/SplashScreen";
+import SplashScreen from "../components/layout/SplashScreen";
+
+import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
+
+import GoogleLoginButton from "../components/common/GoogleLoginButton";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -82,6 +86,10 @@ export default function Login() {
             >
               Ingresar
             </button>
+
+            <div className="google-login-container">
+              <GoogleLoginButton />
+            </div>
 
             <a href="/forgot-password" className="forgot-password">
               ¿Olvidaste tu contraseña?

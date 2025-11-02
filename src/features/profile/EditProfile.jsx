@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../hooks/useAuth";
-import { useMessages } from "../hooks/useMessage";
-import Message from "../components/Message";
-import "../styles/edit-profile.css";
+import { useAuth } from "../../hooks/useAuth";
+import { useMessages } from "../../hooks/useMessage";
+import Message from "../../components/Message";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import "../../styles/edit-profile.css";
 
 const initialFormData = {
   name: "",
@@ -18,28 +20,62 @@ export default function EditProfile() {
   const { currentUser, loading, updateUser, deleteUser } = useAuth();
   const [formData, setFormData] = useState(initialFormData);
   const [showPassword, setShowPassword] = useState(false);
+
+  // Lógica de ELIMINAR CUENTA (REINTEGRADA)
   const [confirmDeleteUsername, setConfirmDeleteUsername] = useState("");
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  // ESTADOS DE PERSONALIZACIÓN
+  const [avatarColor, setAvatarColor] = useState("#6c757d");
+  const [newPhotoFile, setNewPhotoFile] = useState(null);
+  const [newPhotoPreview, setNewPhotoPreview] = useState(null);
 
   const { message, type, showMessage, hideMessage } = useMessages();
   const navigate = useNavigate();
 
   useEffect(() => {
     if (currentUser) {
+      // SOLUCIÓN FECHA: Formatear la fecha a YYYY-MM-DD para el input type="date"
+      const formattedBirthDate = currentUser.birthDate
+        ? currentUser.birthDate.split("T")[0]
+        : "";
+
       setFormData({
         name: currentUser.name || "",
         fullName: currentUser.fullName || "",
-        birthDate: currentUser.birthDate || "",
+        birthDate: formattedBirthDate,
         email: currentUser.email || "",
         newPassword: "",
         confirmNewPassword: "",
       });
+
+      // Inicializar color y foto
+      setAvatarColor(currentUser.avatarColor || "#6c757d");
+      setNewPhotoPreview(currentUser.photoURL || null);
     }
   }, [currentUser]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+  };
+
+  const handleColorChange = (e) => {
+    setAvatarColor(e.target.value);
+  };
+
+  const handleFileUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setNewPhotoFile(file);
+      setNewPhotoPreview(URL.createObjectURL(file)); // Crear preview local
+      showMessage(`Archivo seleccionado: ${file.name}`, "info");
+    }
+  };
+
+  const handleRemovePhoto = () => {
+    setNewPhotoFile(null);
+    setNewPhotoPreview(null);
   };
 
   const handleSubmit = async (e) => {
@@ -56,22 +92,36 @@ export default function EditProfile() {
       return;
     }
 
+    let photoUrlToUpdate = newPhotoPreview;
+
+    // 1. Lógica de Subida de Archivo (PLACEHOLDER)
+    if (newPhotoFile) {
+      showMessage("Subiendo foto... Por favor, espera.", "info");
+      // RECUERDA: Aquí va la llamada a tu API de almacenamiento (Firebase, AWS, etc.)
+    }
+
+    // 2. Preparar Datos de Actualización
     const updatedData = {
       name: formData.name,
       fullName: formData.fullName,
       birthDate: formData.birthDate,
+      avatarColor: avatarColor,
+      photoURL: photoUrlToUpdate,
     };
     if (formData.newPassword) updatedData.password = formData.newPassword;
 
+    // 3. Llamar a la API de actualización
     const res = await updateUser(updatedData);
     if (res.success) {
       showMessage("Perfil actualizado correctamente.", "success");
       setFormData({ ...formData, newPassword: "", confirmNewPassword: "" });
+      setNewPhotoFile(null);
     } else {
       showMessage(res.message || "Error al actualizar el perfil.", "error");
     }
   };
 
+  // FUNCIONES DE ELIMINAR CUENTA (REINTEGRADAS)
   const openDeleteModal = () => setShowDeleteModal(true);
   const closeDeleteModal = () => setShowDeleteModal(false);
 
@@ -90,6 +140,7 @@ export default function EditProfile() {
     }
     closeDeleteModal();
   };
+  // FIN FUNCIONES DE ELIMINAR CUENTA
 
   if (loading) return <div className="loading-container">Cargando...</div>;
   if (!currentUser) {
@@ -97,17 +148,71 @@ export default function EditProfile() {
     return null;
   }
 
+  const firstInitial = formData.name.charAt(0).toUpperCase();
+
   return (
     <main className="edit-profile-container">
-      {/* Botón de volver */}
       <button className="back-button" onClick={() => navigate(-1)}>
         <i className="fas fa-arrow-left"></i> Volver
       </button>
 
       <div className="edit-profile-card">
-        {/* Avatar centrado */}
-        <div className="profile-avatar">
-          {currentUser.name.charAt(0).toUpperCase()}
+        {/* Avatar con foto/color */}
+        <div
+          className="profile-avatar"
+          style={{
+            backgroundColor: newPhotoPreview ? "transparent" : avatarColor,
+          }}
+        >
+          {newPhotoPreview ? (
+            <img
+              src={newPhotoPreview}
+              alt={`${formData.name} avatar`}
+              className="profile-image"
+            />
+          ) : (
+            firstInitial
+          )}
+        </div>
+
+        {/* Controles de personalización */}
+        <div className="avatar-customization-controls">
+          <div className="color-selector-group">
+            <label htmlFor="avatarColor" className="color-label">
+              Color de Avatar:
+            </label>
+            <input
+              id="avatarColor"
+              type="color"
+              value={avatarColor}
+              onChange={handleColorChange}
+              className="color-input"
+              disabled={!!newPhotoPreview}
+            />
+          </div>
+
+          <div className="file-upload-actions">
+            <label htmlFor="photoUpload" className="btn secondary-btn small">
+              {newPhotoPreview ? "Cambiar Foto" : "Subir Foto"}
+            </label>
+            <input
+              id="photoUpload"
+              type="file"
+              accept="image/*"
+              onChange={handleFileUpload}
+              style={{ display: "none" }}
+            />
+
+            {(newPhotoPreview || newPhotoFile) && (
+              <button
+                type="button"
+                className="btn tertiary-btn small"
+                onClick={handleRemovePhoto}
+              >
+                <FontAwesomeIcon icon={faTrash} /> Eliminar
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Header */}
@@ -116,7 +221,6 @@ export default function EditProfile() {
           <p>Actualiza la información de tu cuenta.</p>
         </div>
 
-        {/* Formulario */}
         <form className="profile-form" onSubmit={handleSubmit}>
           {/* Nombre de usuario */}
           <div className="input-group">
@@ -225,7 +329,7 @@ export default function EditProfile() {
           </div>
         </form>
 
-        {/* Sección eliminar cuenta */}
+        {/* SECCIÓN ELIMINAR CUENTA (REINTEGRADA) */}
         <div className="delete-account-section">
           <h3>Eliminar Cuenta</h3>
           <p>
@@ -242,7 +346,7 @@ export default function EditProfile() {
         </div>
       </div>
 
-      {/* Modal de confirmación */}
+      {/* Modal de confirmación (REINTEGRADO) */}
       {showDeleteModal && (
         <div className="modal-overlay">
           <div className="modal">
@@ -260,7 +364,7 @@ export default function EditProfile() {
               />
             </div>
             <div className="modal-actions">
-              <button className="btn" onClick={closeDeleteModal}>
+              <button className="btn cancel-btn" onClick={closeDeleteModal}>
                 Cancelar
               </button>
               <button className="btn danger-btn" onClick={handleConfirmDelete}>

@@ -1,7 +1,7 @@
 // src/components/Notes.jsx
 import { useState } from "react";
-import { useNotes } from "../hooks/useNotes.js";
-import "../styles/notes.css";
+import { useNotes } from "../../hooks/useNotes.js";
+import "../../styles/notes.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
 

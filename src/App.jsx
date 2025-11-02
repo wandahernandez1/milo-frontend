@@ -5,19 +5,19 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import RegisterPage from "./pages/RegisterPage";
 import Dashboard from "./pages/Dashboard";
-import Notes from "./pages/Notes";
-import PanelLayout from "./pages/PanelLayout";
-import Tasks from "./pages/Tasks";
-import ReminderPage from "./pages/ReminderPage";
-import EditProfile from "./pages/EditProfile";
+import Notes from "./features/notes/Notes";
+import PanelLayout from "./components/layout/PanelLayout";
+import EventosPanel from "./features/events/EventosPanel";
+import Tasks from "./features/tasks/Tasks";
+import EditProfile from "./features/profile/EditProfile";
 import ComoUsarMilo from "./pages/ComoUsarMilo";
 import Novedades from "./pages/Novedades";
 
 import { ThemeProvider } from "./context/ThemeContext";
-import ThemeToggle from "./components/ThemeToggle";
-import PrivateRoute from "./components/PrivateRoute";
+import CalendarioPage from "./pages/CalendarioPage";
 
-const CalendarioPage = () => <h1>Calendario y recordatorios</h1>;
+import PrivateRoute from "./components/layout/PrivateRoute";
+
 const ConfigPage = () => <h1>Opciones de Configuración</h1>;
 
 function App() {
@@ -53,8 +53,8 @@ function App() {
           <Route index element={<></>} />
           <Route path="notas" element={<Notes />} />
           <Route path="tareas" element={<Tasks />} />
-          <Route path="recordatorios" element={<ReminderPage />} />
           <Route path="calendario" element={<CalendarioPage />} />
+          <Route path="/panel/eventos" element={<EventosPanel />} />
           <Route path="configuracion" element={<ConfigPage />} />
         </Route>
 

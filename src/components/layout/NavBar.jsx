@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
-import ProfileMenu from "./ProfileMenu";
-import FunctionalitiesMenu from "./FunctionalitiesMenu";
-import ThemeToggle from "./ThemeToggle";
-import "../styles/ThemeToggle.css";
+import ProfileMenu from "../../features/profile/ProfileMenu";
+import FunctionalitiesMenu from "../common/FunctionalitiesMenu";
+import ThemeToggle from "../common/ThemeToggle";
+import "../../styles/ThemeToggle.css";
 
 export default function Navbar({ showProfile, onLogout }) {
   return (

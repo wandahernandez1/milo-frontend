@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { useTasks } from "../hooks/useTasks.js";
+import { useTasks } from "../../hooks/useTasks.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
-import "../styles/Tasks.css";
+import "../../styles/Tasks.css";
 
 export default function Tasks() {
   const { tasks, loading, createTask, updateTask, deleteTask } = useTasks();

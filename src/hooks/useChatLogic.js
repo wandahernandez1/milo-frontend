@@ -1,5 +1,10 @@
 import { useState } from "react";
-import { getWeather, getLocalNews, askGemini } from "../services/api";
+import {
+  getWeather,
+  getLocalNews,
+  askGemini,
+  createCalendarEventFromChat,
+} from "../services/api";
 import { useNotes } from "./useNotes";
 import { useTasks } from "./useTasks";
 import { useNavigate } from "react-router-dom";
@@ -16,14 +21,13 @@ export function useChatLogic(setChatActive) {
 
   const addMessage = (sender, text, isHtml = false, buttons = null) => {
     let safeText = "";
+
     if (typeof text === "string") safeText = text;
-    else if (Array.isArray(text))
-      safeText = text
-        .map((item) =>
-          typeof item === "string" ? item : JSON.stringify(item, null, 2)
-        )
-        .join("\n");
-    else safeText = JSON.stringify(text, null, 2);
+    else if (text && typeof text === "object" && text.reply)
+      safeText = text.reply;
+    else if (text && typeof text === "object" && text.action)
+      safeText = `Acción ${text.action} procesada correctamente.`;
+    else safeText = text?.toString?.() || " (sin respuesta)";
 
     setMessages((prev) => [
       ...prev,
@@ -43,43 +47,24 @@ export function useChatLogic(setChatActive) {
       news: [
         "noticia",
         "novedad",
-        "información",
         "actualidad",
+        "información",
         "noticias de hoy",
       ],
-      notes: ["nota", "anotar", "apuntar", "guardar nota"],
-      reminders: ["recordatorio", "recordarme", "agenda", "alarmar"],
-      tasks: ["tarea", "pendiente", "hacer", "to-do"],
     };
 
-    if (keywords.notes.some((w) => lowerMsg.includes(w))) {
-      addMessage("milo", "📝 Claro, ¿cómo se va a llamar la nota?");
-      setConversationStep("nota_titulo");
-      return true;
-    }
-    if (keywords.reminders.some((w) => lowerMsg.includes(w))) {
-      addMessage("milo", "📅 Perfecto, ¿cómo se va a llamar el recordatorio?");
-      setConversationStep("recordatorio_titulo");
-      return true;
-    }
-    if (keywords.tasks.some((w) => lowerMsg.includes(w))) {
-      addMessage(
-        "milo",
-        "📝 ¡Perfecto! Comencemos. ¿Cuál es el título de tu tarea?"
-      );
-      setConversationStep("tarea_titulo");
-      return true;
-    }
     if (keywords.weather.some((w) => lowerMsg.includes(w))) {
       const weatherReply = await getWeather();
       addMessage("milo", weatherReply, true);
       return true;
     }
+
     if (keywords.news.some((w) => lowerMsg.includes(w))) {
       const newsReply = await getLocalNews();
       addMessage("milo", newsReply, true);
       return true;
     }
+
     return false;
   };
 
@@ -96,17 +81,14 @@ export function useChatLogic(setChatActive) {
     try {
       if (conversationStep) {
         switch (conversationStep) {
-          // ---------- NOTAS ----------
+          // --- Crear Nota ---
           case "nota_titulo":
             setTempData({ title: userMsg });
-            addMessage(
-              "milo",
-              "Perfecto. ¿Qué contenido querés guardar en la nota?"
-            );
+            addMessage("milo", "Perfecto. ¿Qué contenido querés guardar?");
             setConversationStep("nota_contenido");
             break;
 
-          case "nota_contenido":
+          case "nota_contenido": {
             const { title: nTitle } = tempData;
             const newNote = await createNote({
               title: nTitle,
@@ -115,8 +97,8 @@ export function useChatLogic(setChatActive) {
             addMessage(
               "milo",
               newNote
-                ? `¡Nota "${nTitle}" creada exitosamente! 📝`
-                : "No se pudo guardar la nota.",
+                ? `✅ Nota **"${nTitle}"** creada exitosamente.`
+                : "❌ No se pudo guardar la nota.",
               false,
               newNote
                 ? { label: "Ir a mis notas", route: "/panel/notas" }
@@ -124,111 +106,205 @@ export function useChatLogic(setChatActive) {
             );
             resetFlow();
             break;
+          }
 
-          // ---------- RECORDATORIOS ----------
-          case "recordatorio_titulo":
-            setTempData({ title: userMsg });
-            addMessage(
-              "milo",
-              "Genial. ¿Cuándo querés que te lo recuerde? (ej: mañana a las 10)"
-            );
-            setConversationStep("recordatorio_fecha");
-            break;
-
-          case "recordatorio_fecha":
-            const { title: rTitle } = tempData;
-            const dateText = userMsg;
-
-            // Guarda en localStorage
-            const storedReminders = JSON.parse(
-              localStorage.getItem("reminders") || "[]"
-            );
-            const newReminder = {
-              id: Date.now(),
-              title: rTitle,
-              description: "",
-              dateText,
-            };
-            localStorage.setItem(
-              "reminders",
-              JSON.stringify([...storedReminders, newReminder])
-            );
-
-            addMessage(
-              "milo",
-              `⏰ Recordatorio "${rTitle}" programado para ${dateText}.`,
-              false,
-              {
-                label: "Ir a mis recordatorios",
-                route: "/panel/recordatorios",
-                state: { newReminder },
-              }
-            );
-
-            resetFlow();
-            break;
-
-          // ---------- TAREAS ----------
+          // --- Crear Tarea ---
           case "tarea_titulo":
             setTempData({ title: userMsg });
-            addMessage("milo", "¿Quieres agregar una descripción?");
+            addMessage(
+              "milo",
+              "¿Querés agregar una descripción? ('no' para omitir)"
+            );
             setConversationStep("tarea_descripcion");
             break;
 
-          case "tarea_descripcion":
-            setTempData((prev) => ({ ...prev, description: userMsg }));
-            addMessage(
-              "milo",
-              "Buenisimo!. La tarea estará disponible sin fecha límite."
-            );
-            setConversationStep("tarea_prioridad");
-            break;
-
-          case "tarea_prioridad":
-            const { title: tTitle, description } = tempData;
+          case "tarea_descripcion": {
+            const lowerMsg = userMsg.toLowerCase();
+            const description = lowerMsg === "no" ? "" : userMsg;
+            const { title: tTitle } = tempData;
             const newTask = await createTask({ title: tTitle, description });
 
-            if (newTask) {
+            addMessage(
+              "milo",
+              newTask
+                ? `✅ Tarea **"${tTitle}"** creada exitosamente.`
+                : "❌ No se pudo crear la tarea.",
+              false,
+              newTask
+                ? { label: "Ir a mis tareas", route: "/panel/tareas" }
+                : null
+            );
+            resetFlow();
+            break;
+          }
+
+          // --- Crear Evento ---
+          case "evento_titulo":
+            setTempData({ title: userMsg });
+            addMessage("milo", "📅 Perfecto. ¿Cuándo querés agendarlo?");
+            setConversationStep("evento_fecha");
+            break;
+
+          case "evento_fecha": {
+            const { title: eTitle } = tempData;
+            const eTime = userMsg;
+
+            try {
+              console.log("🧭 Intentando crear evento:", { eTitle, eTime });
+
+              await createCalendarEventFromChat({
+                title: eTitle,
+                time: eTime,
+                description: "",
+              });
+
               addMessage(
                 "milo",
-                `✅ Tarea "${tTitle}" creada exitosamente.`,
+                `📆 Evento **"${eTitle}"** agendado para *${eTime}*.`,
                 false,
-                { label: "Ir a mis tareas", route: "/panel/tareas" }
+                { label: "Ir a mi calendario", route: "/panel/calendario" }
               );
-              resetFlow();
-            } else {
+            } catch (error) {
+              console.error("Error al crear evento desde flujo:", error);
               addMessage(
                 "milo",
-                "No se pudo crear la tarea. Intenta nuevamente.",
-                "error"
+                `❌ No pude agendar el evento: ${error.message}. Intenta ser más específico con la fecha.`
               );
             }
+
+            resetFlow();
+            break;
+          }
+
+          default:
+            resetFlow();
             break;
         }
+
         setIsLoading(false);
         return;
       }
 
+      // --- Acciones directas (clima, noticias, etc.) ---
       const handledByKeywords = await handleDirectActions(userMsg);
       if (handledByKeywords) {
         setIsLoading(false);
         return;
       }
 
-      const historyToSend = [
-        ...messages,
-        { sender: "user", text: userMsg },
-      ].slice(-10);
+      // --- Procesar con Gemini ---
+      const historyToSend = messages.slice(-9).map((msg) => ({
+        sender: msg.sender,
+        text: typeof msg.text === "string" ? msg.text : msg.text?.reply || "",
+      }));
+
       const response = await askGemini(userMsg, historyToSend);
 
-      if (response.reply) addMessage("milo", response.reply);
-      else
-        addMessage("milo", "Lo siento, no pude obtener una respuesta válida.");
+      if (typeof response === "object") {
+        // --- Evento ---
+        if (response.action === "create_event") {
+          const naturalTime =
+            response.time ||
+            response.date ||
+            response.datetime ||
+            response.when ||
+            "";
+
+          if (!naturalTime.trim()) {
+            addMessage(
+              "milo",
+              "⚠️ No entendí la fecha u hora. Decime algo como 'mañana a las 19' o '20 de noviembre a las 13 hs'."
+            );
+            resetFlow();
+            setIsLoading(false);
+            return;
+          }
+
+          console.log("📤 Enviando evento a backend:", {
+            summary: response.title,
+            natural_time: naturalTime,
+            description: response.description || "",
+          });
+
+          try {
+            await createCalendarEventFromChat({
+              title: response.title,
+              time: naturalTime,
+              description: response.description || "",
+            });
+
+            addMessage(
+              "milo",
+              response.reply || "✅ Evento creado con éxito.",
+              false,
+              {
+                label: "Ir a mi calendario",
+                route: "/panel/calendario",
+              }
+            );
+          } catch (error) {
+            console.error("Error al crear evento desde chat:", error);
+            addMessage(
+              "milo",
+              `❌ No pude agendar el evento: ${error.message}.`
+            );
+          }
+
+          resetFlow();
+        }
+        // --- Nota ---
+        else if (response.action === "create_note") {
+          if (response.title && response.content && response.reply) {
+            const newNote = await createNote({
+              title: response.title,
+              content: response.content,
+            });
+            addMessage(
+              "milo",
+              response.reply,
+              false,
+              newNote
+                ? { label: "Ir a mis notas", route: "/panel/notas" }
+                : null
+            );
+          } else {
+            addMessage("milo", "📝 Claro, ¿cómo se va a llamar la nota?");
+            setConversationStep("nota_titulo");
+          }
+        }
+        // --- Tarea ---
+        else if (response.action === "create_task") {
+          if (response.title && response.reply) {
+            const newTask = await createTask({
+              title: response.title,
+              description: response.description || "",
+            });
+            addMessage(
+              "milo",
+              response.reply,
+              false,
+              newTask
+                ? { label: "Ir a mis tareas", route: "/panel/tareas" }
+                : null
+            );
+          } else {
+            addMessage("milo", "🗒️ Perfecto. ¿Cuál es el título de tu tarea?");
+            setConversationStep("tarea_titulo");
+          }
+        } else {
+          addMessage(
+            "milo",
+            response.reply || "⚠️ No entendí lo que quisiste hacer."
+          );
+        }
+      } else {
+        addMessage("milo", response.toString());
+      }
     } catch (err) {
       console.error("Error en handleSend:", err);
       addMessage(
         "milo",
-        "Lo siento, hubo un problema. Por favor, inténtalo de nuevo."
+        "⚠️ Ocurrió un error procesando tu mensaje. Intentá nuevamente."
       );
     } finally {
       setIsLoading(false);
@@ -242,9 +318,9 @@ export function useChatLogic(setChatActive) {
     const cardMap = {
       clima: "¿Qué clima hace hoy?",
       noticias: "Dime las noticias de hoy",
-      recordatorio: "Quiero crear un recordatorio",
-      tareas: "Necesito organizar mis tareas",
+      tareas: "Quiero crear una tarea",
       nota: "Quiero crear una nota",
+      calendario: "Quiero agendar un evento",
     };
 
     await handleSend(cardMap[card]);

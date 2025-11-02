@@ -1,6 +1,6 @@
 import { Navigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
-import SplashScreen from "../components/SplashScreen";
+import { useAuth } from "../../context/AuthContext";
+import SplashScreen from "./SplashScreen";
 
 export default function PrivateRoute({ children }) {
   const { currentUser, loading } = useAuth();

@@ -1,51 +1,60 @@
 // src/utils/api.js
+import { API_URL as BASE_URL } from "./config"; // usa el archivo que creamos
 
-// URL base del backend
-const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api/";
+// Normaliza para que no duplique ni falte barra
+function joinUrl(base, path) {
+  const cleanBase = base.endsWith("/") ? base.slice(0, -1) : base;
+  const cleanPath = path.startsWith("/") ? path.slice(1) : path;
+  return `${cleanBase}/${cleanPath}`;
+}
 
 export async function apiFetch(url, options = {}) {
-  // Obtener token desde localStorage
   const token = localStorage.getItem("token");
   if (!token) {
-    window.location.href = "/login";
-    throw new Error("No hay token, inicia sesión");
+    // si no hay token, no redirigir automáticamente en util (dejar al caller si quiere)
+    throw new Error("No hay token");
   }
 
-  // Limpiar barra inicial de la URL si existe
-  const cleanUrl = url.startsWith("/") ? url.slice(1) : url;
-
-  // Headers por defecto + Authorization + cualquier header extra
   const headers = {
     "Content-Type": "application/json",
     ...(options.headers || {}),
     Authorization: `Bearer ${token}`,
   };
 
-  // Realizar fetch
-  const res = await fetch(`${BASE_URL}${cleanUrl}`, {
+  const res = await fetch(joinUrl(BASE_URL, url), {
     ...options,
     headers,
-    // Convertir body a JSON si es objeto
     body:
       options.body && typeof options.body === "object"
         ? JSON.stringify(options.body)
         : options.body,
   });
 
-  // Manejo de errores de autorización
   if (res.status === 401) {
     localStorage.removeItem("token");
-    window.location.href = "/login";
-    throw new Error("No autorizado. Inicia sesión nuevamente.");
+    localStorage.removeItem("user");
+    throw new Error("No autorizado");
   }
 
-  // Otros errores HTTP
   if (!res.ok) {
-    const errorText = await res.text();
-    throw new Error(`Error en la petición: ${res.status} - ${errorText}`);
+    const text = await res.text();
+    throw new Error(`Error ${res.status} - ${text}`);
   }
 
-  // Intentar parsear JSON, si falla devolver null
+  try {
+    return await res.json();
+  } catch {
+    return null;
+  }
+}
+
+// helper para llamadas que no necesitan token (ej: endpoints públicos o login)
+export async function publicFetch(url, options = {}) {
+  const res = await fetch(joinUrl(BASE_URL, url), options);
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`Error ${res.status} - ${text}`);
+  }
   try {
     return await res.json();
   } catch {

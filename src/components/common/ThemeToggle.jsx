@@ -1,8 +1,8 @@
 // src/components/ThemeToggle.jsx
 import React, { useState } from "react";
 import { FaMoon, FaSun } from "react-icons/fa";
-import { useTheme } from "../context/ThemeContext";
-import "../styles/ThemeToggle.css";
+import { useTheme } from "../../context/ThemeContext";
+import "../../styles/ThemeToggle.css";
 
 export default function ThemeToggle() {
   const { isDarkMode, toggleTheme } = useTheme();

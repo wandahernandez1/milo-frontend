@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../components/Navbar";
-import Chat from "../components/Chat";
+import Navbar from "../components/layout/NavBar";
+import Chat from "../components/chat/Chat";
 import { useAuth } from "../context/AuthContext";
-import SplashScreen from "../components/SplashScreen";
+import SplashScreen from "../components/layout/SplashScreen";
 import "../styles/dashboard.css";
 
 export default function Dashboard() {

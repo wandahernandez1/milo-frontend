@@ -1,84 +1,232 @@
-// src/services/api.js
+import { API_URL } from "../utils/config";
+
 export async function askGemini(message, chatHistory = []) {
-    const res = await fetch('http://localhost:3000/api/gemini', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem("token") || ""}`
-        },
-        body: JSON.stringify({ message, history: chatHistory }),
+  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+  const localTime = new Date().toLocaleString("es-AR", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZone: timezone,
+  });
+
+  try {
+    const res = await fetch(`${API_URL}/gemini`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
+      },
+      body: JSON.stringify({
+        message,
+        history: chatHistory,
+        timezone,
+        localTime,
+      }),
     });
 
-    return res.json();
+    const data = await res.json();
+
+    if (data && typeof data === "object") {
+      if (
+        ["create_event", "create_task", "create_note"].includes(data.action)
+      ) {
+        return data;
+      }
+
+      if (data.reply) {
+        const cleanReply =
+          typeof data.reply === "string"
+            ? data.reply.trim()
+            : "No pude interpretar la respuesta del asistente.";
+        return cleanReply;
+      }
+    }
+
+    if (typeof data === "string") return data.trim();
+
+    return "⚠️ No pude interpretar la respuesta.";
+  } catch (err) {
+    console.error("Error en askGemini:", err);
+    return "❌ Error al comunicar con Milo. Intenta de nuevo.";
+  }
 }
 
+// Google Calendar
+export function connectGoogleCalendar() {
+  window.location.href = `${API_URL}/google/connect`;
+}
 
+export async function getCalendarEvents() {
+  const token = localStorage.getItem("token");
+  if (!token)
+    throw new Error("Necesitas iniciar sesión para ver el calendario.");
 
-export async function getWeather() {
-    const API_KEY = "361221015a8e10e6cd9a6d4725732fe4";
-    try {
-        const pos = await new Promise((resolve, reject) =>
-            navigator.geolocation.getCurrentPosition(resolve, reject)
-        );
-        const { latitude: lat, longitude: lon } = pos.coords;
+  try {
+    const res = await fetch(`${API_URL}/google/events`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const data = await res.json();
 
-        const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric&lang=es`;
-        const res = await fetch(url);
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.message);
+    if (!res.ok)
+      throw new Error(
+        data.message ||
+          "Error al obtener eventos. Por favor, reconecta tu cuenta de Google."
+      );
 
-        // Extraemos más información de la respuesta de la API
-        const temp = data.main.temp.toFixed(0);
-        const feelsLike = data.main.feels_like.toFixed(0);
-        const description = data.weather[0].description;
-        const humidity = data.main.humidity;
-        const windSpeed = (data.wind.speed * 3.6).toFixed(1); // Convertimos de m/s a km/h
+    return data;
+  } catch (err) {
+    console.error(err);
+    throw err;
+  }
+}
 
-        // Unimos toda la información en un mensaje más detallado
-        return `🌤️ En ${data.name}: ${temp}°C (Sensación: ${feelsLike}°C), ${description}. Humedad: ${humidity}%, Viento: ${windSpeed} km/h.`;
-    } catch (err) {
-        // Mejoramos un poco el mensaje de error para ser más claro
-        return `No pude obtener el clima 😥. Razón: ${err.message}.`;
+// 📅 NUEVA FUNCIÓN: CREAR EVENTO DESDE EL CHAT
+export async function createCalendarEventFromChat({
+  title,
+  time,
+  description = "",
+}) {
+  const token = localStorage.getItem("token");
+  if (!token) throw new Error("Necesitas iniciar sesión para agendar eventos.");
+
+  // Enviamos los datos que nos dio Milo directamente.
+  // El backend debe encargarse de parsear 'time' (ej. 'lunes a las 14') a ISO.
+  const chatEventData = {
+    summary: title,
+    description: description,
+    natural_time: time,
+  };
+
+  try {
+    const res = await fetch(`${API_URL}/google/events`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(chatEventData),
+    });
+
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(
+        data.message ||
+          "Error al intentar agendar. Verifica tu conexión con Google."
+      );
     }
+    return data;
+  } catch (err) {
+    console.error("Error en createCalendarEventFromChat:", err);
+    throw err;
+  }
+}
+
+// Autenticación y Perfil
+export async function getProfile() {
+  const token = localStorage.getItem("token");
+  if (!token) return null;
+
+  try {
+    const res = await fetch(`${API_URL}/auth/me`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!res.ok) {
+      localStorage.removeItem("token");
+      return null;
+    }
+    return res.json();
+  } catch (error) {
+    console.error("Error al obtener perfil:", error);
+    return null;
+  }
+}
+
+export function loginWithGoogle() {
+  window.location.href = `${API_URL}/google/auth`;
+}
+
+// Funciones auxiliares (Clima, Noticias, Notas)
+export async function getWeather() {
+  const API_KEY = "361221015a8e10e6cd9a6d4725732fe4";
+  try {
+    const pos = await new Promise((resolve, reject) =>
+      navigator.geolocation.getCurrentPosition(resolve, reject)
+    );
+    const { latitude: lat, longitude: lon } = pos.coords;
+
+    const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric&lang=es`;
+    const res = await fetch(url);
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message);
+
+    const temp = data.main.temp.toFixed(0);
+    const feelsLike = data.main.feels_like.toFixed(0);
+    const description = data.weather[0].description;
+    const humidity = data.main.humidity;
+    const windSpeed = (data.wind.speed * 3.6).toFixed(1);
+
+    return `🌤️ En ${data.name}: ${temp}°C (Sensación: ${feelsLike}°C), ${description}. Humedad: ${humidity}%, Viento: ${windSpeed} km/h.`;
+  } catch (err) {
+    return `No pude obtener el clima 😥. Razón: ${err.message}.`;
+  }
 }
 
 export async function getLocalNews() {
-    const API_KEY = "5ee6801a049547db820850d072b7cbb7";
-    try {
-        const url = `https://newsapi.org/v2/everything?q=Argentina&language=es&sortBy=publishedAt&apiKey=${API_KEY}`;
-        const res = await fetch(url);
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.message);
-        if (!data.articles?.length) return "No encontré noticias 😅.";
+  const API_KEY = "5ee6801a049547db820850d072b7cbb7";
+  try {
+    const url = `https://newsapi.org/v2/everything?q=Argentina&language=es&sortBy=publishedAt&apiKey=${API_KEY}`;
+    const res = await fetch(url);
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message);
+    if (!data.articles?.length) return "No encontré noticias 😅.";
 
-        return data.articles
-            .slice(0, 3)
-            .map(
-                (a) =>
-                    `<strong>${a.title}</strong><br><a href="${a.url}" target="_blank">Leer más</a>`
-            )
-            .join("<br><br>");
-    } catch (err) {
-        return `Error al traer noticias 😥 (${err.message})`;
-    }
+    return data.articles
+      .slice(0, 3)
+      .map(
+        (a) =>
+          `<strong>${a.title}</strong><br><a href="${a.url}" target="_blank">Leer más</a>`
+      )
+      .join("<br><br>");
+  } catch (err) {
+    return `Error al traer noticias 😥 (${err.message})`;
+  }
 }
 
 export async function saveNoteFromChat(content) {
-    const token = localStorage.getItem("token");
-    if (!token) return { success: false, message: "Necesitas iniciar sesión para guardar notas." };
+  const token = localStorage.getItem("token");
+  if (!token)
+    return {
+      success: false,
+      message: "Necesitas iniciar sesión para guardar notas.",
+    };
 
-    try {
-        const res = await fetch("http://localhost:3000/api/notes", {
-            method: "POST",
-            headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-            body: JSON.stringify({ title: "Nota desde Milo", content }),
-        });
-        const data = await res.json();
+  try {
+    const res = await fetch(`${API_URL}/api/notes`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ title: "Nota desde Milo", content }),
+    });
+    const data = await res.json();
 
-        if (res.ok) return { success: true, message: "¡Nota guardada correctamente! 📝" };
-        else return { success: false, message: data.message || "Error al guardar la nota." };
-    } catch (err) {
-        console.error(err);
-        return { success: false, message: "Error de conexión con el servidor." };
-    }
+    if (res.ok)
+      return { success: true, message: "¡Nota guardada correctamente! 📝" };
+    else
+      return {
+        success: false,
+        message: data.message || "Error al guardar la nota.",
+      };
+  } catch (err) {
+    console.error(err);
+    return { success: false, message: "Error de conexión con el servidor." };
+  }
 }

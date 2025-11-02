@@ -1,0 +1,399 @@
+:root {
+    /* Variables de Tema (Modo Claro) */
+    --bg-app: #f4f4f8;
+    --bg-card: #ffffff;
+    --text-color-primary: #1a1a1a;
+    --text-color-secondary: #8e8e93;
+    --primary-color: #9b59b6;
+    --secondary-color: #8c49a3;
+    --delete-color: #ff3b30;
+    --border-separator: #e0e0e0;
+    /* Nueva variable añadida para claridad */
+
+    /* Variables Derivadas */
+    --bg-sidebar: var(--bg-card);
+    --text-sidebar: var(--text-color-primary);
+    --border-sidebar: var(--border-separator);
+    --agenda-time-color: var(--primary-color);
+    --bg-modal: rgba(255, 255, 255, 0.95);
+    --bg-input: var(--bg-app);
+    --border-input: #e0e0e0;
+    --bg-button-cancel: var(--border-separator);
+    --border-button-cancel: var(--border-separator);
+    --bg-overlay: rgba(0, 0, 0, 0.5);
+
+    /* Tamaños */
+    --border-radius: 8px;
+    --border-radius-large: 12px;
+    --transition-speed: 0.3s;
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+    --radius-md: 8px;
+    /* Variable faltante asumida */
+    --radius-lg: 12px;
+    /* Variable faltante asumida */
+    --sidebar-hover-bg: #f0f0f4;
+    /* Añadida para el botón Cancelar */
+}
+
+body.dark-mode {
+    /* Variables de Tema (Modo Oscuro) */
+    --bg-app: #12121f;
+    --bg-card: #1f1f3a;
+    --text-color-primary: #f1f1f1;
+    --text-color-secondary: #a0a0a0;
+    --primary-color: #b790d8;
+    --secondary-color: #a07ac4;
+    --delete-color: #ff3b30;
+    --border-separator: #3b3b5a;
+
+    /* Variables Derivadas */
+    --bg-sidebar: var(--bg-card);
+    --text-sidebar: var(--text-color-primary);
+    --border-sidebar: var(--border-separator);
+    --bg-modal: rgba(31, 31, 58, 0.95);
+    --bg-input: #292949;
+    --border-input: #4a4a6e;
+    --bg-button-cancel: var(--border-separator);
+    --border-button-cancel: var(--border-separator);
+    --bg-overlay: rgba(0, 0, 0, 0.7);
+    --sidebar-hover-bg: #3b3b5a;
+    /* Ajustada para el modo oscuro */
+}
+
+
+.calendar-wrapper {
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    background-color: var(--bg-app);
+    min-height: 100vh;
+    font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: var(--text-color-primary);
+    transition: background-color var(--transition-speed), color var(--transition-speed);
+}
+
+/* Layout Principal  */
+.calendar-main-layout {
+    display: flex;
+    max-width: 1400px;
+    margin: 0 auto;
+    gap: 20px;
+    align-items: flex-start;
+}
+
+/* BARRA LATERAL */
+.calendar-sidebar {
+    width: 280px;
+    flex-shrink: 0;
+    background: var(--bg-sidebar);
+    color: var(--text-sidebar);
+    border-radius: var(--border-radius-large);
+    padding: 15px;
+    box-shadow: var(--shadow-md);
+}
+
+.agenda-list-placeholder {
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-sidebar);
+}
+
+.agenda-title {
+    color: var(--text-sidebar);
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.agenda-time {
+    color: var(--agenda-time-color);
+    font-weight: 500;
+    width: 60px;
+    flex-shrink: 0;
+}
+
+.agenda-title-event {
+    color: var(--text-sidebar);
+    line-height: 1.2;
+}
+
+
+/* --- CALENDARIO PRINCIPAL --- */
+.calendar-main-view {
+    flex-grow: 1;
+    background: var(--bg-card);
+
+    color: var(--text-color-primary);
+    border-radius: var(--border-radius-large);
+    padding: 15px;
+    box-shadow: var(--shadow-md);
+    transition: background-color var(--transition-speed);
+}
+
+
+.calendar-main-view .fc-toolbar {
+    margin-bottom: 1.5em;
+    font-size: 1.1rem;
+}
+
+.calendar-main-view .fc-button {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+    text-transform: capitalize;
+}
+
+.calendar-main-view .fc-button:hover {
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+}
+
+/* FullCalendar  */
+.fc-timegrid-slot-label-cush {
+    font-size: 0.75rem;
+    padding: 0 5px;
+    color: var(--text-color-secondary);
+}
+
+.fc-col-header-cell.fc-day-today {
+    /* Color de fondo transparente o similar al app */
+    background-color: var(--bg-app);
+}
+
+.fc-timegrid-now-indicator-line {
+    border-color: var(--delete-color);
+}
+
+/* 🚀 ESTILOS DE EVENTOS GOOGLE CALENDAR-LIKE 🚀 */
+.fc-event {
+    /* Usamos el color primario de tu tema */
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+    color: white !important;
+
+    border-radius: var(--border-radius);
+    cursor: default;
+    text-decoration: none;
+    line-height: 1.2;
+    font-weight: 500;
+    overflow: hidden;
+}
+
+/* Estilo para eventos en la vista de MES (dayGridMonth) */
+.fc-daygrid-event {
+    padding: 1px 4px;
+    margin-bottom: 2px;
+    font-size: 0.8em;
+}
+
+/* Estilo para el título del evento (para que se recorte si es necesario) */
+.fc-event-title {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    display: block;
+}
+
+/* Estilo para eventos en la vista de DÍA/SEMANA (timeGrid) */
+.fc-timegrid-event {
+    padding: 5px 6px;
+    margin: 0 1px 0 1px;
+    font-size: 0.85em;
+
+    /* Borde lateral sutil para un efecto 3D/distintivo */
+    border-left: 4px solid var(--secondary-color) !important;
+}
+
+/* Texto principal del evento (asegura el color blanco y negrita) */
+.fc-event-main-cush {
+    color: white !important;
+    font-weight: 600;
+}
+
+/* Resaltar el día de hoy con un borde sutil, no un fondo completo */
+.fc-day-today {
+    background-color: transparent !important;
+    box-shadow: inset 0 0 0 1px var(--primary-color);
+    /* Borde alrededor de la celda */
+}
+
+/* Cabeceras de columna (días de la semana) */
+.fc-col-header-cell {
+    color: var(--text-color-secondary);
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+/* 🛑 FIN: ESTILOS DE EVENTOS GOOGLE CALENDAR-LIKE 🛑 */
+
+
+/*  OVERLAY */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--bg-overlay);
+    backdrop-filter: blur(4px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    animation: fade-in-overlay var(--transition-speed) ease-out;
+}
+
+@keyframes fade-in-overlay {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/*  CONTENIDO DEL MODAL */
+.modal-content {
+    background-color: var(--bg-modal);
+    padding: 30px;
+    border-radius: var(--border-radius-large);
+    box-shadow: var(--shadow-md);
+    width: 90%;
+    max-width: 450px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+
+    animation: scale-in-modal var(--transition-speed) cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transition: background-color var(--transition-speed);
+}
+
+@keyframes scale-in-modal {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.modal-content h3 {
+    margin-top: 0;
+    color: var(--text-color-primary);
+    font-size: 1.5em;
+    font-weight: 700;
+    border-bottom: 1px solid var(--border-input);
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+/* Inputs del Formulario  */
+.modal-content label {
+    color: var(--text-color-primary);
+    font-weight: 600;
+    margin-bottom: 4px;
+    display: block;
+    font-size: 0.85em;
+    letter-spacing: 0.5px;
+}
+
+.modal-content input[type="text"],
+.modal-content input[type="datetime-local"] {
+    width: 100%;
+    padding: 10px 12px;
+    background-color: var(--bg-input);
+    border: 1px solid var(--border-input);
+    border-radius: var(--radius-md);
+    box-sizing: border-box;
+    font-size: 1em;
+    margin-bottom: 15px;
+    color: var(--text-color-primary);
+    transition: border-color var(--transition-speed), box-shadow var(--transition-speed), background-color var(--transition-speed);
+}
+
+.modal-content input:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(155, 89, 182, 0.3);
+    /* En modo oscuro, el fondo del input se vuelve el fondo del modal para un mejor contraste */
+    background-color: var(--bg-modal);
+}
+
+.modal-content input::placeholder {
+    color: var(--text-color-secondary);
+}
+
+/*  Contenedor y Botones del Modal  */
+.modal-buttons {
+    display: flex;
+    justify-content: space-between;
+    border-top: 1px solid var(--border-input);
+    gap: 10px;
+    padding-top: 15px;
+}
+
+/* Boton base */
+.modal-buttons button {
+    padding: 10px 18px;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background-color var(--transition-speed), opacity var(--transition-speed);
+    border: none;
+    font-weight: 600;
+}
+
+/* Boton de Cancelar*/
+.cancel-btn {
+    background-color: var(--bg-button-cancel);
+    color: var(--text-color-primary);
+    border: 1px solid var(--border-button-cancel);
+    order: 1;
+}
+
+.cancel-btn:hover {
+    background-color: var(--sidebar-hover-bg);
+}
+
+/* Boton de Eliminar */
+.delete-btn {
+    background-color: var(--delete-color);
+    color: #ffffff;
+    order: 2;
+    margin-right: auto;
+}
+
+.delete-btn:hover {
+    background-color: #e53935;
+}
+
+/* Boton de Guardar */
+.save-btn {
+    background-color: var(--primary-color);
+    color: #ffffff;
+    order: 3;
+}
+
+.save-btn:hover {
+    background-color: var(--secondary-color);
+}
+
+
+@media (max-width: 1024px) {
+    .calendar-main-layout {
+        flex-direction: column;
+        gap: 30px;
+    }
+
+    .calendar-sidebar {
+        width: 100%;
+        padding: 20px;
+        margin-bottom: 10px;
+    }
+}

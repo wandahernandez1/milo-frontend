@@ -1,8 +1,9 @@
-// src/hooks/useNotes.js
 import { useState, useEffect } from "react";
 import { apiFetch } from "../utils/api.js";
+import { useAuth } from "../context/AuthContext";
 
 export function useNotes() {
+  const { currentUser } = useAuth();
   const [notes, setNotes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -19,6 +20,14 @@ export function useNotes() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (currentUser) {
+      fetchNotes();
+    } else {
+      setNotes([]);
+    }
+  }, [currentUser]);
 
   const createNote = async (note) => {
     setLoading(true);
@@ -70,10 +79,6 @@ export function useNotes() {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    fetchNotes();
-  }, []);
 
   return {
     notes,

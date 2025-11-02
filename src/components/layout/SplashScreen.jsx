@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { useTheme } from "../context/ThemeContext";
-import miloLight from "../assets/milo-light.png";
-import miloDark from "../assets/milo-avatar.png";
-import "../styles/SplashScreen.css";
+import { useTheme } from "../../context/ThemeContext";
+import miloLight from "../../assets/milo-light.png";
+import miloDark from "../../assets/milo2.jpg";
+import "../../styles/SplashScreen.css";
 
 export default function SplashScreen({ show, onFinish }) {
   const [progress, setProgress] = useState(0);

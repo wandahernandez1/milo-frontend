@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 
+import { API_URL } from "../utils/config";
+
 export function useAuth() {
-  const API_URL = "http://localhost:3000/api";
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
 

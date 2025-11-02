@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 import { apiFetch } from "../utils/api.js";
+import { useAuth } from "../context/AuthContext";
 
 export function useTasks() {
+  const { currentUser } = useAuth();
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -23,10 +25,10 @@ export function useTasks() {
         body: JSON.stringify(task),
       });
       setTasks((prev) => [...prev, newTask]);
-      return newTask; // Devuelve la nueva tarea (valor truthy)
+      return newTask;
     } catch (error) {
       console.error("Error al crear tarea:", error);
-      return false; // Devuelve false en caso de error
+      return false;
     }
   };
 
@@ -37,10 +39,10 @@ export function useTasks() {
         body: JSON.stringify(task),
       });
       setTasks((prev) => prev.map((t) => (t.id === id ? updated : t)));
-      return updated; // Devuelve la tarea actualizada (valor truthy)
+      return updated;
     } catch (error) {
       console.error("Error al actualizar tarea:", error);
-      return false; // Devuelve false en caso de error
+      return false;
     }
   };
 
@@ -48,16 +50,21 @@ export function useTasks() {
     try {
       await apiFetch(`tasks/${id}`, { method: "DELETE" });
       setTasks((prev) => prev.filter((t) => t.id !== id));
-      return true; // ¡Corregido! Devuelve true en caso de éxito
+      return true;
     } catch (error) {
       console.error("Error al eliminar tarea:", error);
-      return false; // Devuelve false en caso de error
+      return false;
     }
   };
 
+  // Cargar tareas cuando hay usuario
   useEffect(() => {
-    fetchTasks();
-  }, []);
+    if (currentUser) {
+      fetchTasks();
+    } else {
+      setTasks([]); // limpia cuando no hay usuario
+    }
+  }, [currentUser]);
 
   return { tasks, loading, fetchTasks, createTask, updateTask, deleteTask };
 }
