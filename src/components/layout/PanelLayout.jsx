@@ -16,7 +16,6 @@ import {
 import { useState } from "react";
 import "../../styles/PanelLayout.css";
 
-// Componente auxiliar para las tarjetas del perfil
 const ProfileCard = ({ icon, label, path, count }) => (
   <Link to={path} className="profile-card-link">
     <div className="profile-card">
@@ -44,19 +43,19 @@ const PerfilContent = ({ currentUser, logout }) => {
   const applicationSections = [
     { label: "Mis Notas", icon: faNoteSticky, path: "/panel/notas", count: 12 },
     {
-      label: "Mis Tareas Pendientes",
+      label: "Mis Tareas",
       icon: faTasks,
       path: "/panel/tareas",
       count: 5,
     },
     {
-      label: "Recordatorios Activos",
+      label: "Recordatorios",
       icon: faBell,
       path: "/panel/recordatorios",
       count: 3,
     },
     {
-      label: "Eventos Próximos",
+      label: "Eventos",
       icon: faCalendarAlt,
       path: "/panel/eventos",
       count: 1,
@@ -65,12 +64,7 @@ const PerfilContent = ({ currentUser, logout }) => {
 
   const settingsSections = [
     {
-      label: "Configuración de Cuenta",
-      icon: faUser,
-      path: "/panel/configuracion",
-    },
-    {
-      label: "Privacidad y Seguridad",
+      label: "Configuración",
       icon: faCog,
       path: "/panel/configuracion",
     },
@@ -92,23 +86,24 @@ const PerfilContent = ({ currentUser, logout }) => {
         <p className="user-email">{userEmail}</p>
       </header>
 
-      <div className="card-group">
-        <h2 className="card-group-title">Actividad</h2>
-        {applicationSections.map((section) => (
-          <ProfileCard key={section.label} {...section} />
-        ))}
-      </div>
+      <div className="profile-cards-grid">
+        <div className="card-group">
+          <h2 className="card-group-title">Actividad</h2>
+          {applicationSections.map((section) => (
+            <ProfileCard key={section.label} {...section} />
+          ))}
+        </div>
 
-      <div className="card-group">
-        <h2 className="card-group-title">Ajustes</h2>
-        {settingsSections.map((section) => (
-          <ProfileCard key={section.label} {...section} />
-        ))}
+        <div className="card-group">
+          <h2 className="card-group-title">Ajustes</h2>
+          {settingsSections.map((section) => (
+            <ProfileCard key={section.label} {...section} />
+          ))}
+          <button className="logout-button" onClick={logout}>
+            Cerrar Sesión
+          </button>
+        </div>
       </div>
-
-      <button className="logout-button" onClick={logout}>
-        Cerrar Sesión
-      </button>
     </section>
   );
 };
@@ -117,7 +112,9 @@ export default function PanelLayout() {
   const { currentUser, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(() => {
+    return window.innerWidth <= 768 ? false : false;
+  });
 
   const toggleSidebar = () => setIsCollapsed(!isCollapsed);
 
@@ -131,10 +128,9 @@ export default function PanelLayout() {
       path: "/panel/calendario",
     },
     { id: "tareas", label: "Tareas", icon: faTasks, path: "/panel/tareas" },
-
     {
       id: "config",
-      label: "Configuración",
+      label: "Ajustes",
       icon: faCog,
       path: "/panel/configuracion",
     },
@@ -155,12 +151,13 @@ export default function PanelLayout() {
         >
           <div className="sidebar-header">
             <div className="header-top-row">
-              {!isCollapsed && <h3 className="sidebar-title">Milo Panel</h3>}
+              {!isCollapsed && <h3 className="sidebar-title">Panel</h3>}
               <button
                 className={`collapse-toggle-button ${
                   isCollapsed ? "collapsed" : ""
                 }`}
                 onClick={toggleSidebar}
+                title={isCollapsed ? "Expandir" : "Contraer"}
               >
                 <FontAwesomeIcon
                   icon={isCollapsed ? faChevronRight : faChevronLeft}
@@ -192,15 +189,23 @@ export default function PanelLayout() {
         </aside>
 
         <main className="panel-content-area">
-          <div className="panel-content-header">
-            <button
-              className="back-button-panel-content"
-              onClick={() => navigate("/dashboard")}
-            >
-              <FontAwesomeIcon icon={faArrowLeft} />
-              <span>Volver a Dashboard</span>
-            </button>
-          </div>
+          {activePath !== "/panel" && (
+            <div className="panel-breadcrumb">
+              <button
+                className="breadcrumb-link"
+                onClick={() => navigate("/dashboard")}
+              >
+                Dashboard
+              </button>
+              <span className="breadcrumb-separator">/</span>
+              <span className="breadcrumb-current">
+                {navItems.find(
+                  (item) =>
+                    activePath.startsWith(item.path) && item.path !== "/panel"
+                )?.label || ""}
+              </span>
+            </div>
+          )}
 
           {activePath === "/panel" ? (
             <PerfilContent currentUser={currentUser} logout={logout} />

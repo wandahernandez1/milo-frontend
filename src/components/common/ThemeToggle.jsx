@@ -1,36 +1,27 @@
-// src/components/ThemeToggle.jsx
-import React, { useState } from "react";
-import { FaMoon, FaSun } from "react-icons/fa";
+import React from "react";
+import { HiOutlineMoon, HiOutlineSun } from "react-icons/hi";
 import { useTheme } from "../../context/ThemeContext";
 import "../../styles/ThemeToggle.css";
 
 export default function ThemeToggle() {
   const { isDarkMode, toggleTheme } = useTheme();
-  const [animating, setAnimating] = useState(false);
-
-  const handleClick = () => {
-    setAnimating(true);
-    toggleTheme();
-    setTimeout(() => setAnimating(false), 400);
-  };
 
   return (
     <button
-      className="theme-toggle-btn"
-      onClick={handleClick}
-      title="Cambiar tema"
+      className="theme-switch"
+      onClick={toggleTheme}
+      aria-label={isDarkMode ? "Activar modo claro" : "Activar modo oscuro"}
+      title={isDarkMode ? "Modo claro" : "Modo oscuro"}
     >
-      {isDarkMode ? (
-        <FaSun
-          className={`theme-icon ${animating ? "animating" : ""}`}
-          aria-label="Modo claro"
-        />
-      ) : (
-        <FaMoon
-          className={`theme-icon ${animating ? "animating" : ""}`}
-          aria-label="Modo oscuro"
-        />
-      )}
+      <div className={`switch-track ${isDarkMode ? "dark" : "light"}`}>
+        <div className="switch-thumb">
+          {isDarkMode ? (
+            <HiOutlineMoon className="switch-icon" />
+          ) : (
+            <HiOutlineSun className="switch-icon" />
+          )}
+        </div>
+      </div>
     </button>
   );
 }

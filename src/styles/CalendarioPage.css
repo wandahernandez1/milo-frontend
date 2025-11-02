@@ -8,7 +8,6 @@
     --secondary-color: #8c49a3;
     --delete-color: #ff3b30;
     --border-separator: #e0e0e0;
-    /* Nueva variable añadida para claridad */
 
     /* Variables Derivadas */
     --bg-sidebar: var(--bg-card);
@@ -26,13 +25,11 @@
     --border-radius: 8px;
     --border-radius-large: 12px;
     --transition-speed: 0.3s;
+    --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.08);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
     --radius-md: 8px;
-    /* Variable faltante asumida */
     --radius-lg: 12px;
-    /* Variable faltante asumida */
     --sidebar-hover-bg: #f0f0f4;
-    /* Añadida para el botón Cancelar */
 }
 
 body.dark-mode {
@@ -57,13 +54,10 @@ body.dark-mode {
     --border-button-cancel: var(--border-separator);
     --bg-overlay: rgba(0, 0, 0, 0.7);
     --sidebar-hover-bg: #3b3b5a;
-    /* Ajustada para el modo oscuro */
 }
 
-
 .calendar-wrapper {
-    border-radius: var(--radius-lg);
-    padding: 2rem;
+    padding: 0;
     background-color: var(--bg-app);
     min-height: 100vh;
     font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -71,162 +65,239 @@ body.dark-mode {
     transition: background-color var(--transition-speed), color var(--transition-speed);
 }
 
-/* Layout Principal  */
 .calendar-main-layout {
     display: flex;
-    max-width: 1400px;
+    max-width: 100%;
     margin: 0 auto;
-    gap: 20px;
+    gap: 0;
     align-items: flex-start;
 }
 
-/* BARRA LATERAL */
-.calendar-sidebar {
-    width: 280px;
-    flex-shrink: 0;
-    background: var(--bg-sidebar);
-    color: var(--text-sidebar);
-    border-radius: var(--border-radius-large);
-    padding: 15px;
-    box-shadow: var(--shadow-md);
-}
 
-.agenda-list-placeholder {
-    margin-top: 25px;
-    padding-top: 20px;
-    border-top: 1px solid var(--border-sidebar);
-}
-
-.agenda-title {
-    color: var(--text-sidebar);
-    font-size: 1rem;
-    font-weight: 600;
-    margin-bottom: 10px;
-}
-
-.agenda-time {
-    color: var(--agenda-time-color);
-    font-weight: 500;
-    width: 60px;
-    flex-shrink: 0;
-}
-
-.agenda-title-event {
-    color: var(--text-sidebar);
-    line-height: 1.2;
-}
-
-
-/* --- CALENDARIO PRINCIPAL --- */
 .calendar-main-view {
     flex-grow: 1;
     background: var(--bg-card);
-
     color: var(--text-color-primary);
     border-radius: var(--border-radius-large);
-    padding: 15px;
-    box-shadow: var(--shadow-md);
+    padding: 16px;
+    box-shadow: var(--shadow-sm);
     transition: background-color var(--transition-speed);
 }
 
 
 .calendar-main-view .fc-toolbar {
-    margin-bottom: 1.5em;
-    font-size: 1.1rem;
+    margin-bottom: 1em;
+    font-size: 0.95rem;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border-separator);
 }
+
+.calendar-main-view .fc-toolbar-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-color-primary);
+}
+
 
 .calendar-main-view .fc-button {
     background-color: var(--primary-color);
     border-color: var(--primary-color);
     color: white;
     text-transform: capitalize;
+    padding: 5px 11px;
+    font-size: 0.85rem;
+    border-radius: var(--radius-md);
+    transition: all 0.2s ease;
+    font-weight: 500;
 }
 
 .calendar-main-view .fc-button:hover {
     background-color: var(--secondary-color);
     border-color: var(--secondary-color);
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(155, 89, 182, 0.3);
 }
 
-/* FullCalendar  */
-.fc-timegrid-slot-label-cush {
-    font-size: 0.75rem;
-    padding: 0 5px;
+.calendar-main-view .fc-button:active,
+.calendar-main-view .fc-button-active {
+    background-color: var(--secondary-color) !important;
+    border-color: var(--secondary-color) !important;
+}
+
+.calendar-main-view .fc-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.fc-col-header-cell {
+    padding: 8px 4px;
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
     color: var(--text-color-secondary);
+    letter-spacing: 0.5px;
 }
 
 .fc-col-header-cell.fc-day-today {
-    /* Color de fondo transparente o similar al app */
-    background-color: var(--bg-app);
+    background-color: transparent !important;
 }
 
-.fc-timegrid-now-indicator-line {
-    border-color: var(--delete-color);
+
+.fc-daygrid-day {
+    transition: background-color 0.2s ease;
 }
 
-/* 🚀 ESTILOS DE EVENTOS GOOGLE CALENDAR-LIKE 🚀 */
+.fc-daygrid-day:hover {
+    background-color: var(--sidebar-hover-bg);
+    cursor: pointer;
+}
+
+.fc-daygrid-day-number {
+    padding: 6px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-color-primary);
+}
+
+
+.fc-day-today {
+    background-color: rgba(155, 89, 182, 0.05) !important;
+}
+
+.fc-day-today .fc-daygrid-day-number {
+    background-color: var(--primary-color);
+    color: white;
+    border-radius: 50%;
+    width: 26px;
+    height: 26px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+}
+
 .fc-event {
-    /* Usamos el color primario de tu tema */
     background-color: var(--primary-color) !important;
     border-color: var(--primary-color) !important;
     color: white !important;
-
-    border-radius: var(--border-radius);
-    cursor: default;
+    border-radius: 4px;
+    cursor: pointer;
     text-decoration: none;
-    line-height: 1.2;
+    line-height: 1.3;
     font-weight: 500;
     overflow: hidden;
+    transition: all 0.2s ease;
 }
 
-/* Estilo para eventos en la vista de MES (dayGridMonth) */
+.fc-event:hover {
+    background-color: var(--secondary-color) !important;
+    border-color: var(--secondary-color) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(155, 89, 182, 0.4);
+}
+
+
 .fc-daygrid-event {
-    padding: 1px 4px;
+    padding: 2px 4px;
     margin-bottom: 2px;
-    font-size: 0.8em;
+    font-size: 0.75em;
+    border-radius: 3px;
 }
 
-/* Estilo para el título del evento (para que se recorte si es necesario) */
 .fc-event-title {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
     display: block;
+    font-weight: 500;
 }
 
-/* Estilo para eventos en la vista de DÍA/SEMANA (timeGrid) */
+
 .fc-timegrid-event {
-    padding: 5px 6px;
-    margin: 0 1px 0 1px;
-    font-size: 0.85em;
-
-    /* Borde lateral sutil para un efecto 3D/distintivo */
-    border-left: 4px solid var(--secondary-color) !important;
+    padding: 4px 6px;
+    margin: 0 1px;
+    font-size: 0.8em;
+    border-left: 3px solid var(--secondary-color) !important;
+    border-radius: 4px;
 }
 
-/* Texto principal del evento (asegura el color blanco y negrita) */
-.fc-event-main-cush {
+.fc-event-main {
     color: white !important;
-    font-weight: 600;
 }
 
-/* Resaltar el día de hoy con un borde sutil, no un fondo completo */
-.fc-day-today {
-    background-color: transparent !important;
-    box-shadow: inset 0 0 0 1px var(--primary-color);
-    /* Borde alrededor de la celda */
-}
 
-/* Cabeceras de columna (días de la semana) */
-.fc-col-header-cell {
+.fc-timegrid-slot-label {
+    font-size: 0.7rem;
     color: var(--text-color-secondary);
-    font-weight: 600;
-    text-transform: uppercase;
+    font-weight: 500;
 }
 
-/* 🛑 FIN: ESTILOS DE EVENTOS GOOGLE CALENDAR-LIKE 🛑 */
+.fc-timegrid-now-indicator-line {
+    border-color: var(--delete-color);
+    border-width: 2px;
+}
+
+.fc-timegrid-now-indicator-arrow {
+    border-color: var(--delete-color);
+}
 
 
-/*  OVERLAY */
+.calendar-not-connected {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 50vh;
+    text-align: center;
+    padding: 40px 20px;
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    margin: 20px;
+    box-shadow: var(--shadow-md);
+}
+
+.calendar-not-connected h2 {
+    color: var(--text-color-primary);
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+}
+
+.calendar-not-connected p {
+    color: var(--text-color-secondary);
+    font-size: 1rem;
+    margin-bottom: 25px;
+    max-width: 500px;
+}
+
+.calendar-not-connected button {
+    background: #4285F4;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    box-shadow: 0 3px 8px rgba(66, 133, 244, 0.3);
+}
+
+.calendar-not-connected button:hover {
+    background: #357ae8;
+    transform: translateY(-1px);
+    box-shadow: 0 5px 12px rgba(66, 133, 244, 0.4);
+}
+
+.calendar-loading {
+    text-align: center;
+    padding: 40px;
+    font-size: 1.1rem;
+    color: var(--text-color-secondary);
+}
+
+
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -239,7 +310,7 @@ body.dark-mode {
     justify-content: center;
     align-items: center;
     z-index: 1000;
-    animation: fade-in-overlay var(--transition-speed) ease-out;
+    animation: fade-in-overlay 0.2s ease-out;
 }
 
 @keyframes fade-in-overlay {
@@ -252,29 +323,27 @@ body.dark-mode {
     }
 }
 
-/*  CONTENIDO DEL MODAL */
+
 .modal-content {
     background-color: var(--bg-modal);
-    padding: 30px;
+    padding: 24px;
     border-radius: var(--border-radius-large);
-    box-shadow: var(--shadow-md);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
     width: 90%;
-    max-width: 450px;
+    max-width: 420px;
     display: flex;
     flex-direction: column;
-    gap: 20px;
-
+    gap: 16px;
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
-
-    animation: scale-in-modal var(--transition-speed) cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    animation: scale-in-modal 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     transition: background-color var(--transition-speed);
 }
 
 @keyframes scale-in-modal {
     from {
         opacity: 0;
-        transform: scale(0.9);
+        transform: scale(0.95);
     }
 
     to {
@@ -284,35 +353,35 @@ body.dark-mode {
 }
 
 .modal-content h3 {
-    margin-top: 0;
+    margin: 0;
     color: var(--text-color-primary);
-    font-size: 1.5em;
+    font-size: 1.3em;
     font-weight: 700;
     border-bottom: 1px solid var(--border-input);
     padding-bottom: 10px;
-    margin-bottom: 15px;
+    margin-bottom: 8px;
 }
 
-/* Inputs del Formulario  */
+/* INPUTS DEL MODAL */
 .modal-content label {
     color: var(--text-color-primary);
     font-weight: 600;
     margin-bottom: 4px;
     display: block;
-    font-size: 0.85em;
-    letter-spacing: 0.5px;
+    font-size: 0.82em;
+    letter-spacing: 0.3px;
 }
 
 .modal-content input[type="text"],
 .modal-content input[type="datetime-local"] {
     width: 100%;
-    padding: 10px 12px;
+    padding: 9px 11px;
     background-color: var(--bg-input);
     border: 1px solid var(--border-input);
     border-radius: var(--radius-md);
     box-sizing: border-box;
-    font-size: 1em;
-    margin-bottom: 15px;
+    font-size: 0.92em;
+    margin-bottom: 12px;
     color: var(--text-color-primary);
     transition: border-color var(--transition-speed), box-shadow var(--transition-speed), background-color var(--transition-speed);
 }
@@ -320,36 +389,36 @@ body.dark-mode {
 .modal-content input:focus {
     border-color: var(--primary-color);
     outline: none;
-    box-shadow: 0 0 0 3px rgba(155, 89, 182, 0.3);
-    /* En modo oscuro, el fondo del input se vuelve el fondo del modal para un mejor contraste */
+    box-shadow: 0 0 0 3px rgba(155, 89, 182, 0.15);
     background-color: var(--bg-modal);
 }
 
 .modal-content input::placeholder {
     color: var(--text-color-secondary);
+    font-size: 0.9em;
 }
 
-/*  Contenedor y Botones del Modal  */
+
 .modal-buttons {
     display: flex;
     justify-content: space-between;
     border-top: 1px solid var(--border-input);
-    gap: 10px;
-    padding-top: 15px;
+    gap: 8px;
+    padding-top: 14px;
+    margin-top: 6px;
 }
 
-/* Boton base */
 .modal-buttons button {
-    padding: 10px 18px;
+    padding: 9px 16px;
     border-radius: var(--radius-md);
     cursor: pointer;
-    font-size: 0.9em;
-    transition: background-color var(--transition-speed), opacity var(--transition-speed);
+    font-size: 0.88em;
+    transition: all 0.2s ease;
     border: none;
     font-weight: 600;
 }
 
-/* Boton de Cancelar*/
+
 .cancel-btn {
     background-color: var(--bg-button-cancel);
     color: var(--text-color-primary);
@@ -359,9 +428,10 @@ body.dark-mode {
 
 .cancel-btn:hover {
     background-color: var(--sidebar-hover-bg);
+    transform: translateY(-1px);
 }
 
-/* Boton de Eliminar */
+
 .delete-btn {
     background-color: var(--delete-color);
     color: #ffffff;
@@ -371,9 +441,10 @@ body.dark-mode {
 
 .delete-btn:hover {
     background-color: #e53935;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(229, 57, 53, 0.3);
 }
 
-/* Boton de Guardar */
 .save-btn {
     background-color: var(--primary-color);
     color: #ffffff;
@@ -382,18 +453,88 @@ body.dark-mode {
 
 .save-btn:hover {
     background-color: var(--secondary-color);
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(155, 89, 182, 0.3);
 }
 
 
 @media (max-width: 1024px) {
     .calendar-main-layout {
         flex-direction: column;
-        gap: 30px;
+        gap: 20px;
     }
 
     .calendar-sidebar {
         width: 100%;
-        padding: 20px;
+        padding: 18px;
         margin-bottom: 10px;
+    }
+
+    .calendar-main-view {
+        padding: 14px;
+    }
+}
+
+@media (max-width: 768px) {
+    .calendar-wrapper {
+        padding: 0;
+    }
+
+    .calendar-main-view {
+        padding: 12px;
+        border-radius: var(--radius-md);
+    }
+
+    .calendar-main-view .fc-toolbar {
+        font-size: 0.85rem;
+        gap: 6px;
+    }
+
+    .calendar-main-view .fc-toolbar-title {
+        font-size: 1.1rem;
+    }
+
+    .calendar-main-view .fc-button {
+        padding: 4px 9px;
+        font-size: 0.8rem;
+    }
+
+    .fc-col-header-cell {
+        padding: 6px 2px;
+        font-size: 0.75rem;
+    }
+
+    .modal-content {
+        padding: 20px;
+        max-width: 95%;
+    }
+
+    .modal-content h3 {
+        font-size: 1.2em;
+    }
+}
+
+@media (max-width: 480px) {
+    .calendar-main-view {
+        padding: 10px;
+    }
+
+    .calendar-main-view .fc-toolbar-title {
+        font-size: 1rem;
+    }
+
+    .fc-daygrid-day-number {
+        font-size: 0.8rem;
+        padding: 4px;
+    }
+
+    .fc-day-today .fc-daygrid-day-number {
+        width: 24px;
+        height: 24px;
+    }
+
+    .modal-buttons button {
+        padding: 8px 12px;
+        font-size: 0.82em;
     }
 }

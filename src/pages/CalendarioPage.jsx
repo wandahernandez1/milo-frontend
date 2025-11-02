@@ -132,20 +132,13 @@ export default function CalendarioPage() {
   if (!connected)
     return (
       <div className="calendar-not-connected">
-        <h2>⚠️ No estás conectado con Google Calendar</h2>
-        <p>Puedes vincular tu cuenta para ver y sincronizar tus eventos.</p>
-        <button
-          onClick={handleConnectGoogle}
-          style={{
-            background: "#4285F4",
-            color: "white",
-            border: "none",
-            padding: "10px 20px",
-            borderRadius: "5px",
-            cursor: "pointer",
-          }}
-        >
-          Connect with Google Calendar
+        <h2>🔗 Conecta tu Google Calendar</h2>
+        <p>
+          Vincula tu cuenta de Google para sincronizar y gestionar tus eventos
+          desde aquí.
+        </p>
+        <button onClick={handleConnectGoogle}>
+          <i className="fab fa-google"></i> Conectar con Google Calendar
         </button>
       </div>
     );
@@ -162,6 +155,12 @@ export default function CalendarioPage() {
               center: "title",
               right: "dayGridMonth,timeGridWeek,timeGridDay",
             }}
+            buttonText={{
+              today: "Hoy",
+              month: "Mes",
+              week: "Semana",
+              day: "Día",
+            }}
             height="auto"
             events={events}
             locale={esLocale}
@@ -172,6 +171,8 @@ export default function CalendarioPage() {
             eventClick={handleEventClick}
             timeZone="America/Argentina/Buenos_Aires"
             eventDisplay="block"
+            dayMaxEvents={3}
+            moreLinkText="más"
           />
         </div>
       </div>

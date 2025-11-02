@@ -1,4 +1,3 @@
-// src/components/ProfileMenu.jsx
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
@@ -13,11 +12,11 @@ export default function ProfileMenu() {
   }
 
   const firstInitial = currentUser.name.charAt(0).toUpperCase();
-  // Obtener el color guardado o usar un valor por defecto
+
   const avatarColor = currentUser.avatarColor || "#6c757d";
 
   const handleLogout = async () => {
-    setOpen(false); // Cierra el menú
+    setOpen(false);
     await logout();
     navigate("/login", { replace: true });
   };
@@ -25,7 +24,6 @@ export default function ProfileMenu() {
   return (
     <div className="profile-menu-container">
       <div className="profile-button" onClick={() => setOpen(!open)}>
-        {/* Avatar con lógica de foto/color */}
         <div
           className="avatar"
           style={{
