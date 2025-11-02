@@ -656,6 +656,19 @@ body {
   transform: scale(0.95);
 }
 
+.send-button:disabled {
+  background: var(--input-bg);
+  color: var(--text-muted);
+  cursor: not-allowed;
+  opacity: 0.5;
+  box-shadow: none;
+}
+
+.send-button:disabled:hover {
+  transform: none;
+  box-shadow: none;
+}
+
 @media (max-width: 1024px) {
   .dashboard-main-container {
     padding: 20px 24px;

@@ -219,6 +219,19 @@ export function useChatLogic(setChatActive) {
 
       const response = await askGemini(userMsg, historyToSend);
 
+      console.log("📥 Respuesta procesada:", response);
+
+      // Verificar que response es un objeto válido
+      if (!response || typeof response !== "object") {
+        console.error("⚠️ Respuesta inválida recibida:", response);
+        addMessage(
+          "milo",
+          "⚠️ Recibí una respuesta en formato incorrecto. Por favor, intentá nuevamente."
+        );
+        setIsLoading(false);
+        return;
+      }
+
       if (typeof response === "object") {
         // --- Evento ---
         if (response.action === "create_event") {

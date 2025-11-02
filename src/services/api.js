@@ -28,40 +28,61 @@ export async function askGemini(message, chatHistory = []) {
       }),
     });
 
-    const data = await res.json();
-
-    if (data && typeof data === "object") {
-      if (data.action) {
-        return data;
-      }
-
-      if (data.reply) {
-        return {
-          action: "general_response",
-          reply:
-            typeof data.reply === "string"
-              ? data.reply.trim()
-              : "No pude interpretar la respuesta del asistente.",
-        };
-      }
+    if (!res.ok) {
+      console.error("Error en la respuesta del servidor:", res.status);
+      return {
+        action: "general_response",
+        reply: "❌ Error al comunicar con Milo. Por favor, intenta de nuevo.",
+      };
     }
 
-    if (typeof data === "string") {
+    const data = await res.json();
+    console.log("📥 Respuesta recibida de Gemini:", data);
+
+    // Verificar que data es un objeto válido
+    if (!data || typeof data !== "object") {
+      console.error("⚠️ Respuesta inválida:", data);
+      return {
+        action: "general_response",
+        reply: "⚠️ Recibí una respuesta sin formato válido.",
+      };
+    }
+
+    // Si tiene acción específica, devolverla completa
+    if (data.action) {
+      return data;
+    }
+
+    // Si tiene reply, normalizarlo
+    if (data.reply) {
+      return {
+        action: "general_response",
+        reply:
+          typeof data.reply === "string" && data.reply.trim()
+            ? data.reply.trim()
+            : "⚠️ No pude interpretar la respuesta del asistente.",
+      };
+    }
+
+    // Si es un string directamente
+    if (typeof data === "string" && data.trim()) {
       return {
         action: "general_response",
         reply: data.trim(),
       };
     }
 
+    // Fallback para otras respuestas
+    console.warn("⚠️ Respuesta sin formato reconocido:", data);
     return {
       action: "general_response",
       reply: "⚠️ No pude interpretar la respuesta.",
     };
   } catch (err) {
-    console.error("Error en askGemini:", err);
+    console.error("❌ Error en askGemini:", err);
     return {
       action: "general_response",
-      reply: "❌ Error al comunicar con Milo. Intenta de nuevo.",
+      reply: "❌ Error al comunicar con Milo. Verifica tu conexión.",
     };
   }
 }

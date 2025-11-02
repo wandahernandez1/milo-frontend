@@ -2,88 +2,173 @@
     display: flex;
     flex-direction: row;
     background-color: var(--card-bg-color);
-    border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-md);
     overflow: hidden;
-    width: 90%;
+    width: 100%;
     max-width: 900px;
-    height: 520px;
-    transition: transform 0.3s ease;
+    min-height: 550px;
+    transition: var(--transition);
+    border: 1px solid var(--divider-color);
 }
 
 .register-card:hover {
-    transform: scale(1.01);
+    box-shadow: var(--shadow-lg);
 }
 
 /* Panel izquierdo */
 .register-card .left-panel {
     flex: 1;
-    padding: 30px;
+    padding: 50px 40px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     text-align: center;
-    color: var(--dark-text-color);
+    border-right: 1px solid var(--divider-color);
 }
 
 .register-card .left-panel .panel-avatar {
-    width: 180px;
-    height: 180px;
+    width: 160px;
+    height: 160px;
     border-radius: 50%;
     object-fit: cover;
-    margin-bottom: 30px;
+    object-position: center;
+    margin-bottom: 20px;
+    border: 2px solid var(--divider-color);
+    transition: var(--transition);
+    background-color: var(--left-panel-bg);
 }
 
-.register-card .left-panel .panel-title,
+.register-card .left-panel .panel-avatar:hover {
+    transform: scale(1.02);
+}
+
+.register-card .left-panel .panel-title {
+    font-size: 1.75em;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: var(--text-primary);
+    letter-spacing: -0.3px;
+}
+
 .register-card .left-panel .panel-tagline {
-    font-size: 1.4em;
-    margin-bottom: 20px;
+    font-size: 0.95em;
+    font-weight: 400;
+    color: var(--text-secondary);
+    line-height: 1.5;
 }
 
 /* Panel derecho */
 .register-card .right-panel {
     flex: 1;
-    padding: 40px;
+    padding: 50px 40px;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    /* align-items: center; */
-    text-align: center;
+    background-color: var(--card-bg-color);
 }
 
 .register-card h2 {
-    font-size: 2em;
-    margin-bottom: 30px;
+    font-size: 1.75em;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--text-primary);
+    letter-spacing: -0.3px;
+    text-align: center;
+}
+
+.register-card .right-panel>p:first-of-type {
+    color: var(--text-secondary);
+    font-size: 0.9em;
+    margin-bottom: 28px;
+    text-align: center;
 }
 
 .register-card .input-group {
-    margin-bottom: 25px;
+    margin-bottom: 18px;
+    width: 100%;
+}
+
+.register-card form {
     width: 100%;
 }
 
 .register-card .login-button {
     width: 100%;
-    margin-top: 20px;
+    margin-top: 12px;
+    margin-bottom: 16px;
+}
+
+.register-card .right-panel>p:last-child {
+    color: var(--text-secondary);
+    font-size: 0.9em;
+    text-align: center;
+    margin-top: 8px;
+}
+
+.register-card .right-panel>p:last-child a {
+    color: var(--text-primary);
+    text-decoration: none;
+    font-weight: 500;
+    transition: var(--transition);
+}
+
+.register-card .right-panel>p:last-child a:hover {
+    text-decoration: underline;
 }
 
 /* 📱 Media Query Móviles */
-@media (max-width: 768px) {
+@media (max-width: 968px) {
     .register-card {
         flex-direction: column;
-        max-width: 400px;
-        height: auto;
+        max-width: 440px;
+        min-height: auto;
     }
 
-    .register-card .left-panel,
-    .register-card .right-panel {
-        width: 100%;
-        padding: 25px;
+    .register-card .left-panel {
+        padding: 40px 30px;
+        border-right: none;
+        border-bottom: 1px solid var(--divider-color);
     }
 
     .register-card .left-panel .panel-avatar {
         width: 120px;
         height: 120px;
-        margin-bottom: 20px;
+    }
+
+    .register-card .left-panel .panel-title {
+        font-size: 1.5em;
+    }
+
+    .register-card .right-panel {
+        padding: 40px 30px;
+    }
+
+    .register-card h2 {
+        font-size: 1.5em;
+    }
+
+    .register-card .input-group {
+        margin-bottom: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .register-card {
+        width: 100%;
+    }
+
+    .register-card .left-panel,
+    .register-card .right-panel {
+        padding: 32px 24px;
+    }
+
+    .register-card h2 {
+        font-size: 1.4em;
+    }
+
+    .register-card .input-group input {
+        font-size: 0.9em;
     }
 }

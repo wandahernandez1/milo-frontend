@@ -37,7 +37,6 @@ export default function EditProfile() {
   const [formData, setFormData] = useState(initialFormData);
   const [showPassword, setShowPassword] = useState(false);
 
-  const [avatarColor, setAvatarColor] = useState("#6c757d");
   const [newPhotoFile, setNewPhotoFile] = useState(null);
   const [newPhotoPreview, setNewPhotoPreview] = useState(null);
 
@@ -59,7 +58,6 @@ export default function EditProfile() {
         confirmNewPassword: "",
       });
 
-      setAvatarColor(currentUser.avatarColor || "#6c757d");
       // 🔑 Prioridad de avatar: avatar personalizado > googleAvatar > null
       setNewPhotoPreview(currentUser.avatar || null);
     }
@@ -68,10 +66,6 @@ export default function EditProfile() {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
-  };
-
-  const handleColorChange = (e) => {
-    setAvatarColor(e.target.value);
   };
 
   const handleFileUpload = (e) => {
@@ -176,6 +170,7 @@ export default function EditProfile() {
   }
 
   const firstInitial = formData.name.charAt(0).toUpperCase() || "U";
+  const avatarColor = currentUser?.avatarColor || "#6c757d";
 
   return (
     <main className="edit-profile-container">
@@ -207,21 +202,6 @@ export default function EditProfile() {
         </div>
 
         <div className="avatar-customization-controls">
-          <div className="color-selector-group">
-            <label htmlFor="avatarColor" className="color-label">
-              Color:
-            </label>
-            <input
-              id="avatarColor"
-              type="color"
-              value={avatarColor}
-              onChange={handleColorChange}
-              className="color-input"
-              disabled={!!newPhotoPreview}
-              title="Selecciona un color para tu avatar"
-            />
-          </div>
-
           <div className="file-upload-actions">
             <label htmlFor="photoUpload" className="btn secondary-btn small">
               <FontAwesomeIcon icon={faImage} />

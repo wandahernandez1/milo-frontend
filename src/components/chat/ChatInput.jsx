@@ -6,6 +6,19 @@ export default function ChatInput({
   onSend,
   onMinimize,
 }) {
+  const handleSendClick = () => {
+    if (inputValue?.trim()) {
+      onSend();
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && !e.shiftKey && inputValue?.trim()) {
+      e.preventDefault();
+      onSend();
+    }
+  };
+
   return (
     <div className="chat-input-container">
       <input
@@ -14,9 +27,14 @@ export default function ChatInput({
         className="chat-input"
         value={inputValue}
         onChange={(e) => setInputValue(e.target.value)}
-        onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && onSend()}
+        onKeyDown={handleKeyDown}
       />
-      <button className="send-button" onClick={onSend} title="Enviar mensaje">
+      <button
+        className="send-button"
+        onClick={handleSendClick}
+        title="Enviar mensaje"
+        disabled={!inputValue?.trim()}
+      >
         <i className="fas fa-paper-plane"></i>
       </button>
     </div>
