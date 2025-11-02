@@ -76,7 +76,7 @@ export default function Home() {
         direction="forward"
         scale={1.8}
         opacity={0.3}
-        mouseInteractive={false}
+        mouseInteractive={true}
       />
 
       <div style={{ position: "relative", zIndex: 100 }}>

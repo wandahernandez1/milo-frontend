@@ -10,6 +10,7 @@ import {
   faCog,
   faChevronLeft,
   faChevronRight,
+  faBell,
 } from "@fortawesome/free-solid-svg-icons";
 import { useState, useMemo } from "react";
 import { useNotes } from "../../hooks/useNotes";
@@ -56,16 +57,16 @@ const PerfilContent = ({
 
   const applicationSections = [
     {
-      label: "Mis Notas",
-      icon: faNoteSticky,
-      path: "/panel/notas",
-      count: notesCount,
-    },
-    {
       label: "Mis Tareas",
       icon: faTasks,
       path: "/panel/tareas",
       count: tasksCount,
+    },
+    {
+      label: "Recordatorios",
+      icon: faBell,
+      path: "/panel/recordatorios",
+      count: 3,
     },
     {
       label: "Eventos",

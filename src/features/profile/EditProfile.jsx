@@ -30,8 +30,7 @@ const initialFormData = {
 };
 
 export default function EditProfile() {
-  const { currentUser, loading, updateUser, deleteUser, updateAvatar } =
-    useAuth();
+  const { currentUser, loading, updateUser, deleteUser } = useAuth();
   const { message, type, showMessage, hideMessage } = useMessages();
   const navigate = useNavigate();
 
@@ -88,25 +87,10 @@ export default function EditProfile() {
     }
   };
 
-  const handleRemovePhoto = async () => {
-    // 🗑️ Eliminar el avatar personalizado del backend
-    const res = await updateAvatar(null);
-
-    if (res.success) {
-      // Limpiar el estado local
-      setNewPhotoFile(null);
-      // Establecer el avatar del usuario actualizado (que ahora será el de Google o null)
-      setNewPhotoPreview(res.user?.avatar || null);
-      showMessage(
-        "Avatar personalizado eliminado. Se mostrará el avatar de Google si existe.",
-        "success"
-      );
-    } else {
-      // Si falla, limpiar solo localmente
-      setNewPhotoFile(null);
-      setNewPhotoPreview(null);
-      showMessage(res.message || "Error al eliminar el avatar.", "error");
-    }
+  const handleRemovePhoto = () => {
+    setNewPhotoFile(null);
+    setNewPhotoPreview(null);
+    showMessage("Imagen eliminada.", "info");
   };
 
   const handleSubmit = async (e) => {
@@ -125,24 +109,12 @@ export default function EditProfile() {
       return;
     }
 
-    // 📸 Si hay un nuevo archivo de foto, subir el avatar primero
+    let photoUrlToUpdate = newPhotoPreview;
+
     if (newPhotoFile) {
       showMessage("Subiendo imagen... Por favor, espera.", "info");
-
-      // Aquí puedes implementar la lógica para subir la imagen a un servicio
-      // Por ahora, usamos la URL de preview (esto debería ser reemplazado con una subida real)
-      const res = await updateAvatar(newPhotoPreview);
-
-      if (!res.success) {
-        showMessage(res.message || "Error al subir el avatar.", "error");
-        return;
-      }
-
-      showMessage("Avatar actualizado correctamente.", "success");
-      setNewPhotoFile(null);
     }
 
-    // 🔧 Actualizar el resto de datos del perfil
     const updatedData = {
       name: formData.name,
       fullName: formData.fullName,
