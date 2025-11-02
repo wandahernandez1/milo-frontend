@@ -152,6 +152,38 @@ export function useAuth() {
     }
   };
 
+  // Actualizar avatar personalizado
+  const updateAvatar = async (avatarUrl) => {
+    const token = localStorage.getItem("token");
+    if (!token) return { success: false, message: "No autenticado" };
+
+    try {
+      const res = await fetch(`${API_URL}/users/avatar`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ avatar: avatarUrl }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        setCurrentUser(data.user);
+        return { success: true, user: data.user };
+      } else {
+        return {
+          success: false,
+          message: data.message || "Error al actualizar avatar",
+        };
+      }
+    } catch (err) {
+      console.error("Update avatar failed:", err);
+      return { success: false, message: "Error de conexión con el servidor." };
+    }
+  };
+
   return {
     login,
     register,
@@ -160,5 +192,6 @@ export function useAuth() {
     loading,
     updateUser,
     deleteUser,
+    updateAvatar,
   };
 }

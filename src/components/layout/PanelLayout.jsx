@@ -7,16 +7,16 @@ import {
   faNoteSticky,
   faCalendarAlt,
   faTasks,
-  faBell,
   faCog,
-  faArrowLeft,
   faChevronLeft,
   faChevronRight,
 } from "@fortawesome/free-solid-svg-icons";
-import { useState } from "react";
+import { useState, useMemo } from "react";
+import { useNotes } from "../../hooks/useNotes";
+import { useTasks } from "../../hooks/useTasks";
+import { useGoogleEvents } from "../../hooks/useGoogleEvents";
 import "../../styles/PanelLayout.css";
 
-// Componente auxiliar para las tarjetas del perfil
 const ProfileCard = ({ icon, label, path, count }) => (
   <Link to={path} className="profile-card-link">
     <div className="profile-card">
@@ -36,41 +36,48 @@ const ProfileCard = ({ icon, label, path, count }) => (
   </Link>
 );
 
-const PerfilContent = ({ currentUser, logout }) => {
-  const userName = currentUser?.nombre || currentUser?.displayName || "Usuario";
+const PerfilContent = ({
+  currentUser,
+  logout,
+  notesCount,
+  tasksCount,
+  eventsCount,
+}) => {
+  const userName =
+    currentUser?.fullName ||
+    currentUser?.displayName ||
+    currentUser?.name ||
+    "Usuario";
+
   const firstInitial = userName.charAt(0).toUpperCase();
   const userEmail = currentUser?.email || "Email no disponible";
 
+  const userAvatar = currentUser?.avatar || currentUser?.googleAvatar || null;
+
   const applicationSections = [
-    { label: "Mis Notas", icon: faNoteSticky, path: "/panel/notas", count: 12 },
     {
-      label: "Mis Tareas Pendientes",
+      label: "Mis Notas",
+      icon: faNoteSticky,
+      path: "/panel/notas",
+      count: notesCount,
+    },
+    {
+      label: "Mis Tareas",
       icon: faTasks,
       path: "/panel/tareas",
-      count: 5,
+      count: tasksCount,
     },
     {
-      label: "Recordatorios Activos",
-      icon: faBell,
-      path: "/panel/recordatorios",
-      count: 3,
-    },
-    {
-      label: "Eventos Próximos",
+      label: "Eventos",
       icon: faCalendarAlt,
       path: "/panel/eventos",
-      count: 1,
+      count: eventsCount,
     },
   ];
 
   const settingsSections = [
     {
-      label: "Configuración de Cuenta",
-      icon: faUser,
-      path: "/panel/configuracion",
-    },
-    {
-      label: "Privacidad y Seguridad",
+      label: "Configuración",
       icon: faCog,
       path: "/panel/configuracion",
     },
@@ -81,7 +88,21 @@ const PerfilContent = ({ currentUser, logout }) => {
       <header className="profile-header">
         <div className="profile-avatar-container">
           <div className="profile-avatar-placeholder">
-            {firstInitial && firstInitial !== "U" ? (
+            {userAvatar ? (
+              <img
+                src={userAvatar}
+                alt={userName}
+                className="profile-avatar-img"
+                onError={(e) => {
+                  //  si imagen de Google falla
+                  e.target.style.display = "none";
+                  e.target.parentElement.innerHTML =
+                    firstInitial && firstInitial !== "U"
+                      ? `<span class="avatar-initial">${firstInitial}</span>`
+                      : '<i class="fas fa-user avatar-icon"></i>';
+                }}
+              />
+            ) : firstInitial && firstInitial !== "U" ? (
               <span className="avatar-initial">{firstInitial}</span>
             ) : (
               <FontAwesomeIcon icon={faUser} className="avatar-icon" />
@@ -92,23 +113,24 @@ const PerfilContent = ({ currentUser, logout }) => {
         <p className="user-email">{userEmail}</p>
       </header>
 
-      <div className="card-group">
-        <h2 className="card-group-title">Actividad</h2>
-        {applicationSections.map((section) => (
-          <ProfileCard key={section.label} {...section} />
-        ))}
-      </div>
+      <div className="profile-cards-grid">
+        <div className="card-group">
+          <h2 className="card-group-title">Actividad</h2>
+          {applicationSections.map((section) => (
+            <ProfileCard key={section.label} {...section} />
+          ))}
+        </div>
 
-      <div className="card-group">
-        <h2 className="card-group-title">Ajustes</h2>
-        {settingsSections.map((section) => (
-          <ProfileCard key={section.label} {...section} />
-        ))}
+        <div className="card-group">
+          <h2 className="card-group-title">Ajustes</h2>
+          {settingsSections.map((section) => (
+            <ProfileCard key={section.label} {...section} />
+          ))}
+          <button className="logout-button" onClick={logout}>
+            Cerrar Sesión
+          </button>
+        </div>
       </div>
-
-      <button className="logout-button" onClick={logout}>
-        Cerrar Sesión
-      </button>
     </section>
   );
 };
@@ -117,7 +139,29 @@ export default function PanelLayout() {
   const { currentUser, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(() => {
+    return window.innerWidth <= 768 ? false : false;
+  });
+
+  const { notes } = useNotes();
+  const { tasks } = useTasks();
+
+  const isGoogleConnected = currentUser?.googleConnected || false;
+
+  const dateRange = useMemo(() => {
+    if (!isGoogleConnected) return { start: null, end: null };
+
+    const now = new Date();
+    const startOfYear = new Date(now.getFullYear(), 0, 1);
+    const endOfYear = new Date(now.getFullYear(), 11, 31);
+    return { start: startOfYear, end: endOfYear };
+  }, [isGoogleConnected]);
+
+  const { events } = useGoogleEvents(dateRange.start, dateRange.end);
+
+  const notesCount = notes?.length || 0;
+  const tasksCount = tasks?.length || 0;
+  const eventsCount = isGoogleConnected ? events?.length || 0 : 0;
 
   const toggleSidebar = () => setIsCollapsed(!isCollapsed);
 
@@ -131,10 +175,9 @@ export default function PanelLayout() {
       path: "/panel/calendario",
     },
     { id: "tareas", label: "Tareas", icon: faTasks, path: "/panel/tareas" },
-
     {
       id: "config",
-      label: "Configuración",
+      label: "Ajustes",
       icon: faCog,
       path: "/panel/configuracion",
     },
@@ -155,12 +198,13 @@ export default function PanelLayout() {
         >
           <div className="sidebar-header">
             <div className="header-top-row">
-              {!isCollapsed && <h3 className="sidebar-title">Milo Panel</h3>}
+              {!isCollapsed && <h3 className="sidebar-title">Panel</h3>}
               <button
                 className={`collapse-toggle-button ${
                   isCollapsed ? "collapsed" : ""
                 }`}
                 onClick={toggleSidebar}
+                title={isCollapsed ? "Expandir" : "Contraer"}
               >
                 <FontAwesomeIcon
                   icon={isCollapsed ? faChevronRight : faChevronLeft}
@@ -192,18 +236,32 @@ export default function PanelLayout() {
         </aside>
 
         <main className="panel-content-area">
-          <div className="panel-content-header">
-            <button
-              className="back-button-panel-content"
-              onClick={() => navigate("/dashboard")}
-            >
-              <FontAwesomeIcon icon={faArrowLeft} />
-              <span>Volver a Dashboard</span>
-            </button>
-          </div>
+          {activePath !== "/panel" && (
+            <div className="panel-breadcrumb">
+              <button
+                className="breadcrumb-link"
+                onClick={() => navigate("/dashboard")}
+              >
+                Dashboard
+              </button>
+              <span className="breadcrumb-separator">/</span>
+              <span className="breadcrumb-current">
+                {navItems.find(
+                  (item) =>
+                    activePath.startsWith(item.path) && item.path !== "/panel"
+                )?.label || ""}
+              </span>
+            </div>
+          )}
 
           {activePath === "/panel" ? (
-            <PerfilContent currentUser={currentUser} logout={logout} />
+            <PerfilContent
+              currentUser={currentUser}
+              logout={logout}
+              notesCount={notesCount}
+              tasksCount={tasksCount}
+              eventsCount={eventsCount}
+            />
           ) : (
             <Outlet />
           )}

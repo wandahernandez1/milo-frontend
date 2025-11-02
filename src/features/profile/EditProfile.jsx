@@ -1,10 +1,23 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../hooks/useAuth";
+import { useAuth } from "../../context/AuthContext";
 import { useMessages } from "../../hooks/useMessage";
 import Message from "../../components/Message";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import {
+  faTrash,
+  faArrowLeft,
+  faUser,
+  faIdCard,
+  faCalendarAlt,
+  faEnvelope,
+  faLock,
+  faEye,
+  faEyeSlash,
+  faImage,
+  faExclamationTriangle,
+  faSave,
+} from "@fortawesome/free-solid-svg-icons";
 import "../../styles/edit-profile.css";
 
 const initialFormData = {
@@ -17,25 +30,23 @@ const initialFormData = {
 };
 
 export default function EditProfile() {
-  const { currentUser, loading, updateUser, deleteUser } = useAuth();
+  const { currentUser, loading, updateUser, deleteUser, updateAvatar } =
+    useAuth();
+  const { message, type, showMessage, hideMessage } = useMessages();
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState(initialFormData);
   const [showPassword, setShowPassword] = useState(false);
 
-  // Lógica de ELIMINAR CUENTA (REINTEGRADA)
-  const [confirmDeleteUsername, setConfirmDeleteUsername] = useState("");
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-
-  // ESTADOS DE PERSONALIZACIÓN
   const [avatarColor, setAvatarColor] = useState("#6c757d");
   const [newPhotoFile, setNewPhotoFile] = useState(null);
   const [newPhotoPreview, setNewPhotoPreview] = useState(null);
 
-  const { message, type, showMessage, hideMessage } = useMessages();
-  const navigate = useNavigate();
+  const [confirmDeleteUsername, setConfirmDeleteUsername] = useState("");
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   useEffect(() => {
     if (currentUser) {
-      // SOLUCIÓN FECHA: Formatear la fecha a YYYY-MM-DD para el input type="date"
       const formattedBirthDate = currentUser.birthDate
         ? currentUser.birthDate.split("T")[0]
         : "";
@@ -49,9 +60,9 @@ export default function EditProfile() {
         confirmNewPassword: "",
       });
 
-      // Inicializar color y foto
       setAvatarColor(currentUser.avatarColor || "#6c757d");
-      setNewPhotoPreview(currentUser.photoURL || null);
+      // 🔑 Prioridad de avatar: avatar personalizado > googleAvatar > null
+      setNewPhotoPreview(currentUser.avatar || null);
     }
   }, [currentUser]);
 
@@ -67,15 +78,35 @@ export default function EditProfile() {
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        showMessage("La imagen no puede superar los 5MB.", "error");
+        return;
+      }
       setNewPhotoFile(file);
-      setNewPhotoPreview(URL.createObjectURL(file)); // Crear preview local
-      showMessage(`Archivo seleccionado: ${file.name}`, "info");
+      setNewPhotoPreview(URL.createObjectURL(file));
+      showMessage(`Imagen seleccionada: ${file.name}`, "info");
     }
   };
 
-  const handleRemovePhoto = () => {
-    setNewPhotoFile(null);
-    setNewPhotoPreview(null);
+  const handleRemovePhoto = async () => {
+    // 🗑️ Eliminar el avatar personalizado del backend
+    const res = await updateAvatar(null);
+
+    if (res.success) {
+      // Limpiar el estado local
+      setNewPhotoFile(null);
+      // Establecer el avatar del usuario actualizado (que ahora será el de Google o null)
+      setNewPhotoPreview(res.user?.avatar || null);
+      showMessage(
+        "Avatar personalizado eliminado. Se mostrará el avatar de Google si existe.",
+        "success"
+      );
+    } else {
+      // Si falla, limpiar solo localmente
+      setNewPhotoFile(null);
+      setNewPhotoPreview(null);
+      showMessage(res.message || "Error al eliminar el avatar.", "error");
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -85,45 +116,60 @@ export default function EditProfile() {
       formData.newPassword &&
       formData.newPassword !== formData.confirmNewPassword
     ) {
-      showMessage(
-        "La nueva contraseña y la confirmación no coinciden.",
-        "error"
-      );
+      showMessage("Las contraseñas no coinciden.", "error");
       return;
     }
 
-    let photoUrlToUpdate = newPhotoPreview;
-
-    // 1. Lógica de Subida de Archivo (PLACEHOLDER)
-    if (newPhotoFile) {
-      showMessage("Subiendo foto... Por favor, espera.", "info");
-      // RECUERDA: Aquí va la llamada a tu API de almacenamiento (Firebase, AWS, etc.)
+    if (formData.newPassword && formData.newPassword.length < 6) {
+      showMessage("La contraseña debe tener al menos 6 caracteres.", "error");
+      return;
     }
 
-    // 2. Preparar Datos de Actualización
+    // 📸 Si hay un nuevo archivo de foto, subir el avatar primero
+    if (newPhotoFile) {
+      showMessage("Subiendo imagen... Por favor, espera.", "info");
+
+      // Aquí puedes implementar la lógica para subir la imagen a un servicio
+      // Por ahora, usamos la URL de preview (esto debería ser reemplazado con una subida real)
+      const res = await updateAvatar(newPhotoPreview);
+
+      if (!res.success) {
+        showMessage(res.message || "Error al subir el avatar.", "error");
+        return;
+      }
+
+      showMessage("Avatar actualizado correctamente.", "success");
+      setNewPhotoFile(null);
+    }
+
+    // 🔧 Actualizar el resto de datos del perfil
     const updatedData = {
       name: formData.name,
       fullName: formData.fullName,
       birthDate: formData.birthDate,
       avatarColor: avatarColor,
-      photoURL: photoUrlToUpdate,
     };
-    if (formData.newPassword) updatedData.password = formData.newPassword;
 
-    // 3. Llamar a la API de actualización
+    if (formData.newPassword) {
+      updatedData.password = formData.newPassword;
+    }
+
     const res = await updateUser(updatedData);
+
     if (res.success) {
       showMessage("Perfil actualizado correctamente.", "success");
       setFormData({ ...formData, newPassword: "", confirmNewPassword: "" });
-      setNewPhotoFile(null);
     } else {
       showMessage(res.message || "Error al actualizar el perfil.", "error");
     }
   };
 
-  // FUNCIONES DE ELIMINAR CUENTA (REINTEGRADAS)
   const openDeleteModal = () => setShowDeleteModal(true);
-  const closeDeleteModal = () => setShowDeleteModal(false);
+
+  const closeDeleteModal = () => {
+    setShowDeleteModal(false);
+    setConfirmDeleteUsername("");
+  };
 
   const handleConfirmDelete = async () => {
     if (confirmDeleteUsername !== formData.name) {
@@ -132,32 +178,45 @@ export default function EditProfile() {
     }
 
     const res = await deleteUser();
+
     if (res.success) {
       showMessage("Cuenta eliminada correctamente.", "success");
-      setTimeout(() => navigate("/login"), 1000);
+      setTimeout(() => navigate("/login"), 1500);
     } else {
       showMessage(res.message || "Error al eliminar la cuenta.", "error");
     }
+
     closeDeleteModal();
   };
-  // FIN FUNCIONES DE ELIMINAR CUENTA
 
-  if (loading) return <div className="loading-container">Cargando...</div>;
+  if (loading) {
+    return (
+      <div className="loading-container">
+        <div className="spinner"></div>
+        <p>Cargando...</p>
+      </div>
+    );
+  }
+
   if (!currentUser) {
     navigate("/login");
     return null;
   }
 
-  const firstInitial = formData.name.charAt(0).toUpperCase();
+  const firstInitial = formData.name.charAt(0).toUpperCase() || "U";
 
   return (
     <main className="edit-profile-container">
       <button className="back-button" onClick={() => navigate(-1)}>
-        <i className="fas fa-arrow-left"></i> Volver
+        <FontAwesomeIcon icon={faArrowLeft} /> Volver
       </button>
 
       <div className="edit-profile-card">
-        {/* Avatar con foto/color */}
+        <div className="profile-header">
+          <h2>Editar Perfil</h2>
+          <p>Personaliza tu cuenta y mantén tu información actualizada</p>
+        </div>
+
         <div
           className="profile-avatar"
           style={{
@@ -167,7 +226,7 @@ export default function EditProfile() {
           {newPhotoPreview ? (
             <img
               src={newPhotoPreview}
-              alt={`${formData.name} avatar`}
+              alt={`Avatar de ${formData.name}`}
               className="profile-image"
             />
           ) : (
@@ -175,11 +234,10 @@ export default function EditProfile() {
           )}
         </div>
 
-        {/* Controles de personalización */}
         <div className="avatar-customization-controls">
           <div className="color-selector-group">
             <label htmlFor="avatarColor" className="color-label">
-              Color de Avatar:
+              Color:
             </label>
             <input
               id="avatarColor"
@@ -188,12 +246,14 @@ export default function EditProfile() {
               onChange={handleColorChange}
               className="color-input"
               disabled={!!newPhotoPreview}
+              title="Selecciona un color para tu avatar"
             />
           </div>
 
           <div className="file-upload-actions">
             <label htmlFor="photoUpload" className="btn secondary-btn small">
-              {newPhotoPreview ? "Cambiar Foto" : "Subir Foto"}
+              <FontAwesomeIcon icon={faImage} />
+              {newPhotoPreview ? "Cambiar foto" : "Subir foto"}
             </label>
             <input
               id="photoUpload"
@@ -208,21 +268,15 @@ export default function EditProfile() {
                 type="button"
                 className="btn tertiary-btn small"
                 onClick={handleRemovePhoto}
+                title="Eliminar foto"
               >
-                <FontAwesomeIcon icon={faTrash} /> Eliminar
+                <FontAwesomeIcon icon={faTrash} />
               </button>
             )}
           </div>
         </div>
 
-        {/* Header */}
-        <div className="profile-header">
-          <h2>Editar Perfil</h2>
-          <p>Actualiza la información de tu cuenta.</p>
-        </div>
-
         <form className="profile-form" onSubmit={handleSubmit}>
-          {/* Nombre de usuario */}
           <div className="input-group">
             <input
               id="profileUsername"
@@ -234,10 +288,9 @@ export default function EditProfile() {
               required
             />
             <label htmlFor="profileUsername">Nombre de Usuario</label>
-            <i className="fas fa-user input-icon"></i>
+            <FontAwesomeIcon icon={faUser} className="input-icon" />
           </div>
 
-          {/* Nombre completo */}
           <div className="input-group">
             <input
               id="profileFullName"
@@ -248,10 +301,9 @@ export default function EditProfile() {
               placeholder=" "
             />
             <label htmlFor="profileFullName">Nombre Completo</label>
-            <i className="fas fa-id-card input-icon"></i>
+            <FontAwesomeIcon icon={faIdCard} className="input-icon" />
           </div>
 
-          {/* Fecha de nacimiento */}
           <div className="input-group">
             <input
               id="profileBirthDate"
@@ -262,10 +314,9 @@ export default function EditProfile() {
               placeholder=" "
             />
             <label htmlFor="profileBirthDate">Fecha de Nacimiento</label>
-            <i className="fas fa-calendar-alt input-icon"></i>
+            <FontAwesomeIcon icon={faCalendarAlt} className="input-icon" />
           </div>
 
-          {/* Email */}
           <div className="input-group">
             <input
               id="profileEmail"
@@ -276,10 +327,9 @@ export default function EditProfile() {
               readOnly
             />
             <label htmlFor="profileEmail">Email</label>
-            <i className="fas fa-envelope input-icon"></i>
+            <FontAwesomeIcon icon={faEnvelope} className="input-icon" />
           </div>
 
-          {/* Nueva contraseña */}
           <div className="input-group password-group">
             <input
               id="profileNewPassword"
@@ -290,16 +340,14 @@ export default function EditProfile() {
               placeholder=" "
             />
             <label htmlFor="profileNewPassword">Nueva Contraseña</label>
-            <i className="fas fa-lock input-icon"></i>
-            <i
-              className={`toggle-password fas ${
-                showPassword ? "fa-eye-slash" : "fa-eye"
-              }`}
+            <FontAwesomeIcon icon={faLock} className="input-icon" />
+            <FontAwesomeIcon
+              icon={showPassword ? faEyeSlash : faEye}
+              className="toggle-password"
               onClick={() => setShowPassword(!showPassword)}
-            ></i>
+            />
           </div>
 
-          {/* Confirmar contraseña */}
           <div className="input-group password-group">
             <input
               id="profileConfirmNewPassword"
@@ -310,49 +358,46 @@ export default function EditProfile() {
               placeholder=" "
             />
             <label htmlFor="profileConfirmNewPassword">
-              Confirmar Nueva Contraseña
+              Confirmar Contraseña
             </label>
-            <i className="fas fa-lock input-icon"></i>
-            <i
-              className={`toggle-password fas ${
-                showPassword ? "fa-eye-slash" : "fa-eye"
-              }`}
+            <FontAwesomeIcon icon={faLock} className="input-icon" />
+            <FontAwesomeIcon
+              icon={showPassword ? faEyeSlash : faEye}
+              className="toggle-password"
               onClick={() => setShowPassword(!showPassword)}
-            ></i>
+            />
           </div>
 
-          {/* Botón guardar cambios */}
           <div className="form-actions">
             <button type="submit" className="btn primary-btn">
-              Guardar Cambios
+              <FontAwesomeIcon icon={faSave} /> Guardar Cambios
             </button>
           </div>
         </form>
 
-        {/* SECCIÓN ELIMINAR CUENTA (REINTEGRADA) */}
         <div className="delete-account-section">
-          <h3>Eliminar Cuenta</h3>
+          <h3>Zona de Peligro</h3>
           <p>
-            Esta acción es irreversible y eliminará permanentemente todos tus
-            datos.
+            La eliminación de tu cuenta es permanente e irreversible. Todos tus
+            datos serán eliminados.
           </p>
           <button
             type="button"
             className="btn danger-btn"
             onClick={openDeleteModal}
           >
-            Eliminar mi cuenta
+            <FontAwesomeIcon icon={faExclamationTriangle} /> Eliminar Cuenta
           </button>
         </div>
       </div>
 
-      {/* Modal de confirmación (REINTEGRADO) */}
       {showDeleteModal && (
-        <div className="modal-overlay">
-          <div className="modal">
-            <h3>Confirmar eliminación</h3>
+        <div className="modal-overlay" onClick={closeDeleteModal}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <h3>⚠️ Confirmar Eliminación</h3>
             <p>
-              Esta acción es irreversible. Escribe tu nombre de usuario para
+              Esta acción es <strong>irreversible</strong>. Por favor, escribe
+              tu nombre de usuario <strong>"{formData.name}"</strong> para
               confirmar.
             </p>
             <div className="input-group">
@@ -360,14 +405,18 @@ export default function EditProfile() {
                 type="text"
                 value={confirmDeleteUsername}
                 onChange={(e) => setConfirmDeleteUsername(e.target.value)}
-                placeholder="Nombre de usuario"
+                placeholder="Escribe tu nombre de usuario"
               />
             </div>
             <div className="modal-actions">
               <button className="btn cancel-btn" onClick={closeDeleteModal}>
                 Cancelar
               </button>
-              <button className="btn danger-btn" onClick={handleConfirmDelete}>
+              <button
+                className="btn danger-btn"
+                onClick={handleConfirmDelete}
+                disabled={confirmDeleteUsername !== formData.name}
+              >
                 Eliminar
               </button>
             </div>
@@ -375,7 +424,6 @@ export default function EditProfile() {
         </div>
       )}
 
-      {/* Toast Message */}
       <Message message={message} type={type} onClose={hideMessage} />
     </main>
   );

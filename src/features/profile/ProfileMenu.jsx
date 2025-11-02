@@ -1,7 +1,6 @@
-// src/components/ProfileMenu.jsx
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { useAuth } from "../../hooks/useAuth";
+import { useAuth } from "../../context/AuthContext";
 
 export default function ProfileMenu() {
   const { currentUser, logout } = useAuth();
@@ -12,12 +11,20 @@ export default function ProfileMenu() {
     return null;
   }
 
-  const firstInitial = currentUser.name.charAt(0).toUpperCase();
-  // Obtener el color guardado o usar un valor por defecto
+  // Prioridad: nombre completo > displayName > name
+  const displayName =
+    currentUser.fullName ||
+    currentUser.displayName ||
+    currentUser.name ||
+    "Usuario";
+  const firstInitial = displayName.charAt(0).toUpperCase();
+
+  // Prioridad de avatar: avatar personalizado > googleAvatar > null
+  const userAvatar = currentUser.avatar || currentUser.googleAvatar || null;
   const avatarColor = currentUser.avatarColor || "#6c757d";
 
   const handleLogout = async () => {
-    setOpen(false); // Cierra el menú
+    setOpen(false);
     await logout();
     navigate("/login", { replace: true });
   };
@@ -25,25 +32,30 @@ export default function ProfileMenu() {
   return (
     <div className="profile-menu-container">
       <div className="profile-button" onClick={() => setOpen(!open)}>
-        {/* Avatar con lógica de foto/color */}
         <div
           className="avatar"
           style={{
-            backgroundColor: currentUser.photoURL ? "transparent" : avatarColor,
+            backgroundColor: userAvatar ? "transparent" : avatarColor,
           }}
         >
-          {currentUser.photoURL ? (
+          {userAvatar ? (
             <img
-              src={currentUser.photoURL}
+              src={userAvatar}
               alt="Avatar"
               className="profile-image-small"
+              onError={(e) => {
+                // Fallback si la imagen falla
+                e.target.style.display = "none";
+                e.target.parentElement.innerHTML = firstInitial;
+                e.target.parentElement.style.backgroundColor = avatarColor;
+              }}
             />
           ) : (
             firstInitial
           )}
         </div>
 
-        <span className="profile-name">{currentUser.name}</span>
+        <span className="profile-name">{displayName}</span>
         <i
           className={`fas fa-caret-down dropdown-arrow ${open ? "open" : ""}`}
         ></i>

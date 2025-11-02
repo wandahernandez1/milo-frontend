@@ -22,12 +22,32 @@ export function useChatLogic(setChatActive) {
   const addMessage = (sender, text, isHtml = false, buttons = null) => {
     let safeText = "";
 
-    if (typeof text === "string") safeText = text;
-    else if (text && typeof text === "object" && text.reply)
-      safeText = text.reply;
-    else if (text && typeof text === "object" && text.action)
-      safeText = `Acción ${text.action} procesada correctamente.`;
-    else safeText = text?.toString?.() || " (sin respuesta)";
+    // Validacion para evitar [object Object]
+    if (typeof text === "string") {
+      safeText = text.trim();
+    } else if (text && typeof text === "object") {
+      if (text.reply && typeof text.reply === "string") {
+        safeText = text.reply.trim();
+      } else if (text.message && typeof text.message === "string") {
+        safeText = text.message.trim();
+      } else if (text.action) {
+        safeText = `✅ Acción "${text.action}" procesada correctamente.`;
+      } else {
+        console.error("⚠️ Objeto recibido sin campo válido:", text);
+        safeText =
+          "⚠️ Recibí una respuesta sin formato correcto. Por favor, intentá nuevamente.";
+      }
+    } else if (text === null || text === undefined) {
+      console.warn("⚠️ Texto nulo o indefinido recibido");
+      safeText = "⚠️ No recibí respuesta del servidor.";
+    } else {
+      console.warn("⚠️ Tipo inesperado recibido:", typeof text, text);
+      safeText = String(text).trim();
+    }
+
+    if (!safeText || safeText.includes("[object") || safeText === "") {
+      safeText = "⚠️ Error al procesar la respuesta.";
+    }
 
     setMessages((prev) => [
       ...prev,
@@ -81,7 +101,7 @@ export function useChatLogic(setChatActive) {
     try {
       if (conversationStep) {
         switch (conversationStep) {
-          // --- Crear Nota ---
+          // --- Crear Nota
           case "nota_titulo":
             setTempData({ title: userMsg });
             addMessage("milo", "Perfecto. ¿Qué contenido querés guardar?");
@@ -108,7 +128,7 @@ export function useChatLogic(setChatActive) {
             break;
           }
 
-          // --- Crear Tarea ---
+          // --- Crear Tarea
           case "tarea_titulo":
             setTempData({ title: userMsg });
             addMessage(
@@ -138,7 +158,7 @@ export function useChatLogic(setChatActive) {
             break;
           }
 
-          // --- Crear Evento ---
+          // --- Crear Evento
           case "evento_titulo":
             setTempData({ title: userMsg });
             addMessage("milo", "📅 Perfecto. ¿Cuándo querés agendarlo?");
@@ -185,14 +205,13 @@ export function useChatLogic(setChatActive) {
         return;
       }
 
-      // --- Acciones directas (clima, noticias, etc.) ---
+      // --- Acciones directas (clima, noticias, etc.)
       const handledByKeywords = await handleDirectActions(userMsg);
       if (handledByKeywords) {
         setIsLoading(false);
         return;
       }
 
-      // --- Procesar con Gemini ---
       const historyToSend = messages.slice(-9).map((msg) => ({
         sender: msg.sender,
         text: typeof msg.text === "string" ? msg.text : msg.text?.reply || "",
@@ -292,13 +311,33 @@ export function useChatLogic(setChatActive) {
             setConversationStep("tarea_titulo");
           }
         } else {
-          addMessage(
-            "milo",
-            response.reply || "⚠️ No entendí lo que quisiste hacer."
-          );
+          let replyText = "⚠️ No entendí lo que quisiste hacer.";
+
+          if (typeof response.reply === "string" && response.reply.trim()) {
+            replyText = response.reply.trim();
+          } else if (
+            typeof response.message === "string" &&
+            response.message.trim()
+          ) {
+            replyText = response.message.trim();
+          } else if (typeof response === "string" && response.trim()) {
+            replyText = response.trim();
+          } else {
+            console.error("⚠️ Respuesta sin formato válido:", response);
+            replyText =
+              "⚠️ Recibí una respuesta en formato incorrecto. Por favor, intentá nuevamente.";
+          }
+
+          addMessage("milo", replyText);
         }
+      } else if (typeof response === "string") {
+        addMessage("milo", response);
       } else {
-        addMessage("milo", response.toString());
+        console.error("Respuesta inesperada de Gemini:", response);
+        addMessage(
+          "milo",
+          "⚠️ Recibí una respuesta inesperada. Intentá reformular tu pregunta."
+        );
       }
     } catch (err) {
       console.error("Error en handleSend:", err);

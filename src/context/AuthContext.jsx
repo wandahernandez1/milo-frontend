@@ -150,6 +150,39 @@ export const AuthProvider = ({ children }) => {
     setIsLoggingOut(false);
   };
 
+  // Actualizar avatar personalizado
+  const updateAvatar = async (avatarUrl) => {
+    const token = localStorage.getItem("token");
+    if (!token) return { success: false, message: "No autenticado" };
+
+    try {
+      const res = await fetch(`${API_URL}/users/avatar`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ avatar: avatarUrl }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        setCurrentUser(data.user);
+        localStorage.setItem("user", JSON.stringify(data.user));
+        return { success: true, user: data.user };
+      }
+
+      return {
+        success: false,
+        message: data.message || "Error al actualizar avatar",
+      };
+    } catch (err) {
+      console.error("Error actualizando avatar:", err);
+      return { success: false, message: "Error de conexión con el servidor" };
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -160,6 +193,7 @@ export const AuthProvider = ({ children }) => {
         loginWithJwt,
         logout,
         isLoggingOut,
+        updateAvatar,
       }}
     >
       <MessageProvider>{children}</MessageProvider>

@@ -31,27 +31,38 @@ export async function askGemini(message, chatHistory = []) {
     const data = await res.json();
 
     if (data && typeof data === "object") {
-      if (
-        ["create_event", "create_task", "create_note"].includes(data.action)
-      ) {
+      if (data.action) {
         return data;
       }
 
       if (data.reply) {
-        const cleanReply =
-          typeof data.reply === "string"
-            ? data.reply.trim()
-            : "No pude interpretar la respuesta del asistente.";
-        return cleanReply;
+        return {
+          action: "general_response",
+          reply:
+            typeof data.reply === "string"
+              ? data.reply.trim()
+              : "No pude interpretar la respuesta del asistente.",
+        };
       }
     }
 
-    if (typeof data === "string") return data.trim();
+    if (typeof data === "string") {
+      return {
+        action: "general_response",
+        reply: data.trim(),
+      };
+    }
 
-    return "⚠️ No pude interpretar la respuesta.";
+    return {
+      action: "general_response",
+      reply: "⚠️ No pude interpretar la respuesta.",
+    };
   } catch (err) {
     console.error("Error en askGemini:", err);
-    return "❌ Error al comunicar con Milo. Intenta de nuevo.";
+    return {
+      action: "general_response",
+      reply: "❌ Error al comunicar con Milo. Intenta de nuevo.",
+    };
   }
 }
 
@@ -87,7 +98,7 @@ export async function getCalendarEvents() {
   }
 }
 
-// 📅 NUEVA FUNCIÓN: CREAR EVENTO DESDE EL CHAT
+//  CREAR EVENTO DESDE EL CHAT
 export async function createCalendarEventFromChat({
   title,
   time,
@@ -96,8 +107,6 @@ export async function createCalendarEventFromChat({
   const token = localStorage.getItem("token");
   if (!token) throw new Error("Necesitas iniciar sesión para agendar eventos.");
 
-  // Enviamos los datos que nos dio Milo directamente.
-  // El backend debe encargarse de parsear 'time' (ej. 'lunes a las 14') a ISO.
   const chatEventData = {
     summary: title,
     description: description,

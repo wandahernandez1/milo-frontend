@@ -15,6 +15,14 @@ export const useGoogleEvents = (timeMin, timeMax) => {
     const userString = localStorage.getItem("user");
     const user = userString ? JSON.parse(userString) : null;
 
+    // Si no hay fechas válidas, no hacer nada
+    if (!timeMin || !timeMax) {
+      setConnected(false);
+      setLoading(false);
+      setEvents([]);
+      return;
+    }
+
     if (!token || !user || !user.googleConnected) {
       setConnected(false);
       setLoading(false);
@@ -27,6 +35,11 @@ export const useGoogleEvents = (timeMin, timeMax) => {
       const timeMinISO = new Date(timeMin).toISOString();
       const timeMaxISO = new Date(timeMax).toISOString();
 
+      console.log("🔍 Intentando obtener eventos de Google Calendar...");
+      console.log("📍 API_URL:", API_URL);
+      console.log("🔑 Token existe:", !!token);
+      console.log("👤 Usuario conectado a Google:", user?.googleConnected);
+
       const res = await fetch(
         `${API_URL}/google/events?timeMin=${encodeURIComponent(
           timeMinISO
@@ -34,7 +47,11 @@ export const useGoogleEvents = (timeMin, timeMax) => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      if (!res.ok) throw new Error(`Error ${res.status} al obtener eventos.`);
+      if (!res.ok) {
+        const errorText = await res.text();
+        console.error("❌ Respuesta del servidor:", res.status, errorText);
+        throw new Error(`Error ${res.status} al obtener eventos: ${errorText}`);
+      }
 
       const data = await res.json();
 
@@ -60,8 +77,16 @@ export const useGoogleEvents = (timeMin, timeMax) => {
   useEffect(() => {
     if (timeMin && timeMax) {
       fetchEvents();
+    } else {
+      setEvents([]);
+      setLoading(false);
+      setConnected(false);
     }
-  }, [fetchEvents]);
+  }, [
+    typeof timeMin === "string" ? timeMin : timeMin?.getTime?.(),
+    typeof timeMax === "string" ? timeMax : timeMax?.getTime?.(),
+    token,
+  ]);
 
   const createEvent = useCallback(
     async (eventData) => {

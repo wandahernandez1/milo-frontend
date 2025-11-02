@@ -7,6 +7,13 @@ export default function ChatMessage({ msg }) {
   const navigate = useNavigate();
   const isUser = msg.sender === "user";
 
+  const messageText =
+    typeof msg.text === "string"
+      ? msg.text
+      : msg.text?.reply ||
+        msg.text?.message ||
+        "⚠️ Error al mostrar el mensaje";
+
   return (
     <div className={`chat-message-container ${msg.sender}`}>
       {!isUser && (
@@ -14,17 +21,16 @@ export default function ChatMessage({ msg }) {
           <img src={miloAvatar} alt="Milo" className="milo-chat-img" />
         </div>
       )}
-      {/* Burbuja del mensaje */}
+
       <div className={`chat-bubble ${msg.sender}-bubble`}>
         <div className="prose prose-invert max-w-none message-content">
           {msg.isHtml ? (
-            <div dangerouslySetInnerHTML={{ __html: msg.text }} />
+            <div dangerouslySetInnerHTML={{ __html: messageText }} />
           ) : (
-            <ReactMarkdown>{msg.text}</ReactMarkdown>
+            <ReactMarkdown>{messageText}</ReactMarkdown>
           )}
         </div>
 
-        {/* Botones dinámicos */}
         {msg.buttons && (
           <div className="chat-buttons-container">
             {(Array.isArray(msg.buttons) ? msg.buttons : [msg.buttons]).map(

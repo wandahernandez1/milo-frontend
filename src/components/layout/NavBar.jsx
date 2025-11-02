@@ -8,7 +8,9 @@ export default function Navbar({ showProfile, onLogout }) {
   return (
     <header className="navbar">
       <div className="navbar-left">
-        <span>MiloAssistant</span>
+        <Link to={showProfile ? "/dashboard" : "/"} className="logo-link">
+          MiloAssistant
+        </Link>
       </div>
 
       <nav className="navbar-right">

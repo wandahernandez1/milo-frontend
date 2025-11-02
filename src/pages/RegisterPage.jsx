@@ -5,7 +5,7 @@ import miloAvatar from "../assets/milo-avatar.png";
 import "../styles/login.css";
 import "../styles/register.css";
 
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "../context/AuthContext";
 import { useMessages } from "../hooks/useMessage";
 import Message from "../components/Message";
 
