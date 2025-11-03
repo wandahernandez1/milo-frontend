@@ -3,7 +3,7 @@
   --primary-bg-color: #0f0d1b;
   --secondary-bg-color: #1a152d;
   --card-bg-color: #2c2744;
-  --left-panel-bg: #1a152d;
+  --left-panel-bg: #2c2744;
 
   /* Tipografía y textos */
   --text-color: #f0f0f0;
@@ -13,7 +13,7 @@
 
   /* Colores de acento */
   --accent-color: #9b59b6;
-  --accent-hover: #8e44ad;
+  --accent-hover: #c48ed4;
 
   /* Inputs */
   --input-bg-color: #1a152d;
@@ -27,9 +27,9 @@
   --profile-icon-hover-bg: #3a3551;
   --dropdown-bg: #1a152d;
   --dropdown-hover-bg: #3a3551;
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.2);
-  --shadow-md: 0 6px 15px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 12px 25px rgba(0, 0, 0, 0.6);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.7);
   --divider-color: #4a4563;
 }
 

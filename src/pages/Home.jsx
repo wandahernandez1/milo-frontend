@@ -5,15 +5,21 @@ import miloAvatarDark from "../assets/milo2.jpg";
 import miloAvatarLight from "../assets/milo-light.png";
 import { useTheme } from "../context/ThemeContext";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 export default function Home() {
   const navigate = useNavigate();
   const { isDarkMode } = useTheme();
+  const { currentUser } = useAuth();
   const featuresRef = useRef([]);
   const heroRef = useRef(null);
 
   const handleStartClick = () => {
-    navigate("/login");
+    if (currentUser) {
+      navigate("/dashboard");
+    } else {
+      navigate("/login");
+    }
   };
 
   const currentMiloAvatar = isDarkMode ? miloAvatarDark : miloAvatarLight;
