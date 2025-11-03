@@ -110,20 +110,28 @@ export function useChatLogic(setChatActive) {
 
           case "nota_contenido": {
             const { title: nTitle } = tempData;
-            const newNote = await createNote({
-              title: nTitle,
-              content: userMsg,
-            });
-            addMessage(
-              "milo",
-              newNote
-                ? `✅ Nota **"${nTitle}"** creada exitosamente.`
-                : "❌ No se pudo guardar la nota.",
-              false,
-              newNote
-                ? { label: "Ir a mis notas", route: "/panel/notas" }
-                : null
-            );
+
+            try {
+              const newNote = await createNote({
+                title: nTitle,
+                content: userMsg,
+              });
+
+              if (newNote) {
+                addMessage(
+                  "milo",
+                  `✅ Nota **"${nTitle}"** creada exitosamente.`,
+                  false,
+                  { label: "Ir a mis notas", route: "/panel/notas" }
+                );
+              } else {
+                addMessage("milo", "❌ No se pudo guardar la nota.");
+              }
+            } catch (error) {
+              console.error("Error al crear nota:", error);
+              addMessage("milo", "❌ Ocurrió un error al crear la nota.");
+            }
+
             resetFlow();
             break;
           }
@@ -133,7 +141,7 @@ export function useChatLogic(setChatActive) {
             setTempData({ title: userMsg });
             addMessage(
               "milo",
-              "¿Querés agregar una descripción? ('no' para omitir)"
+              "¿Querés agregar una descripción? (escribí 'no' para omitir)"
             );
             setConversationStep("tarea_descripcion");
             break;
@@ -142,18 +150,25 @@ export function useChatLogic(setChatActive) {
             const lowerMsg = userMsg.toLowerCase();
             const description = lowerMsg === "no" ? "" : userMsg;
             const { title: tTitle } = tempData;
-            const newTask = await createTask({ title: tTitle, description });
 
-            addMessage(
-              "milo",
-              newTask
-                ? `✅ Tarea **"${tTitle}"** creada exitosamente.`
-                : "❌ No se pudo crear la tarea.",
-              false,
-              newTask
-                ? { label: "Ir a mis tareas", route: "/panel/tareas" }
-                : null
-            );
+            try {
+              const newTask = await createTask({ title: tTitle, description });
+
+              if (newTask) {
+                addMessage(
+                  "milo",
+                  `✅ Tarea **"${tTitle}"** creada exitosamente.`,
+                  false,
+                  { label: "Ir a mis tareas", route: "/panel/tareas" }
+                );
+              } else {
+                addMessage("milo", "❌ No se pudo crear la tarea.");
+              }
+            } catch (error) {
+              console.error("Error al crear tarea:", error);
+              addMessage("milo", "❌ Ocurrió un error al crear la tarea.");
+            }
+
             resetFlow();
             break;
           }
@@ -286,41 +301,85 @@ export function useChatLogic(setChatActive) {
         }
         // --- Nota ---
         else if (response.action === "create_note") {
-          if (response.title && response.content && response.reply) {
-            const newNote = await createNote({
-              title: response.title,
-              content: response.content,
-            });
+          // Validar si tiene datos reales o si solo está preguntando
+          const hasRealData =
+            response.title &&
+            response.content &&
+            response.title.toLowerCase() !== "nueva nota" &&
+            response.title.toLowerCase() !== "nota" &&
+            !response.reply.includes("se va a llamar") &&
+            !response.reply.includes("título");
+
+          if (hasRealData) {
+            try {
+              const newNote = await createNote({
+                title: response.title,
+                content: response.content,
+              });
+
+              if (newNote) {
+                addMessage("milo", response.reply, false, {
+                  label: "Ir a mis notas",
+                  route: "/panel/notas",
+                });
+              } else {
+                addMessage("milo", "❌ No se pudo guardar la nota.");
+              }
+            } catch (error) {
+              console.error(
+                "Error al crear nota desde respuesta directa:",
+                error
+              );
+              addMessage("milo", "❌ Ocurrió un error al crear la nota.");
+            }
+          } else {
+            // Gemini está preguntando, no tiene datos reales aún
             addMessage(
               "milo",
-              response.reply,
-              false,
-              newNote
-                ? { label: "Ir a mis notas", route: "/panel/notas" }
-                : null
+              response.reply || "📝 Claro, ¿cómo se va a llamar la nota?"
             );
-          } else {
-            addMessage("milo", "📝 Claro, ¿cómo se va a llamar la nota?");
             setConversationStep("nota_titulo");
           }
         }
         // --- Tarea ---
         else if (response.action === "create_task") {
-          if (response.title && response.reply) {
-            const newTask = await createTask({
-              title: response.title,
-              description: response.description || "",
-            });
+          // Validar si tiene datos reales o si solo está preguntando
+          const hasRealData =
+            response.title &&
+            response.title.toLowerCase() !== "nueva tarea" &&
+            !response.reply.includes("gustaría crear") &&
+            !response.reply.includes("título") &&
+            !response.reply.includes("necesitas que te recuerde");
+
+          if (hasRealData) {
+            try {
+              const newTask = await createTask({
+                title: response.title,
+                description: response.description || "",
+              });
+
+              if (newTask) {
+                addMessage("milo", response.reply, false, {
+                  label: "Ir a mis tareas",
+                  route: "/panel/tareas",
+                });
+              } else {
+                addMessage("milo", "❌ No se pudo crear la tarea.");
+              }
+            } catch (error) {
+              console.error(
+                "Error al crear tarea desde respuesta directa:",
+                error
+              );
+              addMessage("milo", "❌ Ocurrió un error al crear la tarea.");
+            }
+          } else {
+            // Gemini está preguntando, no tiene datos reales aún
             addMessage(
               "milo",
-              response.reply,
-              false,
-              newTask
-                ? { label: "Ir a mis tareas", route: "/panel/tareas" }
-                : null
+              response.reply ||
+                "¡Perfecto! Crear una tarea es mi especialidad. ¿Qué necesitas que te recuerde hacer?"
             );
-          } else {
-            addMessage("milo", "🗒️ Perfecto. ¿Cuál es el título de tu tarea?");
             setConversationStep("tarea_titulo");
           }
         } else {
