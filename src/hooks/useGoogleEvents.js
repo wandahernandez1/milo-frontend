@@ -4,8 +4,9 @@ import { API_URL, TIME_ZONE } from "../utils/config";
 
 export const useGoogleEvents = (timeMin, timeMax) => {
   const [events, setEvents] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [connected, setConnected] = useState(false);
+  const [error, setError] = useState(null);
 
   const token = localStorage.getItem("token");
 
@@ -31,6 +32,11 @@ export const useGoogleEvents = (timeMin, timeMax) => {
     }
 
     setLoading(true);
+    setError(null);
+
+    // Agregar timeout a la petición
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
     try {
       const timeMinISO = new Date(timeMin).toISOString();
       const timeMaxISO = new Date(timeMax).toISOString();
@@ -39,8 +45,13 @@ export const useGoogleEvents = (timeMin, timeMax) => {
         `${API_URL}/google/events?timeMin=${encodeURIComponent(
           timeMinISO
         )}&timeMax=${encodeURIComponent(timeMaxISO)}`,
-        { headers: { Authorization: `Bearer ${token}` } }
+        {
+          headers: { Authorization: `Bearer ${token}` },
+          signal: controller.signal,
+        }
       );
+
+      clearTimeout(timeoutId);
 
       if (!res.ok) {
         const errorText = await res.text();
@@ -61,7 +72,16 @@ export const useGoogleEvents = (timeMin, timeMax) => {
       setEvents(formatted);
       setConnected(true);
     } catch (err) {
-      console.error("❌ Error obteniendo eventos:", err);
+      clearTimeout(timeoutId);
+
+      if (err.name === "AbortError") {
+        console.error("⏱️ Timeout al cargar eventos de Google Calendar");
+        setError("La carga de eventos tardó demasiado. Intenta nuevamente.");
+      } else {
+        console.error("❌ Error obteniendo eventos:", err);
+        setError(err.message);
+      }
+
       setEvents([]);
       setConnected(false);
     } finally {
@@ -77,11 +97,7 @@ export const useGoogleEvents = (timeMin, timeMax) => {
       setLoading(false);
       setConnected(false);
     }
-  }, [
-    typeof timeMin === "string" ? timeMin : timeMin?.getTime?.(),
-    typeof timeMax === "string" ? timeMax : timeMax?.getTime?.(),
-    token,
-  ]);
+  }, [fetchEvents]);
 
   const createEvent = useCallback(
     async (eventData) => {
@@ -227,6 +243,7 @@ export const useGoogleEvents = (timeMin, timeMax) => {
     events,
     loading,
     connected,
+    error,
     fetchEvents,
     createEvent,
     updateEvent,

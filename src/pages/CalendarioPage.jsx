@@ -25,18 +25,19 @@ export default function CalendarioPage() {
 
   const startDateRange = new Date(
     today.getFullYear(),
-    today.getMonth() - 12,
+    today.getMonth() - 3,
     1
   ).toISOString();
   const endDateRange = new Date(
     today.getFullYear(),
-    today.getMonth() + 12,
+    today.getMonth() + 6,
     0
   ).toISOString();
 
   const {
     events,
     loading,
+    error,
     createEvent,
     updateEvent,
     deleteEvent,
@@ -128,7 +129,23 @@ export default function CalendarioPage() {
   }, []);
 
   if (loading)
-    return <p className="calendar-loading"> Cargando eventos de Google...</p>;
+    return (
+      <div className="calendar-loading">
+        <div className="spinner"></div>
+        <p>Cargando eventos de Google Calendar...</p>
+        <small>Esto puede tardar unos segundos</small>
+      </div>
+    );
+
+  if (error) {
+    return (
+      <div className="calendar-error">
+        <h2>⚠️ Error al cargar eventos</h2>
+        <p>{error}</p>
+        <button onClick={fetchEvents}>Reintentar</button>
+      </div>
+    );
+  }
 
   if (!connected)
     return (

@@ -244,8 +244,13 @@ export function useChatLogic(setChatActive) {
       }
 
       if (typeof response === "object") {
-        // --- Evento ---
-        if (response.action === "create_event") {
+        if (response.action === "ask_event_details") {
+          addMessage(
+            "milo",
+            response.reply || "📅 Perfecto, ¿cómo se va a llamar el evento?"
+          );
+          setConversationStep("evento_titulo");
+        } else if (response.action === "create_event") {
           const naturalTime =
             response.time ||
             response.date ||
@@ -256,9 +261,11 @@ export function useChatLogic(setChatActive) {
           if (!naturalTime.trim()) {
             addMessage(
               "milo",
-              "⚠️ No entendí la fecha u hora. Decime algo como 'mañana a las 19' o '20 de noviembre a las 13 hs'."
+              "⚠️ No entendí la fecha u hora. Decime algo como 'mañana a las 19' o '20 de noviembre a las 13 hs'. ¿Querés intentar de nuevo?"
             );
-            resetFlow();
+
+            setTempData({ title: response.title });
+            setConversationStep("evento_fecha");
             setIsLoading(false);
             return;
           }
@@ -291,7 +298,6 @@ export function useChatLogic(setChatActive) {
         }
         // --- Nota ---
         else if (response.action === "create_note") {
-          // Validar si tiene datos reales o si solo está preguntando
           const hasRealData =
             response.title &&
             response.content &&
@@ -332,7 +338,6 @@ export function useChatLogic(setChatActive) {
         }
         // --- Tarea ---
         else if (response.action === "create_task") {
-          // Validar si tiene datos reales o si solo está preguntando
           const hasRealData =
             response.title &&
             response.title.toLowerCase() !== "nueva tarea" &&
