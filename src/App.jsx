@@ -54,7 +54,7 @@ function App() {
           <Route path="notas" element={<Notes />} />
           <Route path="tareas" element={<Tasks />} />
           <Route path="calendario" element={<CalendarioPage />} />
-          <Route path="/panel/eventos" element={<EventosPanel />} />
+          <Route path="eventos" element={<EventosPanel />} />
           <Route path="configuracion" element={<ConfigPage />} />
         </Route>
 
