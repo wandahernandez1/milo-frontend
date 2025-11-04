@@ -37,7 +37,6 @@ export async function askGemini(message, chatHistory = []) {
     }
 
     const data = await res.json();
-    console.log("📥 Respuesta recibida de Gemini:", data);
 
     // Verificar que data es un objeto válido
     if (!data || typeof data !== "object") {
@@ -47,13 +46,9 @@ export async function askGemini(message, chatHistory = []) {
         reply: "⚠️ Recibí una respuesta sin formato válido.",
       };
     }
-
-    // Si tiene acción específica, devolverla completa
     if (data.action) {
       return data;
     }
-
-    // Si tiene reply, normalizarlo
     if (data.reply) {
       return {
         action: "general_response",

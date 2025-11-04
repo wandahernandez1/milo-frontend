@@ -35,11 +35,6 @@ export const useGoogleEvents = (timeMin, timeMax) => {
       const timeMinISO = new Date(timeMin).toISOString();
       const timeMaxISO = new Date(timeMax).toISOString();
 
-      console.log("🔍 Intentando obtener eventos de Google Calendar...");
-      console.log("📍 API_URL:", API_URL);
-      console.log("🔑 Token existe:", !!token);
-      console.log("👤 Usuario conectado a Google:", user?.googleConnected);
-
       const res = await fetch(
         `${API_URL}/google/events?timeMin=${encodeURIComponent(
           timeMinISO

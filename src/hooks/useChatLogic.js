@@ -22,7 +22,7 @@ export function useChatLogic(setChatActive) {
   const addMessage = (sender, text, isHtml = false, buttons = null) => {
     let safeText = "";
 
-    // Validacion para evitar [object Object]
+    // Validacion para evitar object
     if (typeof text === "string") {
       safeText = text.trim();
     } else if (text && typeof text === "object") {
@@ -185,8 +185,6 @@ export function useChatLogic(setChatActive) {
             const eTime = userMsg;
 
             try {
-              console.log("🧭 Intentando crear evento:", { eTitle, eTime });
-
               await createCalendarEventFromChat({
                 title: eTitle,
                 time: eTime,
@@ -234,8 +232,6 @@ export function useChatLogic(setChatActive) {
 
       const response = await askGemini(userMsg, historyToSend);
 
-      console.log("📥 Respuesta procesada:", response);
-
       // Verificar que response es un objeto válido
       if (!response || typeof response !== "object") {
         console.error("⚠️ Respuesta inválida recibida:", response);
@@ -266,12 +262,6 @@ export function useChatLogic(setChatActive) {
             setIsLoading(false);
             return;
           }
-
-          console.log("📤 Enviando evento a backend:", {
-            summary: response.title,
-            natural_time: naturalTime,
-            description: response.description || "",
-          });
 
           try {
             await createCalendarEventFromChat({
@@ -333,7 +323,6 @@ export function useChatLogic(setChatActive) {
               addMessage("milo", "❌ Ocurrió un error al crear la nota.");
             }
           } else {
-            // Gemini está preguntando, no tiene datos reales aún
             addMessage(
               "milo",
               response.reply || "📝 Claro, ¿cómo se va a llamar la nota?"
@@ -374,7 +363,6 @@ export function useChatLogic(setChatActive) {
               addMessage("milo", "❌ Ocurrió un error al crear la tarea.");
             }
           } else {
-            // Gemini está preguntando, no tiene datos reales aún
             addMessage(
               "milo",
               response.reply ||
