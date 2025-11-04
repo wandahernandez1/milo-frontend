@@ -1,4 +1,5 @@
 import Navbar from "../components/layout/NavBar";
+import Plasma from "../components/Plasma";
 import "../styles/novedades.css";
 
 export default function Novedades() {
@@ -67,6 +68,14 @@ export default function Novedades() {
 
   return (
     <div className="page-wrapper">
+      <Plasma
+        color="#9b59b6"
+        speed={0.25}
+        direction="forward"
+        scale={1.6}
+        opacity={0.15}
+        mouseInteractive={false}
+      />
       <Navbar />
       <main className="novedades-container">
         <a href="/" className="back-button">

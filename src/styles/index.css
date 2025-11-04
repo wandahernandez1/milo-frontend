@@ -993,6 +993,16 @@ body.light-mode .feature-card-minimal:hover {
   transition: all 0.3s ease;
   filter: drop-shadow(0 4px 8px rgba(155, 89, 182, 0.2));
   flex-shrink: 0;
+  color: var(--accent-primary, #9b59b6);
+}
+
+body.light-mode .feature-icon-minimal {
+  color: #9b59b6;
+}
+
+.feature-icon-minimal i {
+  display: block;
+  line-height: 1;
 }
 
 .feature-card-minimal:hover .feature-icon-minimal {

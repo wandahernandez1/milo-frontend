@@ -1,4 +1,5 @@
 import Navbar from "../components/layout/NavBar";
+import Plasma from "../components/Plasma";
 import "../styles/comoUsarMilo.css";
 
 export default function ComoUsarMilo() {
@@ -50,6 +51,14 @@ export default function ComoUsarMilo() {
 
   return (
     <div className="page-wrapper">
+      <Plasma
+        color="#9b59b6"
+        speed={0.2}
+        direction="forward"
+        scale={1.8}
+        opacity={0.12}
+        mouseInteractive={false}
+      />
       <Navbar />
       <main className="how-to-use-container">
         <a href="/" className="back-button">

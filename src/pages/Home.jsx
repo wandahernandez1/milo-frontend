@@ -52,23 +52,23 @@ export default function Home() {
 
   const features = [
     {
-      icon: "✓",
+      icon: "fas fa-check-circle",
       title: "Gestión de Tareas",
       description:
         "Organiza y prioriza tus actividades con un sistema intuitivo",
     },
     {
-      icon: "📅",
+      icon: "fas fa-calendar-check",
       title: "Calendario Integrado",
       description: "Sincronización perfecta con Google Calendar",
     },
     {
-      icon: "💬",
+      icon: "fas fa-brain",
       title: "IA Conversacional",
       description: "Asistente potenciado por Gemini AI",
     },
     {
-      icon: "📝",
+      icon: "fas fa-pen-fancy",
       title: "Notas Rápidas",
       description: "Captura y organiza tus ideas al instante",
     },
@@ -124,7 +124,9 @@ export default function Home() {
                 className="feature-card-minimal"
                 ref={(el) => (featuresRef.current[index] = el)}
               >
-                <div className="feature-icon-minimal">{feature.icon}</div>
+                <div className="feature-icon-minimal">
+                  <i className={feature.icon}></i>
+                </div>
                 <h3 className="feature-title-minimal">{feature.title}</h3>
                 <p className="feature-description-minimal">
                   {feature.description}
