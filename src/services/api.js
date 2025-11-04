@@ -209,12 +209,22 @@ export async function getWeather() {
 }
 
 export async function getLocalNews() {
-  const API_KEY = "5ee6801a049547db820850d072b7cbb7";
   try {
-    const url = `https://newsapi.org/v2/everything?q=Argentina&language=es&sortBy=publishedAt&apiKey=${API_KEY}`;
-    const res = await fetch(url);
+    const token = localStorage.getItem("token");
+    const headers = {
+      "Content-Type": "application/json",
+    };
+
+    // Agregar token si existe
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+
+    const url = `${API_URL}/news/local`;
+    const res = await fetch(url, { headers });
     const data = await res.json();
-    if (!res.ok) throw new Error(data.message);
+
+    if (!res.ok) throw new Error(data.message || "Error al obtener noticias");
     if (!data.articles?.length) return "No encontré noticias 😅.";
 
     return data.articles
@@ -225,6 +235,7 @@ export async function getLocalNews() {
       )
       .join("<br><br>");
   } catch (err) {
+    console.error("Error fetching news:", err);
     return `Error al traer noticias 😥 (${err.message})`;
   }
 }
