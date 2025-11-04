@@ -467,22 +467,22 @@ body.dark-mode {
   padding: 12px;
   margin-top: auto;
   font-size: 0.92rem;
-  color: var(--error-color);
+  color: #6b7280;
   background-color: transparent;
   border: none;
   border-top: 1px solid var(--back-button-border);
   border-radius: 0;
   cursor: pointer;
   font-weight: 600;
-  transition: all 0.2s ease;
+  transition: color 0.2s ease;
 }
 
 .logout-button:hover {
-  background-color: rgba(255, 59, 48, 0.1);
+  color: #374151;
 }
 
 body.dark-mode .logout-button:hover {
-  background-color: rgba(255, 59, 48, 0.15);
+  color: #9ca3af;
 }
 
 

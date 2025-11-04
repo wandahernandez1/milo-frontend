@@ -480,25 +480,30 @@ body.light-mode .navbar {
   background-color: var(--dropdown-hover-bg);
 }
 
-.logout-button {
+.profile-menu-container .logout-button {
   border: none;
   background: none;
-  width: 100%;
-  text-align: left;
   cursor: pointer;
-  padding: 10px 16px;
-  color: var(--text-color);
   font-family: inherit;
+  width: 100%;
+  padding: 10px 16px;
+  text-align: left;
   font-size: 0.875rem;
   font-weight: 500;
+  color: #6b7280;
+  transition: color 0.2s ease;
 }
 
-.logout-button:hover {
-  background-color: var(--dropdown-hover-bg);
+.profile-menu-container .logout-button:hover {
+  color: #374151;
 }
 
-.logout-button:hover {
-  background-color: var(--dropdown-hover-bg);
+body.light-mode .profile-menu-container .logout-button {
+  color: #6b7280;
+}
+
+body.light-mode .profile-menu-container .logout-button:hover {
+  color: #1f2937;
 }
 
 /* Boton volver  */
@@ -2058,23 +2063,24 @@ body.light-mode .splash-container {
 
 }
 
-.logout-button {
+/* Botón de logout en card-group (no en el dropdown del perfil) */
+.card-group .logout-button {
   width: 100%;
   padding: 12px;
   margin-top: 20px;
   font-size: 17px;
-  color: var(--button-danger);
+  color: #6b7280;
   background-color: var(--secondary-bg-color);
   border: none;
   border-radius: 12px;
   box-shadow: var(--card-shadow);
   cursor: pointer;
   font-weight: 500;
-  transition: background-color 0.1s;
+  transition: color 0.2s ease;
 }
 
-.logout-button:hover {
-  background-color: var(--dropdown-hover-bg);
+.card-group .logout-button:hover {
+  color: #374151;
 }
 
 @media (max-width: 768px) {

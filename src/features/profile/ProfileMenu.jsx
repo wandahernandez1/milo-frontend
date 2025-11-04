@@ -78,10 +78,7 @@ export default function ProfileMenu() {
             Editar Perfil
           </Link>
 
-          <button
-            onClick={handleLogout}
-            className="dropdown-link logout-button"
-          >
+          <button onClick={handleLogout} className="logout-button">
             Cerrar Sesión
           </button>
         </div>

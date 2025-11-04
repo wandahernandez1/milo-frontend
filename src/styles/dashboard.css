@@ -520,6 +520,51 @@ body {
   text-align: right;
 }
 
+.chat-buttons-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.chat-dynamic-button {
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  color: white;
+  border: none;
+  border-radius: var(--border-radius-sm);
+  padding: 10px 18px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: var(--shadow-sm);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  font-family: inherit;
+}
+
+.chat-dynamic-button:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-accent);
+  filter: brightness(1.1);
+}
+
+.chat-dynamic-button:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
+}
+
+body.light-mode .chat-dynamic-button {
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  box-shadow: 0 2px 8px rgba(155, 89, 182, 0.2);
+}
+
+body.light-mode .chat-dynamic-button:hover {
+  box-shadow: 0 4px 12px rgba(155, 89, 182, 0.3);
+}
+
 .thinking-bubble {
   background-color: var(--tertiary-bg);
   color: var(--text-secondary);
