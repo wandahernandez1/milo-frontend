@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useTasks } from "../../hooks/useTasks.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
+import ConfirmDialog from "../../components/common/ConfirmDialog.jsx";
 import "../../styles/Tasks.css";
 
 export default function Tasks() {
@@ -11,6 +12,10 @@ export default function Tasks() {
   const [description, setDescription] = useState("");
   const [editingId, setEditingId] = useState(null);
   const [toast, setToast] = useState({ message: "", type: "" });
+  const [confirmDialog, setConfirmDialog] = useState({
+    isOpen: false,
+    taskId: null,
+  });
 
   const showMessage = (msg, type = "info") => {
     setToast({ message: msg, type });
@@ -51,13 +56,17 @@ export default function Tasks() {
     setShowInput(true);
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm("¿Seguro que querés eliminar esta tarea?")) return;
-    const success = await deleteTask(id);
+  const handleDelete = (id) => {
+    setConfirmDialog({ isOpen: true, taskId: id });
+  };
+
+  const confirmDelete = async () => {
+    const success = await deleteTask(confirmDialog.taskId);
     showMessage(
       success ? "Tarea eliminada" : "Error al eliminar la tarea",
       success ? "info" : "error"
     );
+    setConfirmDialog({ isOpen: false, taskId: null });
   };
 
   const toggleComplete = async (task) => {
@@ -169,6 +178,17 @@ export default function Tasks() {
       {toast.message && (
         <div className={`toast ${toast.type}`}>{toast.message}</div>
       )}
+
+      <ConfirmDialog
+        isOpen={confirmDialog.isOpen}
+        onClose={() => setConfirmDialog({ isOpen: false, taskId: null })}
+        onConfirm={confirmDelete}
+        title="Eliminar tarea"
+        message="¿Estás seguro de que querés eliminar esta tarea? Esta acción no se puede deshacer."
+        confirmText="Eliminar"
+        cancelText="Cancelar"
+        type="danger"
+      />
     </section>
   );
 }

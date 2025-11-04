@@ -38,11 +38,16 @@ export default function CalendarioPage() {
     events,
     loading,
     error,
+    connected: googleConnected,
     createEvent,
     updateEvent,
     deleteEvent,
     fetchEvents,
   } = useGoogleEvents(startDateRange, endDateRange);
+
+  useEffect(() => {
+    setConnected(googleConnected);
+  }, [googleConnected]);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -138,11 +143,24 @@ export default function CalendarioPage() {
     );
 
   if (error) {
+    const isAuthError =
+      error.includes("expiró") ||
+      error.includes("401") ||
+      error.includes("Cuenta de Google no conectada");
+
     return (
       <div className="calendar-error">
-        <h2>⚠️ Error al cargar eventos</h2>
+        <h2>
+          ⚠️ {isAuthError ? "Sesión Expirada" : "Error al cargar eventos"}
+        </h2>
         <p>{error}</p>
-        <button onClick={fetchEvents}>Reintentar</button>
+        {isAuthError ? (
+          <button onClick={handleConnectGoogle}>
+            <i className="fab fa-google"></i> Reconectar Google Calendar
+          </button>
+        ) : (
+          <button onClick={fetchEvents}>Reintentar</button>
+        )}
       </div>
     );
   }
@@ -163,6 +181,15 @@ export default function CalendarioPage() {
 
   return (
     <div className="calendar-wrapper">
+      {!loading && events.length === 0 && (
+        <div className="calendar-empty-message">
+          <div className="empty-icon">📅</div>
+          <h3>Tu calendario está vacío</h3>
+          <p>Comienza a organizar tu tiempo creando tu primer evento</p>
+          <small>Haz clic en cualquier día del calendario para empezar</small>
+        </div>
+      )}
+
       <div className="calendar-main-layout">
         <div className="calendar-main-view">
           <FullCalendar

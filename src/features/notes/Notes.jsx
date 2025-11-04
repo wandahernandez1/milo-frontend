@@ -4,6 +4,7 @@ import { useNotes } from "../../hooks/useNotes.js";
 import "../../styles/notes.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
+import ConfirmDialog from "../../components/common/ConfirmDialog.jsx";
 
 export default function Notes() {
   const { notes, loading, createNote, updateNote, deleteNote } = useNotes();
@@ -13,6 +14,10 @@ export default function Notes() {
   const [content, setContent] = useState("");
   const [editingId, setEditingId] = useState(null);
   const [toast, setToast] = useState({ message: "", type: "" });
+  const [confirmDialog, setConfirmDialog] = useState({
+    isOpen: false,
+    noteId: null,
+  });
 
   const showMessage = (message, type = "info") => {
     setToast({ message, type });
@@ -57,13 +62,17 @@ export default function Notes() {
     setShowInput(true);
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm("¿Seguro que querés eliminar esta nota?")) return;
-    const success = await deleteNote(id);
+  const handleDelete = (id) => {
+    setConfirmDialog({ isOpen: true, noteId: id });
+  };
+
+  const confirmDelete = async () => {
+    const success = await deleteNote(confirmDialog.noteId);
     showMessage(
       success ? "Nota eliminada" : "Error al eliminar",
       success ? "info" : "error"
     );
+    setConfirmDialog({ isOpen: false, noteId: null });
   };
 
   return (
@@ -137,6 +146,17 @@ export default function Notes() {
       {toast.message && (
         <div className={`toast ${toast.type}`}>{toast.message}</div>
       )}
+
+      <ConfirmDialog
+        isOpen={confirmDialog.isOpen}
+        onClose={() => setConfirmDialog({ isOpen: false, noteId: null })}
+        onConfirm={confirmDelete}
+        title="Eliminar nota"
+        message="¿Estás seguro de que querés eliminar esta nota? Esta acción no se puede deshacer."
+        confirmText="Eliminar"
+        cancelText="Cancelar"
+        type="danger"
+      />
     </section>
   );
 }

@@ -56,6 +56,20 @@ export const useGoogleEvents = (timeMin, timeMax) => {
       if (!res.ok) {
         const errorText = await res.text();
         console.error("❌ Respuesta del servidor:", res.status, errorText);
+
+        if (res.status === 401) {
+          const userString = localStorage.getItem("user");
+          if (userString) {
+            const user = JSON.parse(userString);
+            user.googleConnected = false;
+            localStorage.setItem("user", JSON.stringify(user));
+          }
+          setConnected(false);
+          throw new Error(
+            "Tu sesión de Google Calendar expiró. Por favor, reconecta tu cuenta."
+          );
+        }
+
         throw new Error(`Error ${res.status} al obtener eventos: ${errorText}`);
       }
 

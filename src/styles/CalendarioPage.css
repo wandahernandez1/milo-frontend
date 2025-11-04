@@ -382,6 +382,140 @@ body.dark-mode {
     box-shadow: 0 5px 12px rgba(155, 89, 182, 0.4);
 }
 
+.calendar-empty-message {
+    background: transparent;
+    border: none;
+    padding: 16px 12px;
+    margin: 12px auto;
+    max-width: 400px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.calendar-empty-message .empty-icon {
+    font-size: 2rem;
+    margin-bottom: 8px;
+    opacity: 0.7;
+}
+
+.calendar-empty-message h3 {
+    margin: 0 0 6px 0;
+    color: var(--text-color-primary);
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: -0.2px;
+}
+
+.calendar-empty-message p {
+    margin: 0 0 8px 0;
+    color: var(--text-color-secondary);
+    font-size: 0.85rem;
+    line-height: 1.4;
+}
+
+.calendar-empty-message small {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 12px;
+    background: rgba(155, 89, 182, 0.1);
+    color: var(--primary-color);
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.calendar-empty-message small::before {
+    content: "👆";
+    font-size: 0.85rem;
+}
+
+body.dark-mode .calendar-empty-message small {
+    background: rgba(183, 144, 216, 0.15);
+    color: var(--primary-color);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .calendar-empty-message {
+        max-width: 90%;
+        padding: 14px 10px;
+    }
+}
+
+@media (max-width: 768px) {
+    .calendar-empty-message {
+        padding: 12px 10px;
+        margin: 10px auto;
+        max-width: 100%;
+    }
+
+    .calendar-empty-message .empty-icon {
+        font-size: 1.8rem;
+    }
+
+    .calendar-empty-message h3 {
+        font-size: 0.95rem;
+    }
+
+    .calendar-empty-message p {
+        font-size: 0.8rem;
+    }
+
+    .calendar-empty-message small {
+        font-size: 0.7rem;
+        padding: 4px 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .calendar-empty-message {
+        padding: 10px 8px;
+        margin: 8px auto;
+    }
+
+    .calendar-empty-message .empty-icon {
+        font-size: 1.6rem;
+        margin-bottom: 6px;
+    }
+
+    .calendar-empty-message h3 {
+        font-size: 0.9rem;
+        margin-bottom: 4px;
+    }
+
+    .calendar-empty-message p {
+        font-size: 0.75rem;
+        margin-bottom: 6px;
+    }
+
+    .calendar-empty-message small {
+        font-size: 0.65rem;
+        padding: 3px 8px;
+    }
+
+    .calendar-empty-message small::before {
+        font-size: 0.75rem;
+    }
+}
+
+@media (max-width: 360px) {
+    .calendar-empty-message {
+        padding: 8px 6px;
+    }
+
+    .calendar-empty-message .empty-icon {
+        font-size: 1.5rem;
+    }
+
+    .calendar-empty-message h3 {
+        font-size: 0.85rem;
+    }
+
+    .calendar-empty-message p {
+        font-size: 0.7rem;
+    }
+}
 
 .modal-overlay {
     position: fixed;
