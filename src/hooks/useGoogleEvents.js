@@ -16,7 +16,6 @@ export const useGoogleEvents = (timeMin, timeMax) => {
     const userString = localStorage.getItem("user");
     const user = userString ? JSON.parse(userString) : null;
 
-    // Si no hay fechas válidas, no hacer nada
     if (!timeMin || !timeMax) {
       setConnected(false);
       setLoading(false);
@@ -34,7 +33,6 @@ export const useGoogleEvents = (timeMin, timeMax) => {
     setLoading(true);
     setError(null);
 
-    // Agregar timeout a la petición
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 10000);
     try {
@@ -54,15 +52,27 @@ export const useGoogleEvents = (timeMin, timeMax) => {
       clearTimeout(timeoutId);
 
       if (!res.ok) {
-        const errorText = await res.text();
-        console.error("❌ Respuesta del servidor:", res.status, errorText);
+        let errorMessage = `Error ${res.status} al obtener eventos`;
+
+        try {
+          const errorData = await res.json();
+          errorMessage = errorData.message || errorMessage;
+          console.error("❌ Respuesta del servidor:", res.status, errorData);
+        } catch (jsonError) {
+          const errorText = await res.text();
+          console.error("❌ Respuesta del servidor:", res.status, errorText);
+        }
 
         if (res.status === 401) {
           const userString = localStorage.getItem("user");
           if (userString) {
-            const user = JSON.parse(userString);
-            user.googleConnected = false;
-            localStorage.setItem("user", JSON.stringify(user));
+            try {
+              const user = JSON.parse(userString);
+              user.googleConnected = false;
+              localStorage.setItem("user", JSON.stringify(user));
+            } catch (e) {
+              console.error("Error actualizando estado de usuario:", e);
+            }
           }
           setConnected(false);
           throw new Error(
@@ -70,7 +80,7 @@ export const useGoogleEvents = (timeMin, timeMax) => {
           );
         }
 
-        throw new Error(`Error ${res.status} al obtener eventos: ${errorText}`);
+        throw new Error(errorMessage);
       }
 
       const data = await res.json();
@@ -92,8 +102,8 @@ export const useGoogleEvents = (timeMin, timeMax) => {
         console.error("⏱️ Timeout al cargar eventos de Google Calendar");
         setError("La carga de eventos tardó demasiado. Intenta nuevamente.");
       } else {
-        console.error("❌ Error obteniendo eventos:", err);
-        setError(err.message);
+        console.error("❌ Error obteniendo eventos:", err.message || err);
+        setError(err.message || "Error al obtener eventos");
       }
 
       setEvents([]);

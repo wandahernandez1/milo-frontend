@@ -107,6 +107,8 @@ body.light-mode {
   position: relative;
   display: flex;
   align-items: center;
+  cursor: pointer;
+  user-select: none;
 }
 
 .dropdown-link:last-child {

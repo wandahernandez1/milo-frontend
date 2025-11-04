@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
 import "../../styles/functionalities-menu.css";
 
 export default function FunctionalitiesMenu() {
@@ -10,29 +9,29 @@ export default function FunctionalitiesMenu() {
     {
       name: "Calendario",
       fullName: "Gestiona tu calendario",
-      path: "/panel/calendario",
     },
     {
       name: "Chat Milo",
       fullName: "Habla con Milo",
-      path: "/panel",
     },
     {
       name: "Noticias",
       fullName: "Noticias de hoy",
-      path: "/panel/novedades",
     },
     {
       name: "Clima",
       fullName: "Clima en tiempo real",
-      path: "#",
     },
     {
       name: "Tareas y Notas",
       fullName: "Gestiona tareas y notas",
-      path: "/panel/tareas",
     },
   ];
+
+  const handleItemClick = (e) => {
+    e.preventDefault();
+    setOpen(false);
+  };
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -67,17 +66,16 @@ export default function FunctionalitiesMenu() {
         {open && (
           <div className="dropdown-content">
             {funcionalidades.map((item, idx) => (
-              <Link
+              <div
                 key={idx}
-                to={item.path}
                 className="dropdown-link"
-                onClick={() => setOpen(false)}
+                onClick={handleItemClick}
               >
                 <div className="dropdown-text">
                   <span className="dropdown-name">{item.name}</span>
                   <span className="dropdown-description">{item.fullName}</span>
                 </div>
-              </Link>
+              </div>
             ))}
           </div>
         )}
