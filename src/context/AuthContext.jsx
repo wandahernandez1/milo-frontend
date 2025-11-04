@@ -83,6 +83,36 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Registro de nuevo usuario
+  const register = async (name, email, password) => {
+    setLoading(true);
+    try {
+      const res = await fetch(`${API_URL}/auth/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password }),
+      });
+      const data = await res.json();
+
+      if (res.ok && data.access_token) {
+        localStorage.setItem("token", data.access_token);
+        localStorage.setItem("user", JSON.stringify(data.user));
+        setCurrentUser(data.user);
+        return { success: true, user: data.user };
+      }
+
+      return {
+        success: false,
+        message: data.message || "Error en el registro",
+      };
+    } catch (err) {
+      console.error("Error en register:", err);
+      return { success: false, message: "Error de conexión con el servidor" };
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Login con Google (idToken)
   const loginWithGoogle = async (googleToken) => {
     setLoading(true);
@@ -189,6 +219,7 @@ export const AuthProvider = ({ children }) => {
         currentUser,
         loading,
         login,
+        register,
         loginWithGoogle,
         loginWithJwt,
         logout,
