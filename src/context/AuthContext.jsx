@@ -213,6 +213,67 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Actualizar perfil de usuario
+  const updateUser = async (updatedData) => {
+    const token = localStorage.getItem("token");
+    if (!token) return { success: false, message: "No autenticado" };
+
+    try {
+      const res = await fetch(`${API_URL}/users/me`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(updatedData),
+      });
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        setCurrentUser(data.user);
+        localStorage.setItem("user", JSON.stringify(data.user));
+        return { success: true, user: data.user };
+      } else {
+        return {
+          success: false,
+          message: data.message || "Error al actualizar perfil",
+        };
+      }
+    } catch (err) {
+      console.error("Update user failed:", err);
+      return { success: false, message: "Error de conexión con el servidor." };
+    }
+  };
+
+  // Eliminar cuenta de usuario
+  const deleteUser = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) return { success: false, message: "No autenticado" };
+
+    try {
+      const res = await fetch(`${API_URL}/users/me`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        setCurrentUser(null);
+        return { success: true, message: data.message };
+      } else {
+        return {
+          success: false,
+          message: data.message || "Error al eliminar cuenta",
+        };
+      }
+    } catch (err) {
+      console.error("Delete user failed:", err);
+      return { success: false, message: "Error de conexión con el servidor." };
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -225,6 +286,8 @@ export const AuthProvider = ({ children }) => {
         logout,
         isLoggingOut,
         updateAvatar,
+        updateUser,
+        deleteUser,
       }}
     >
       <MessageProvider>{children}</MessageProvider>
