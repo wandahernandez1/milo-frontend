@@ -58,7 +58,6 @@ body.dark-mode {
 
 .calendar-wrapper {
     padding: 0;
-    background-color: var(--bg-app);
     min-height: 100vh;
     font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     color: var(--text-color-primary);

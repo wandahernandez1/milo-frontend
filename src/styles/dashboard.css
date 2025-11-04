@@ -147,21 +147,6 @@ body {
   color: var(--accent-primary);
 }
 
-.navbar-right ul li a::after {
-  content: '';
-  position: absolute;
-  bottom: -4px;
-  left: 0;
-  width: 0;
-  height: 2px;
-  background: var(--accent-primary);
-  transition: width 0.3s ease;
-}
-
-.navbar-right ul li a:hover::after {
-  width: 100%;
-}
-
 
 .chat-initial-content {
   display: flex;
@@ -454,7 +439,6 @@ body {
   background: var(--accent-primary);
 }
 
-/* Mensaje Container */
 .chat-message-container {
   display: flex;
   align-items: flex-end;
