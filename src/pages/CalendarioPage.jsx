@@ -6,6 +6,7 @@ import interactionPlugin from "@fullcalendar/interaction";
 import esLocale from "@fullcalendar/core/locales/es";
 import EventModal from "../components/chat/EventModal";
 import { useGoogleEvents } from "../hooks/useGoogleEvents";
+import { API_URL } from "../utils/config";
 import "../styles/CalendarioPage.css";
 
 const formatDayHeader = (arg) => arg.text.substring(0, 1).toUpperCase();
@@ -108,7 +109,7 @@ export default function CalendarioPage() {
     }
 
     try {
-      const res = await fetch("http://localhost:3000/api/google/auth", {
+      const res = await fetch(`${API_URL}/google/auth`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
