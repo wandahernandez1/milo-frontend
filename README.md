@@ -1,32 +1,50 @@
 # 🎨 Milo Assistant - Frontend
 
-Interfaz de usuario desarrollada con React y Vite para Milo, tu asistente personal inteligente.
+<div align="center">
+  <p><strong>Interfaz de usuario moderna desarrollada con React 19 y Vite</strong></p>
+  <p>
+    <a href="#-descripción">Descripción</a> •
+    <a href="#-instalación">Instalación</a> •
+    <a href="#️-configuración">Configuración</a> •
+    <a href="#-ejecutar-el-proyecto">Uso</a> •
+    <a href="#️-tecnologías">Tecnologías</a>
+  </p>
+</div>
+
+---
 
 ## 📋 Tabla de Contenidos
 
-- [Descripción](#descripción)
-- [Requisitos Previos](#requisitos-previos)
-- [Instalación](#instalación)
-- [Configuración](#configuración)
-- [Ejecutar el Proyecto](#ejecutar-el-proyecto)
-- [Build para Producción](#build-para-producción)
-- [Estructura del Proyecto](#estructura-del-proyecto)
-- [Páginas y Rutas](#páginas-y-rutas)
-- [Componentes Principales](#componentes-principales)
-- [Tecnologías](#tecnologías)
+- [📖 Descripción](#-descripción)
+- [🔧 Requisitos Previos](#-requisitos-previos)
+- [🚀 Instalación](#-instalación)
+- [⚙️ Configuración](#️-configuración)
+- [🏃 Ejecutar el Proyecto](#-ejecutar-el-proyecto)
+- [📦 Build para Producción](#-build-para-producción)
+- [📁 Estructura del Proyecto](#-estructura-del-proyecto)
+- [🗺️ Páginas y Rutas](#️-páginas-y-rutas)
+- [🧩 Componentes Principales](#-componentes-principales)
+- [🛠️ Tecnologías](#️-tecnologías)
+- [🎨 Diseño y Estilo](#-diseño-y-estilo)
+- [📝 Notas Importantes](#-notas-importantes)
+- [🐛 Solución de Problemas](#-solución-de-problemas)
 
 ## 📖 Descripción
 
-Frontend de MiloAssistant, una aplicación web moderna que ofrece:
+Frontend de **MiloAssistant**, una aplicación web moderna y responsiva que ofrece una experiencia de usuario fluida y atractiva.
 
-- 💬 Chat conversacional con IA (Gemini)
-- 🔐 Autenticación segura (JWT + Google OAuth)
-- ✅ Gestión de tareas con recordatorios
-- 📝 Sistema de notas organizado
-- 📅 Integración con Google Calendar
-- 🌓 Modo claro/oscuro
-- 📱 Diseño responsive y minimalista
-- ⚡ Interfaz rápida con React 19 y Vite
+### ✨ Características Principales
+
+- 💬 **Chat Inteligente** - Conversación con IA (Gemini) con formato Markdown
+- 🔐 **Autenticación Múltiple** - Login tradicional y Google OAuth 2.0
+- ✅ **Gestión de Tareas** - Crear, editar, priorizar y marcar tareas como completadas
+- 📝 **Sistema de Notas** - Organización avanzada con búsqueda y filtros
+- 📅 **Calendario Integrado** - Visualización y gestión de eventos de Google Calendar
+- 🌓 **Temas Personalizables** - Modo claro/oscuro con transiciones suaves
+- 📱 **Diseño Responsive** - Optimizado para móvil, tablet y desktop
+- ⚡ **Rendimiento Óptimo** - Carga rápida con React 19 y Vite
+- 🎨 **UI Moderna** - Animaciones con GSAP y efectos visuales atractivos
+- 🔔 **Notificaciones** - Sistema de mensajes toast para feedback inmediato
 
 ## 🔧 Requisitos Previos
 
@@ -283,71 +301,121 @@ Sistema de notificaciones toast:
 
 ## 🛠️ Tecnologías
 
-### Core
+### Framework & Core
 
-- **[React 19](https://react.dev/)** - Biblioteca UI
-- **[Vite](https://vitejs.dev/)** - Build tool ultrarrápido
-- **[React Router v7](https://reactrouter.com/)** - Navegación
+- **[React](https://react.dev/)** v19.1 - Biblioteca UI moderna con Concurrent Features
+- **[Vite](https://vitejs.dev/)** v7.1 - Build tool ultrarrápido con HMR instantáneo
+- **[React Router DOM](https://reactrouter.com/)** v7.9 - Enrutamiento declarativo
 
 ### UI & Styling
 
-- **CSS Modules** - Estilos encapsulados
-- **CSS Variables** - Temas dinámicos
-- **[Font Awesome](https://fontawesome.com/)** - Iconos
-- **[GSAP](https://greensock.com/gsap/)** - Animaciones avanzadas
+- **CSS Custom Properties** - Variables CSS para temas dinámicos
+- **CSS Modules** - Estilos encapsulados y con scope local
+- **[Font Awesome](https://fontawesome.com/)** v7.0 - Biblioteca de iconos vectoriales
+- **[React Icons](https://react-icons.github.io/react-icons/)** v5.5 - Iconos de múltiples bibliotecas
+- **[GSAP](https://greensock.com/gsap/)** v3.13 - Animaciones de alto rendimiento
+- **[Radix UI](https://www.radix-ui.com/)** - Componentes accesibles sin estilos
 
-### Integrations
+### Integraciones
 
-- **[@react-oauth/google](https://www.npmjs.com/package/@react-oauth/google)** - Google OAuth
-- **[@google/genai](https://www.npmjs.com/package/@google/genai)** - Gemini API
-- **[FullCalendar](https://fullcalendar.io/)** - Calendario interactivo
-- **[date-fns](https://date-fns.org/)** - Manipulación de fechas
-- **[react-markdown](https://remarkjs.github.io/react-markdown/)** - Renderizado Markdown
+- **[@react-oauth/google](https://www.npmjs.com/package/@react-oauth/google)** v0.12 - Google OAuth 2.0
+- **[@google/genai](https://www.npmjs.com/package/@google/genai)** v1.20 - Gemini AI
+- **[FullCalendar](https://fullcalendar.io/)** v6.1 - Calendario interactivo completo
+- **[date-fns](https://date-fns.org/)** v4.1 - Utilidades modernas para fechas
+- **[chrono-node](https://github.com/wanasit/chrono)** v2.9 - Parser de lenguaje natural
+- **[react-markdown](https://remarkjs.github.io/react-markdown/)** v10.1 - Renderizado Markdown
 
-### Development
+### Efectos Visuales
 
-- **[ESLint](https://eslint.org/)** - Linter
-- **Vite Dev Server** - Hot Module Replacement
+- **[@tsparticles/react](https://particles.js.org/)** v3.0 - Sistema de partículas
+- **[OGL](https://oframe.github.io/ogl/)** v1.0 - Biblioteca WebGL ligera
+- **[Tailwind Variants](https://www.tailwind-variants.org/)** v3.1 - Variantes de componentes
+- **[clsx](https://github.com/lukeed/clsx)** v2.1 - Utilidad para clases condicionales
+
+### Herramientas de Desarrollo
+
+- **[ESLint](https://eslint.org/)** v9.33 - Linter de código
+- **[Vite Dev Server](https://vitejs.dev/)** - Hot Module Replacement
+- **[@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react)** - Plugin oficial de React para Vite
 
 ## 🎨 Diseño y Estilo
 
-### Colores del Sistema
+### Paleta de Colores
+
+#### Modo Oscuro (Predeterminado)
 
 ```css
-/* Modo Oscuro (por defecto) */
---primary-bg: #0f0d1b;
---secondary-bg: #1a152d;
---card-bg: #2c2744;
---text-primary: #f0f0f0;
---text-secondary: #a0a0a0;
---accent: #9b59b6;
---accent-light: #c48ed4;
+--primary-bg: #0f0d1b; /* Fondo principal profundo */
+--secondary-bg: #1a152d; /* Fondo secundario */
+--card-bg: #2c2744; /* Fondo de tarjetas */
+--text-primary: #f0f0f0; /* Texto principal */
+--text-secondary: #a0a0a0; /* Texto secundario */
+--accent: #9b59b6; /* Color de acento (púrpura) */
+--accent-light: #c48ed4; /* Acento claro */
+--success: #2ecc71; /* Verde éxito */
+--warning: #f39c12; /* Naranja advertencia */
+--error: #e74c3c; /* Rojo error */
+```
 
-/* Modo Claro */
---primary-bg: #fcfcfc;
---secondary-bg: #ffffff;
---card-bg: #f8f8f8;
---text-primary: #1a1a1a;
---text-secondary: #666666;
---accent: #9b59b6;
+#### Modo Claro
+
+```css
+--primary-bg: #fcfcfc; /* Fondo blanco suave */
+--secondary-bg: #ffffff; /* Fondo blanco puro */
+--card-bg: #f8f8f8; /* Fondo gris muy claro */
+--text-primary: #1a1a1a; /* Texto negro suave */
+--text-secondary: #666666; /* Texto gris */
+--accent: #9b59b6; /* Púrpura (consistente) */
 ```
 
 ### Tipografía
 
-- **Font Principal**: Poppins (Google Fonts)
-- **Tamaños Responsivos**: `clamp()` para escalabilidad
+- **Familia**: [Poppins](https://fonts.google.com/specimen/Poppins) (Google Fonts)
+- **Pesos**: 300 (Light), 400 (Regular), 500 (Medium), 600 (SemiBold), 700 (Bold)
+- **Tamaños**: Responsivos con `clamp()` para escalabilidad fluida
+  - Título principal: `clamp(2rem, 5vw, 3.5rem)`
+  - Subtítulo: `clamp(1.2rem, 3vw, 1.8rem)`
+  - Cuerpo: `clamp(0.9rem, 2vw, 1rem)`
 
-### Responsive Design
+### Breakpoints Responsive
 
-- **Móvil**: < 768px
-- **Tablet**: 768px - 1024px
-- **Desktop**: > 1024px
+| Dispositivo      | Ancho          | Características                     |
+| ---------------- | -------------- | ----------------------------------- |
+| 📱 Móvil         | < 768px        | Menú hamburguesa, columnas únicas   |
+| 📱 Tablet        | 768px - 1024px | Diseño adaptativo, 2 columnas       |
+| 💻 Desktop       | > 1024px       | Layout completo, múltiples columnas |
+| 🖥️ Desktop Large | > 1440px       | Espaciado ampliado                  |
+
+### Animaciones
+
+- **Transiciones**: 0.3s ease-in-out (estándar)
+- **Tema toggle**: Animación suave con GSAP
+- **Scroll**: Lazy loading y efectos parallax
+- **Cards**: Hover con transformación 3D
+- **Modales**: Fade in/out con backdrop blur
 
 ## 📝 Notas Importantes
 
-1. **API Backend**: El frontend requiere que el backend esté corriendo en `http://localhost:3000` (o la URL configurada en `.env`)
-2. **Google OAuth**: Los dominios deben estar autorizados en Google Cloud Console
-3. **CORS**: El backend debe permitir requests desde `http://localhost:5173`
+### Desarrollo Local
+
+- 🔌 El backend debe estar corriendo en `http://localhost:3000` (o la URL configurada)
+- 🌐 CORS debe estar habilitado en el backend para `http://localhost:5173`
+- 🔑 Las variables de entorno `.env` no se suben al repositorio
+
+### Producción
+
+- ⚙️ Actualiza `VITE_API_URL` con la URL de producción del backend
+- 🔒 Configura CORS en el backend para tu dominio de producción
+- 🌍 Verifica que Google OAuth tenga tu dominio autorizado
+- 📦 Los archivos de `dist/` están optimizados y minificados
+
+### Rendimiento
+
+- ⚡ Vite optimiza automáticamente las importaciones
+- 🗜️ El build incluye code splitting automático
+- 🖼️ Las imágenes en `assets/` se optimizan durante el build
+- 💾 localStorage se usa para persistencia de sesión y preferencias
+
 4. **LocalStorage**: Se usa para persistir token JWT y preferencias de usuario
 5. **Context API**: Todos los componentes pueden acceder a auth, theme y messages mediante hooks
 
@@ -387,14 +455,22 @@ npm install
 npm run build
 ```
 
-## 🚀 Próximas Funcionalidades
+## 🚀 Roadmap
 
-- [ ] PWA (Progressive Web App) para móviles
-- [ ] Notificaciones push
-- [ ] Modo offline con Service Workers
-- [ ] Búsqueda avanzada en tareas y notas
-- [ ] Compartir tareas con otros usuarios
-- [ ] Temas personalizados
+### En Desarrollo
+
+- [ ] 📱 PWA (Progressive Web App)
+- [ ] 🔔 Notificaciones push
+- [ ] 📴 Modo offline con Service Workers
+
+### Futuras Funcionalidades
+
+- [ ] 🔍 Búsqueda avanzada en tareas y notas
+- [ ] 👥 Compartir tareas con otros usuarios
+- [ ] 🎨 Temas personalizados y paletas de colores
+- [ ] 🗣️ Comandos de voz para el chat
+- [ ] 📊 Dashboard con estadísticas y gráficos
+- [ ] 🔄 Sincronización offline-online
 
 ## 📄 Licencia
 
@@ -402,8 +478,10 @@ Este proyecto es privado y de uso interno.
 
 ## 👥 Autor
 
-Desarrollado por el equipo de MiloAssistant
+Desarrollado con ❤️ por Hernandez Wanda
 
----
-
-**¿Necesitas ayuda?** Abre un issue en el repositorio o contacta al equipo de desarrollo.
+<div align="center">
+  <p><strong>¿Necesitas ayuda?</strong></p>
+  <p>Abre un issue en el repositorio o contacta al equipo de desarrollo</p>
+  <p>Hecho con React ⚛️ • Vite ⚡ • TypeScript 💙</p>
+</div>

@@ -4,6 +4,8 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import RegisterPage from "./pages/RegisterPage";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 import Dashboard from "./pages/Dashboard";
 import Notes from "./features/notes/Notes";
 import PanelLayout from "./components/layout/PanelLayout";
@@ -29,6 +31,8 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/como-usar-milo" element={<ComoUsarMilo />} />
         <Route path="/novedades" element={<Novedades />} />
 
