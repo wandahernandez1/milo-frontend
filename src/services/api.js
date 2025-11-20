@@ -236,18 +236,26 @@ export async function getLocalNews() {
     const data = await res.json();
 
     if (!res.ok) throw new Error(data.message || "Error al obtener noticias");
-    if (!data.articles?.length) return "No encontré noticias 😅.";
+    if (!data.articles?.length) {
+      return {
+        isNews: true,
+        articles: [],
+        text: "No encontré noticias 😅.",
+      };
+    }
 
-    return data.articles
-      .slice(0, 3)
-      .map(
-        (a) =>
-          `<strong>${a.title}</strong><br><a href="${a.url}" target="_blank">Leer más</a>`
-      )
-      .join("<br><br>");
+    // Devolver objeto con datos estructurados
+    return {
+      isNews: true,
+      articles: data.articles.slice(0, 2),
+      text: `📰 Aquí tienes las últimas noticias de hoy`,
+    };
   } catch (err) {
     console.error("Error fetching news:", err);
-    return `Error al traer noticias 😥 (${err.message})`;
+    return {
+      isNews: false,
+      text: `Error al traer noticias 😥 (${err.message})`,
+    };
   }
 }
 

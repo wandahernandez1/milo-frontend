@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import miloAvatar from "../../assets/milo2.jpg";
 import WeatherCard from "./WeatherCard";
+import NewsCard from "../common/NewsCard";
 
 export default function ChatMessage({ msg }) {
   const navigate = useNavigate();
@@ -16,9 +17,11 @@ export default function ChatMessage({ msg }) {
         msg.text?.text ||
         "⚠️ Error al mostrar el mensaje";
 
-  // Detectar si es un mensaje de clima
   const isWeatherMessage = msg.text?.isWeather || msg.weatherData;
   const weatherData = msg.text?.weatherData || msg.weatherData;
+
+  const isNewsMessage = msg.text?.isNews;
+  const newsArticles = msg.text?.articles;
 
   return (
     <div className={`chat-message-container ${msg.sender}`}>
@@ -31,6 +34,8 @@ export default function ChatMessage({ msg }) {
       <div className={`chat-bubble ${msg.sender}-bubble`}>
         {isWeatherMessage && weatherData ? (
           <WeatherCard weatherData={weatherData} />
+        ) : isNewsMessage ? (
+          <NewsCard articles={newsArticles} />
         ) : (
           <div className="prose prose-invert max-w-none message-content">
             {msg.isHtml ? (

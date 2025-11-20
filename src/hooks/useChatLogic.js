@@ -20,17 +20,23 @@ export function useChatLogic(setChatActive) {
   const navigate = useNavigate();
 
   const addMessage = (sender, text, isHtml = false, buttons = null) => {
-    if (
-      text &&
-      typeof text === "object" &&
-      text.isWeather &&
-      text.weatherData
-    ) {
-      setMessages((prev) => [
-        ...prev,
-        { sender, text, isHtml, buttons, time: Date.now() },
-      ]);
-      return;
+    // Manejo de objetos especiales (clima y noticias)
+    if (text && typeof text === "object") {
+      if (text.isWeather && text.weatherData) {
+        setMessages((prev) => [
+          ...prev,
+          { sender, text, isHtml, buttons, time: Date.now() },
+        ]);
+        return;
+      }
+
+      if (text.isNews && text.articles !== undefined) {
+        setMessages((prev) => [
+          ...prev,
+          { sender, text, isHtml, buttons, time: Date.now() },
+        ]);
+        return;
+      }
     }
 
     let safeText = "";
@@ -100,7 +106,11 @@ export function useChatLogic(setChatActive) {
 
     if (keywords.news.some((w) => lowerMsg.includes(w))) {
       const newsReply = await getLocalNews();
-      addMessage("milo", newsReply, true);
+      if (newsReply.isNews) {
+        addMessage("milo", newsReply);
+      } else {
+        addMessage("milo", newsReply.text || newsReply, true);
+      }
       return true;
     }
 

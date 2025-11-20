@@ -54,11 +54,11 @@ export async function handleHardcodedFlow(
   if (keywords.news.some((w) => lowerMsg.includes(w))) {
     try {
       const newsReply = await getLocalNews();
-      addMessage(
-        "milo",
-        Array.isArray(newsReply) ? newsReply.join("\n") : newsReply,
-        true
-      );
+      if (newsReply.isNews) {
+        addMessage("milo", newsReply);
+      } else {
+        addMessage("milo", newsReply.text || newsReply, true);
+      }
     } catch {
       addMessage("milo", "No pude obtener las noticias 😥");
     }
