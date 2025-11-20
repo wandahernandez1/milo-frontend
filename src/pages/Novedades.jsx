@@ -5,7 +5,7 @@ import "../styles/novedades.css";
 export default function Novedades() {
   const updates = [
     {
-      date: "Octubre 2024",
+      date: "Noviembre 2025",
       version: "v2.0",
       items: [
         {
@@ -25,7 +25,7 @@ export default function Novedades() {
       ],
     },
     {
-      date: "Septiembre 2024",
+      date: "Octubre 2024",
       version: "v1.8",
       items: [
         {
