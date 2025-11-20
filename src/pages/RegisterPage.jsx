@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../components/layout/NavBar";
-import miloAvatar from "../assets/milo-avatar.png";
+import miloAvatar from "../assets/milo2.jpg";
 import "../styles/login.css";
 import "../styles/register.css";
 

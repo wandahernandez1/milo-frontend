@@ -33,11 +33,12 @@
     height: 160px;
     border-radius: 50%;
     object-fit: cover;
-    object-position: center;
+    object-position: center center;
     margin-bottom: 20px;
     border: 2px solid var(--divider-color);
     transition: var(--transition);
     background-color: var(--left-panel-bg);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .register-card .left-panel .panel-avatar:hover {
