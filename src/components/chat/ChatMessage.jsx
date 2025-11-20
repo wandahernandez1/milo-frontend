@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import miloAvatar from "../../assets/milo2.jpg";
+import WeatherCard from "./WeatherCard";
 
 export default function ChatMessage({ msg }) {
   const navigate = useNavigate();
@@ -12,7 +13,12 @@ export default function ChatMessage({ msg }) {
       ? msg.text
       : msg.text?.reply ||
         msg.text?.message ||
+        msg.text?.text ||
         "⚠️ Error al mostrar el mensaje";
+
+  // Detectar si es un mensaje de clima
+  const isWeatherMessage = msg.text?.isWeather || msg.weatherData;
+  const weatherData = msg.text?.weatherData || msg.weatherData;
 
   return (
     <div className={`chat-message-container ${msg.sender}`}>
@@ -23,13 +29,17 @@ export default function ChatMessage({ msg }) {
       )}
 
       <div className={`chat-bubble ${msg.sender}-bubble`}>
-        <div className="prose prose-invert max-w-none message-content">
-          {msg.isHtml ? (
-            <div dangerouslySetInnerHTML={{ __html: messageText }} />
-          ) : (
-            <ReactMarkdown>{messageText}</ReactMarkdown>
-          )}
-        </div>
+        {isWeatherMessage && weatherData ? (
+          <WeatherCard weatherData={weatherData} />
+        ) : (
+          <div className="prose prose-invert max-w-none message-content">
+            {msg.isHtml ? (
+              <div dangerouslySetInnerHTML={{ __html: messageText }} />
+            ) : (
+              <ReactMarkdown>{messageText}</ReactMarkdown>
+            )}
+          </div>
+        )}
 
         {msg.buttons && (
           <div className="chat-buttons-container">

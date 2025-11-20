@@ -20,6 +20,19 @@ export function useChatLogic(setChatActive) {
   const navigate = useNavigate();
 
   const addMessage = (sender, text, isHtml = false, buttons = null) => {
+    if (
+      text &&
+      typeof text === "object" &&
+      text.isWeather &&
+      text.weatherData
+    ) {
+      setMessages((prev) => [
+        ...prev,
+        { sender, text, isHtml, buttons, time: Date.now() },
+      ]);
+      return;
+    }
+
     let safeText = "";
 
     // Validacion para evitar object
@@ -30,6 +43,8 @@ export function useChatLogic(setChatActive) {
         safeText = text.reply.trim();
       } else if (text.message && typeof text.message === "string") {
         safeText = text.message.trim();
+      } else if (text.text && typeof text.text === "string") {
+        safeText = text.text.trim();
       } else if (text.action) {
         safeText = `✅ Acción "${text.action}" procesada correctamente.`;
       } else {
@@ -75,7 +90,11 @@ export function useChatLogic(setChatActive) {
 
     if (keywords.weather.some((w) => lowerMsg.includes(w))) {
       const weatherReply = await getWeather();
-      addMessage("milo", weatherReply, true);
+      if (weatherReply.isWeather && weatherReply.weatherData) {
+        addMessage("milo", weatherReply);
+      } else {
+        addMessage("milo", weatherReply.text || weatherReply, true);
+      }
       return true;
     }
 

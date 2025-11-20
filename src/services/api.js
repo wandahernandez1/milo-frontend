@@ -197,9 +197,25 @@ export async function getWeather() {
     const humidity = data.main.humidity;
     const windSpeed = (data.wind.speed * 3.6).toFixed(1);
 
-    return `🌤️ En ${data.name}: ${temp}°C (Sensación: ${feelsLike}°C), ${description}. Humedad: ${humidity}%, Viento: ${windSpeed} km/h.`;
+    // Devolver objeto con datos estructurados y texto
+    return {
+      isWeather: true,
+      weatherData: {
+        location: data.name,
+        temperature: temp,
+        feelsLike: feelsLike,
+        description: description,
+        humidity: humidity,
+        windSpeed: windSpeed,
+        icon: data.weather[0].icon,
+      },
+      text: `🌤️ En ${data.name}: ${temp}°C (Sensación: ${feelsLike}°C), ${description}. Humedad: ${humidity}%, Viento: ${windSpeed} km/h.`,
+    };
   } catch (err) {
-    return `No pude obtener el clima 😥. Razón: ${err.message}.`;
+    return {
+      isWeather: false,
+      text: `No pude obtener el clima 😥. Razón: ${err.message}.`,
+    };
   }
 }
 
