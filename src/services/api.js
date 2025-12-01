@@ -149,7 +149,29 @@ export async function createCalendarEventFromChat({
     return data;
   } catch (err) {
     console.error("Error en createCalendarEventFromChat:", err);
-    throw err;
+
+    // Proporcionar mensajes de error más útiles
+    if (err.message.includes("No pude entender la fecha")) {
+      throw new Error(
+        "No pude interpretar esa fecha. Intenta con más detalles como día y hora."
+      );
+    } else if (
+      err.message.includes("no está conectada") ||
+      err.message.includes("conecta tu cuenta")
+    ) {
+      throw new Error(
+        "Tu cuenta de Google Calendar no está conectada. Ve a tu perfil para conectarla."
+      );
+    } else if (
+      err.message.includes("conexión") ||
+      err.message.includes("Google")
+    ) {
+      throw new Error(
+        "Problema de conexión con Google Calendar. Verifica tu cuenta."
+      );
+    } else {
+      throw new Error(err.message || "Error al crear el evento");
+    }
   }
 }
 
@@ -178,43 +200,95 @@ export function loginWithGoogle() {
 }
 
 // Funciones auxiliares (Clima, Noticias, Notas)
-export async function getWeather() {
+export async function getWeather(location = null) {
   const API_KEY = "361221015a8e10e6cd9a6d4725732fe4";
   try {
-    const pos = await new Promise((resolve, reject) =>
-      navigator.geolocation.getCurrentPosition(resolve, reject)
-    );
-    const { latitude: lat, longitude: lon } = pos.coords;
+    let url;
 
-    const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric&lang=es`;
-    const res = await fetch(url);
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.message);
+    if (location) {
+      // Normalizar el nombre de la ubicación
+      const normalizedLocation = location.trim();
 
-    const temp = data.main.temp.toFixed(0);
-    const feelsLike = data.main.feels_like.toFixed(0);
-    const description = data.weather[0].description;
-    const humidity = data.main.humidity;
-    const windSpeed = (data.wind.speed * 3.6).toFixed(1);
+      // Intentar primero con el nombre de la ciudad y código de país (Argentina)
+      let searchQuery = `${normalizedLocation},AR`;
+      url = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(
+        searchQuery
+      )}&appid=${API_KEY}&units=metric&lang=es`;
 
-    // Devolver objeto con datos estructurados y texto
-    return {
-      isWeather: true,
-      weatherData: {
-        location: data.name,
-        temperature: temp,
-        feelsLike: feelsLike,
-        description: description,
-        humidity: humidity,
-        windSpeed: windSpeed,
-        icon: data.weather[0].icon,
-      },
-      text: `🌤️ En ${data.name}: ${temp}°C (Sensación: ${feelsLike}°C), ${description}. Humedad: ${humidity}%, Viento: ${windSpeed} km/h.`,
-    };
+      let res = await fetch(url);
+      let data = await res.json();
+
+      // Si no funciona con AR, intentar sin código de país
+      if (!res.ok && data.cod === "404") {
+        url = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(
+          normalizedLocation
+        )}&appid=${API_KEY}&units=metric&lang=es`;
+        res = await fetch(url);
+        data = await res.json();
+      }
+
+      if (!res.ok) throw new Error(data.message || "Ciudad no encontrada");
+
+      const temp = data.main.temp.toFixed(0);
+      const feelsLike = data.main.feels_like.toFixed(0);
+      const description = data.weather[0].description;
+      const humidity = data.main.humidity;
+      const windSpeed = (data.wind.speed * 3.6).toFixed(1);
+
+      return {
+        isWeather: true,
+        weatherData: {
+          location: data.name,
+          temperature: temp,
+          feelsLike: feelsLike,
+          description: description,
+          humidity: humidity,
+          windSpeed: windSpeed,
+          icon: data.weather[0].icon,
+        },
+        text: `🌤️ En ${data.name}: ${temp}°C (Sensación: ${feelsLike}°C), ${description}. Humedad: ${humidity}%, Viento: ${windSpeed} km/h.`,
+      };
+    } else {
+      // Si no hay ubicación, usar geolocalización del navegador
+      const pos = await new Promise((resolve, reject) =>
+        navigator.geolocation.getCurrentPosition(resolve, reject)
+      );
+      const { latitude: lat, longitude: lon } = pos.coords;
+      url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric&lang=es`;
+
+      const res = await fetch(url);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message);
+
+      const temp = data.main.temp.toFixed(0);
+      const feelsLike = data.main.feels_like.toFixed(0);
+      const description = data.weather[0].description;
+      const humidity = data.main.humidity;
+      const windSpeed = (data.wind.speed * 3.6).toFixed(1);
+
+      return {
+        isWeather: true,
+        weatherData: {
+          location: data.name,
+          temperature: temp,
+          feelsLike: feelsLike,
+          description: description,
+          humidity: humidity,
+          windSpeed: windSpeed,
+          icon: data.weather[0].icon,
+        },
+        text: `🌤️ En ${data.name}: ${temp}°C (Sensación: ${feelsLike}°C), ${description}. Humedad: ${humidity}%, Viento: ${windSpeed} km/h.`,
+      };
+    }
   } catch (err) {
     return {
       isWeather: false,
-      text: `No pude obtener el clima 😥. Razón: ${err.message}.`,
+      text: `No pude obtener el clima${location ? ` de ${location}` : ""} 😥. ${
+        err.message === "ciudad no encontrada" ||
+        err.message === "city not found"
+          ? "Verifica que el nombre de la ciudad esté bien escrito."
+          : `Razón: ${err.message}`
+      }`,
     };
   }
 }

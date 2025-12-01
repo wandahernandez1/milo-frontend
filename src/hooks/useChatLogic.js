@@ -95,7 +95,57 @@ export function useChatLogic(setChatActive) {
     };
 
     if (keywords.weather.some((w) => lowerMsg.includes(w))) {
-      const weatherReply = await getWeather();
+      // Intentar extraer ubicación específica de la consulta
+      // Solo si se usa "en" o "de" seguido de una palabra que NO sea temporal
+      const temporalWords = [
+        "hoy",
+        "mañana",
+        "ayer",
+        "ahora",
+        "tarde",
+        "noche",
+        "día",
+      ];
+      const stopWords = [
+        "que",
+        "como",
+        "esta",
+        "está",
+        "hace",
+        "clima",
+        "tiempo",
+        "el",
+        "la",
+      ];
+
+      const locationPatterns = [
+        /(?:clima|tiempo)\s+(?:en|de)\s+([a-záéíóúñü]+(?:\s+[a-záéíóúñü]+)?)/i,
+        /(?:en|de)\s+([a-záéíóúñü]+(?:\s+[a-záéíóúñü]+)?)\s+(?:que|como|qué|cómo)/i,
+      ];
+
+      let location = null;
+      for (const pattern of locationPatterns) {
+        const match = userMsg.match(pattern);
+        if (match && match[1]) {
+          let candidate = match[1].trim();
+
+          // Limpiar palabras de parada al final
+          stopWords.forEach((word) => {
+            const regex = new RegExp(`\\s+${word}$`, "i");
+            candidate = candidate.replace(regex, "");
+          });
+
+          const candidateLower = candidate.toLowerCase();
+
+          // Solo aceptar si NO es una palabra temporal y tiene contenido válido
+          if (!temporalWords.includes(candidateLower) && candidate.length > 2) {
+            location = candidate;
+            break;
+          }
+        }
+      }
+
+      const weatherReply = await getWeather(location);
       if (weatherReply.isWeather && weatherReply.weatherData) {
         addMessage("milo", weatherReply);
       } else {
@@ -154,11 +204,11 @@ export function useChatLogic(setChatActive) {
                   { label: "Ir a mis notas", route: "/panel/notas" }
                 );
               } else {
-                addMessage("milo", "❌ No se pudo guardar la nota.");
+                addMessage("milo", " No se pudo guardar la nota.");
               }
             } catch (error) {
               console.error("Error al crear nota:", error);
-              addMessage("milo", "❌ Ocurrió un error al crear la nota.");
+              addMessage("milo", " Ocurrió un error al crear la nota.");
             }
 
             resetFlow();
@@ -191,11 +241,11 @@ export function useChatLogic(setChatActive) {
                   { label: "Ir a mis tareas", route: "/panel/tareas" }
                 );
               } else {
-                addMessage("milo", "❌ No se pudo crear la tarea.");
+                addMessage("milo", " No se pudo crear la tarea.");
               }
             } catch (error) {
               console.error("Error al crear tarea:", error);
-              addMessage("milo", "❌ Ocurrió un error al crear la tarea.");
+              addMessage("milo", " Ocurrió un error al crear la tarea.");
             }
 
             resetFlow();
@@ -205,7 +255,10 @@ export function useChatLogic(setChatActive) {
           // --- Crear Evento
           case "evento_titulo":
             setTempData({ title: userMsg });
-            addMessage("milo", "📅 Perfecto. ¿Cuándo querés agendarlo?");
+            addMessage(
+              "milo",
+              '📅 Perfecto. ¿Cuándo querés agendarlo?\n\nPodés decir cosas como:\n• "mañana a las 15"\n• "el viernes 6 a las 18hs"\n• "el jueves a las 7 de la tarde"\n• "el 10 de diciembre a las 9:30"'
+            );
             setConversationStep("evento_fecha");
             break;
 
@@ -222,21 +275,33 @@ export function useChatLogic(setChatActive) {
 
               addMessage(
                 "milo",
-                `📆 Evento **"${eTitle}"** agendado para *${eTime}*.`,
+                `📆 Evento **"${eTitle}"** agendado exitosamente.`,
                 false,
                 { label: "Ir a mi calendario", route: "/panel/calendario" }
               );
+              resetFlow();
             } catch (error) {
               console.error("Error al crear evento desde flujo:", error);
+
               addMessage(
                 "milo",
-                `❌ No pude agendar el evento: ${error.message}. Intenta ser más específico con la fecha.`
+                ` No pude entender esa fecha/hora.\n\n¿Podrías intentar de nuevo con más detalles?\n\nEjemplos:\n• \"mañana a las 15\"\n• \"el viernes 6 a las 18hs\"\n• \"el jueves a las 7 de la tarde\"\n• \"el 10 de diciembre a las 9\"\n\nO escribí \"cancelar\" para salir.`
               );
             }
-
-            resetFlow();
             break;
           }
+
+          case "evento_fecha_retry":
+            if (userMsg.toLowerCase() === "cancelar") {
+              addMessage(
+                "milo",
+                "Evento cancelado. ¿En qué más puedo ayudarte?"
+              );
+              resetFlow();
+            } else {
+              setConversationStep("evento_fecha");
+            }
+            break;
 
           default:
             resetFlow();
@@ -247,7 +312,6 @@ export function useChatLogic(setChatActive) {
         return;
       }
 
-      // --- Acciones directas (clima, noticias, etc.)
       const handledByKeywords = await handleDirectActions(userMsg);
       if (handledByKeywords) {
         setIsLoading(false);
@@ -261,7 +325,6 @@ export function useChatLogic(setChatActive) {
 
       const response = await askGemini(userMsg, historyToSend);
 
-      // Verificar que response es un objeto válido
       if (!response || typeof response !== "object") {
         console.error("⚠️ Respuesta inválida recibida:", response);
         addMessage(
@@ -279,6 +342,33 @@ export function useChatLogic(setChatActive) {
             response.reply || "📅 Perfecto, ¿cómo se va a llamar el evento?"
           );
           setConversationStep("evento_titulo");
+        } else if (response.action === "get_weather_location") {
+          try {
+            const weatherReply = await getWeather(response.location);
+            if (weatherReply.isWeather && weatherReply.weatherData) {
+              addMessage("milo", weatherReply);
+            } else {
+              addMessage("milo", weatherReply.text || weatherReply, true);
+            }
+          } catch (error) {
+            console.error("Error al obtener clima:", error);
+            addMessage(
+              "milo",
+              `No pude obtener el clima de ${response.location} 😥`
+            );
+          }
+        } else if (response.action === "get_weather") {
+          try {
+            const weatherReply = await getWeather();
+            if (weatherReply.isWeather && weatherReply.weatherData) {
+              addMessage("milo", weatherReply);
+            } else {
+              addMessage("milo", weatherReply.text || weatherReply, true);
+            }
+          } catch (error) {
+            console.error("Error al obtener clima:", error);
+            addMessage("milo", "No pude obtener el clima ");
+          }
         } else if (response.action === "create_event") {
           const naturalTime =
             response.time ||
@@ -290,7 +380,7 @@ export function useChatLogic(setChatActive) {
           if (!naturalTime.trim()) {
             addMessage(
               "milo",
-              "⚠️ No entendí la fecha u hora. Decime algo como 'mañana a las 19' o '20 de noviembre a las 13 hs'. ¿Querés intentar de nuevo?"
+              " No entendí la fecha u hora. Decime algo como 'mañana a las 19' o '20 de noviembre a las 13 hs'. ¿Querés intentar de nuevo?"
             );
 
             setTempData({ title: response.title });
@@ -417,9 +507,9 @@ export function useChatLogic(setChatActive) {
           } else if (typeof response === "string" && response.trim()) {
             replyText = response.trim();
           } else {
-            console.error("⚠️ Respuesta sin formato válido:", response);
+            console.error(" Respuesta sin formato válido:", response);
             replyText =
-              "⚠️ Recibí una respuesta en formato incorrecto. Por favor, intentá nuevamente.";
+              " Recibí una respuesta en formato incorrecto. Por favor, intentá nuevamente.";
           }
 
           addMessage("milo", replyText);
@@ -430,14 +520,14 @@ export function useChatLogic(setChatActive) {
         console.error("Respuesta inesperada de Gemini:", response);
         addMessage(
           "milo",
-          "⚠️ Recibí una respuesta inesperada. Intentá reformular tu pregunta."
+          " Recibí una respuesta inesperada. Intentá reformular tu pregunta."
         );
       }
     } catch (err) {
       console.error("Error en handleSend:", err);
       addMessage(
         "milo",
-        "⚠️ Ocurrió un error procesando tu mensaje. Intentá nuevamente."
+        " Ocurrió un error procesando tu mensaje. Intentá nuevamente."
       );
     } finally {
       setIsLoading(false);
