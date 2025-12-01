@@ -254,6 +254,21 @@ export function useChatLogic(setChatActive) {
 
           // --- Crear Evento
           case "evento_titulo":
+            // Verificar si el usuario tiene Google Calendar conectado
+            const userString = localStorage.getItem("user");
+            const user = userString ? JSON.parse(userString) : null;
+
+            if (!user?.googleConnected) {
+              addMessage(
+                "milo",
+                "🔗 Para agendar eventos, necesitás conectar tu cuenta de Google Calendar primero.\n\nPodés hacerlo desde tu perfil o desde la sección de Calendario.",
+                false,
+                { label: "Ir a Calendario", route: "/panel/calendario" }
+              );
+              resetFlow();
+              break;
+            }
+
             setTempData({ title: userMsg });
             addMessage(
               "milo",
@@ -337,6 +352,21 @@ export function useChatLogic(setChatActive) {
 
       if (typeof response === "object") {
         if (response.action === "ask_event_details") {
+          // Verificar si el usuario tiene Google Calendar conectado
+          const userString = localStorage.getItem("user");
+          const user = userString ? JSON.parse(userString) : null;
+
+          if (!user?.googleConnected) {
+            addMessage(
+              "milo",
+              "🔗 Para agendar eventos, necesitás conectar tu cuenta de Google Calendar primero.\n\nPodés hacerlo desde tu perfil o desde la sección de Calendario.",
+              false,
+              { label: "Ir a Calendario", route: "/panel/calendario" }
+            );
+            setIsLoading(false);
+            return;
+          }
+
           addMessage(
             "milo",
             response.reply || "📅 Perfecto, ¿cómo se va a llamar el evento?"
@@ -370,6 +400,21 @@ export function useChatLogic(setChatActive) {
             addMessage("milo", "No pude obtener el clima ");
           }
         } else if (response.action === "create_event") {
+          // Verificar si el usuario tiene Google Calendar conectado
+          const userString = localStorage.getItem("user");
+          const user = userString ? JSON.parse(userString) : null;
+
+          if (!user?.googleConnected) {
+            addMessage(
+              "milo",
+              "🔗 Para agendar eventos, necesitás conectar tu cuenta de Google Calendar primero.\n\nPodés hacerlo desde tu perfil o desde la sección de Calendario.",
+              false,
+              { label: "Ir a Calendario", route: "/panel/calendario" }
+            );
+            setIsLoading(false);
+            return;
+          }
+
           const naturalTime =
             response.time ||
             response.date ||
