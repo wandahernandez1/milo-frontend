@@ -20,8 +20,6 @@ import CalendarioPage from "./pages/CalendarioPage";
 
 import PrivateRoute from "./components/layout/PrivateRoute";
 
-const ConfigPage = () => <h1>Opciones de Configuración</h1>;
-
 function App() {
   return (
     <ThemeProvider>
@@ -59,7 +57,6 @@ function App() {
           <Route path="tareas" element={<Tasks />} />
           <Route path="calendario" element={<CalendarioPage />} />
           <Route path="eventos" element={<EventosPanel />} />
-          <Route path="configuracion" element={<ConfigPage />} />
         </Route>
 
         <Route

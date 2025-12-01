@@ -377,7 +377,17 @@ export function useChatLogic(setChatActive) {
             response.when ||
             "";
 
+          console.log("📅 Datos del evento recibidos:", {
+            title: response.title,
+            time: response.time,
+            naturalTime: naturalTime,
+            fullResponse: response,
+          });
+
           if (!naturalTime.trim()) {
+            console.warn(
+              "⚠️ No se detectó fecha/hora en la respuesta de Gemini"
+            );
             addMessage(
               "milo",
               " No entendí la fecha u hora. Decime algo como 'mañana a las 19' o '20 de noviembre a las 13 hs'. ¿Querés intentar de nuevo?"
@@ -390,6 +400,12 @@ export function useChatLogic(setChatActive) {
           }
 
           try {
+            console.log("📤 Enviando evento al backend:", {
+              title: response.title,
+              time: naturalTime,
+              description: response.description || "",
+            });
+
             await createCalendarEventFromChat({
               title: response.title,
               time: naturalTime,

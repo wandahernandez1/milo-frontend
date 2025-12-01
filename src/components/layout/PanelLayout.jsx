@@ -7,7 +7,6 @@ import {
   faNoteSticky,
   faCalendarAlt,
   faTasks,
-  faCog,
   faChevronLeft,
   faChevronRight,
 } from "@fortawesome/free-solid-svg-icons";
@@ -75,14 +74,6 @@ const PerfilContent = ({
     },
   ];
 
-  const settingsSections = [
-    {
-      label: "Configuración",
-      icon: faCog,
-      path: "/panel/configuracion",
-    },
-  ];
-
   return (
     <section className="profile-section">
       <header className="profile-header">
@@ -121,15 +112,9 @@ const PerfilContent = ({
           ))}
         </div>
 
-        <div className="card-group">
-          <h2 className="card-group-title">Ajustes</h2>
-          {settingsSections.map((section) => (
-            <ProfileCard key={section.label} {...section} />
-          ))}
-          <button className="logout-button" onClick={logout}>
-            Cerrar Sesión
-          </button>
-        </div>
+        <button className="logout-button" onClick={logout}>
+          Cerrar Sesión
+        </button>
       </div>
     </section>
   );
@@ -175,12 +160,6 @@ export default function PanelLayout() {
       path: "/panel/calendario",
     },
     { id: "tareas", label: "Tareas", icon: faTasks, path: "/panel/tareas" },
-    {
-      id: "config",
-      label: "Ajustes",
-      icon: faCog,
-      path: "/panel/configuracion",
-    },
   ];
 
   const activePath = location.pathname;
