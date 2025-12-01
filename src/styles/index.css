@@ -1767,11 +1767,12 @@ body.light-mode .cta-button.primary:hover {
   flex-direction: column;
   justify-content: space-between;
   min-height: 180px;
+  transition: all 0.3s ease;
 }
 
 .note-item-card:hover {
-  transform: translateY(-5px);
-  box-shadow: var(--card-hover-shadow);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .note-item-content h3 {
