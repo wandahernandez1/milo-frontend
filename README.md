@@ -32,7 +32,7 @@
 
 | Entorno            | URL                                                                              | Estado                                                                                                 |
 | ------------------ | -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| **🟢 Producción**  | [https://milo-assistant.vercel.app](https://milo-assistant.vercel.app)           | [![Vercel Status](https://img.shields.io/badge/Vercel-Online-success?logo=vercel)](https://vercel.com) |
+| **🟢 Producción**  | [https://milo-frontend-six.vercel.app](https://milo-frontend-six.vercel.app)     | [![Vercel Status](https://img.shields.io/badge/Vercel-Online-success?logo=vercel)](https://vercel.com) |
 | **🔵 Backend API** | [https://milo-backend-4dga.onrender.com](https://milo-backend-4dga.onrender.com) | [![Render Status](https://img.shields.io/badge/Render-Online-success?logo=render)](https://render.com) |
 
 ### 📱 Preview
