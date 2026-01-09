@@ -1,20 +1,520 @@
 # 🎨 Milo Assistant - Frontend
 
 <div align="center">
-  <p><strong>Interfaz de usuario moderna desarrollada con React 19 y Vite</strong></p>
+
+  ![React](https://img.shields.io/badge/React_19-61DAFB?style=for-the-badge&logo=react&logoColor=black)
+  ![Vite](https://img.shields.io/badge/Vite_7-646CFF?style=for-the-badge&logo=vite&logoColor=white)
+  ![TailwindCSS](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
+  ![GSAP](https://img.shields.io/badge/GSAP-88CE02?style=for-the-badge&logo=greensock&logoColor=black)
+  ![Vercel](https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)
+
+  <p><strong>Interfaz de usuario moderna y reactiva para Milo, tu asistente personal inteligente potenciado por IA</strong></p>
+
   <p>
-    <a href="#-descripción">Descripción</a> •
-    <a href="#-instalación">Instalación</a> •
-    <a href="#️-configuración">Configuración</a> •
-    <a href="#-ejecutar-el-proyecto">Uso</a> •
-    <a href="#️-tecnologías">Tecnologías</a>
+    <a href="#-demo-en-vivo">🌐 Demo</a> •
+    <a href="#-arquitectura">📐 Arquitectura</a> •
+    <a href="#-retos-técnicos-superados">🏆 Retos</a> •
+    <a href="#-instalación">🚀 Instalación</a> •
+    <a href="#-componentes">🧩 Componentes</a>
   </p>
+
+  <br/>
+
+  | 🚀 Deploy | ⚡ Performance | 🎨 UI/UX |
+  |-----------|---------------|----------|
+  | Vercel Edge | React 19 + Vite 7 | GSAP + CSS Moderno |
+
 </div>
+
+---
+
+## 🌐 Demo en Vivo
+
+| Entorno | URL | Estado |
+|---------|-----|--------|
+| **🟢 Producción** | [https://milo-assistant.vercel.app](https://milo-assistant.vercel.app) | [![Vercel Status](https://img.shields.io/badge/Vercel-Online-success?logo=vercel)](https://vercel.com) |
+| **🔵 Backend API** | [https://milo-backend-4dga.onrender.com](https://milo-backend-4dga.onrender.com) | [![Render Status](https://img.shields.io/badge/Render-Online-success?logo=render)](https://render.com) |
+
+### 📱 Preview
+
+```
+🖥️ Desktop: Experiencia completa con panel lateral y animaciones
+📱 Mobile: Diseño responsive optimizado para touch
+🌓 Temas: Modo claro/oscuro con persistencia
+```
+
+### 🔑 Características Destacadas en Demo
+
+- ✅ Chat con IA (Gemini) - Conversación natural en español
+- ✅ Gestión de tareas con arrastrar y soltar
+- ✅ Calendario integrado con Google Calendar
+- ✅ Sistema de notas con Markdown
+- ✅ Autenticación Google OAuth
+
+---
+
+## 📐 Arquitectura
+
+### 🏗️ Diagrama de Arquitectura del Frontend
+
+```
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│                              🌐 BROWSER (Cliente)                               │
+│                                                                                 │
+│  ┌─────────────────────────────────────────────────────────────────────────┐   │
+│  │                         📱 React 19 Application                         │   │
+│  │                                                                         │   │
+│  │  ┌─────────────────────────────────────────────────────────────────┐   │   │
+│  │  │                    🎯 App.jsx (Root)                             │   │   │
+│  │  │                    React Router v7                               │   │   │
+│  │  └─────────────────────────────┬───────────────────────────────────┘   │   │
+│  │                                │                                       │   │
+│  │         ┌──────────────────────┼──────────────────────┐               │   │
+│  │         ▼                      ▼                      ▼               │   │
+│  │  ┌─────────────┐       ┌─────────────┐       ┌─────────────────┐     │   │
+│  │  │🔐 AuthContext│       │💬 MessageCtx│       │🌓 ThemeContext  │     │   │
+│  │  │ • JWT Tokens│       │ • Toast Msgs│       │ • Dark/Light    │     │   │
+│  │  │ • User State│       │ • Errors    │       │ • Persistence   │     │   │
+│  │  │ • Google SSO│       │ • Success   │       │ • CSS Variables │     │   │
+│  │  └─────────────┘       └─────────────┘       └─────────────────┘     │   │
+│  │                                                                       │   │
+│  └───────────────────────────────────────────────────────────────────────┘   │
+│                                                                                 │
+│  ┌─────────────────────────────────────────────────────────────────────────┐   │
+│  │                          📄 PAGES (Rutas)                               │   │
+│  │                                                                         │   │
+│  │   /                    /dashboard              /calendario              │   │
+│  │   ┌────────────┐       ┌────────────┐         ┌────────────┐           │   │
+│  │   │  🏠 Home   │       │ 📊Dashboard│         │ 📅Calendar │           │   │
+│  │   │  Landing   │       │ Chat+Panels│         │ FullCalendar│          │   │
+│  │   └────────────┘       └────────────┘         └────────────┘           │   │
+│  │                                                                         │   │
+│  │   /login               /register               /novedades              │   │
+│  │   ┌────────────┐       ┌────────────┐         ┌────────────┐           │   │
+│  │   │  🔑 Login  │       │ 📝 Register│         │ 📰 News    │           │   │
+│  │   │ OAuth+Form │       │ Validation │         │ Updates    │           │   │
+│  │   └────────────┘       └────────────┘         └────────────┘           │   │
+│  │                                                                         │   │
+│  └───────────────────────────────────────────────────────────────────────┘   │
+│                                                                                 │
+│  ┌─────────────────────────────────────────────────────────────────────────┐   │
+│  │                       🧩 COMPONENTES CORE                               │   │
+│  │                                                                         │   │
+│  │  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐         │   │
+│  │  │   💬 Chat       │  │   ✅ Tasks       │  │   📝 Notes      │         │   │
+│  │  │   ──────────    │  │   ──────────    │  │   ──────────    │         │   │
+│  │  │   ChatMilo.jsx  │  │   TasksPanel    │  │   NotesPanel    │         │   │
+│  │  │   ChatInput     │  │   TaskItem      │  │   NoteItem      │         │   │
+│  │  │   Message       │  │   TaskForm      │  │   NoteEditor    │         │   │
+│  │  │   MarkdownRender│  │   PriorityBadge │  │   NoteSearch    │         │   │
+│  │  └─────────────────┘  └─────────────────┘  └─────────────────┘         │   │
+│  │                                                                         │   │
+│  │  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐         │   │
+│  │  │   📅 Calendar   │  │   🎨 UI/Layout  │  │   ✨ Effects    │         │   │
+│  │  │   ──────────    │  │   ──────────    │  │   ──────────    │         │   │
+│  │  │   EventosPanel  │  │   PanelLayout   │  │   Plasma.jsx    │         │   │
+│  │  │   EventForm     │  │   Sidebar       │  │   GSAP Anims    │         │   │
+│  │  │   FullCalendar  │  │   ThemeToggle   │  │   Particles     │         │   │
+│  │  └─────────────────┘  └─────────────────┘  └─────────────────┘         │   │
+│  │                                                                         │   │
+│  └───────────────────────────────────────────────────────────────────────┘   │
+│                                                                                 │
+│  ┌─────────────────────────────────────────────────────────────────────────┐   │
+│  │                         🎣 CUSTOM HOOKS                                 │   │
+│  │                                                                         │   │
+│  │   useAuth        useTasks        useNotes        useGoogleEvents       │   │
+│  │   ┌──────────┐   ┌──────────┐   ┌──────────┐   ┌──────────────────┐    │   │
+│  │   │• login   │   │• CRUD    │   │• CRUD    │   │• fetchEvents     │    │   │
+│  │   │• logout  │   │• filter  │   │• search  │   │• createEvent     │    │   │
+│  │   │• refresh │   │• sort    │   │• markdown│   │• syncCalendar    │    │   │
+│  │   └──────────┘   └──────────┘   └──────────┘   └──────────────────┘    │   │
+│  │                                                                         │   │
+│  │   useChatLogic   useMessage      useToast        geminiLogic           │   │
+│  │   ┌──────────┐   ┌──────────┐   ┌──────────┐   ┌──────────────────┐    │   │
+│  │   │• sendMsg │   │• context │   │• show    │   │• parseIntent     │    │   │
+│  │   │• history │   │• error   │   │• hide    │   │• handleResponse  │    │   │
+│  │   │• loading │   │• success │   │• queue   │   │• nlpProcess      │    │   │
+│  │   └──────────┘   └──────────┘   └──────────┘   └──────────────────┘    │   │
+│  │                                                                         │   │
+│  └───────────────────────────────────────────────────────────────────────┘   │
+│                                                                                 │
+└─────────────────────────────────────────────────────────────────────────────────┘
+                                      │
+                                      │ HTTP/HTTPS (Fetch API)
+                                      ▼
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│                           🔌 SERVICES LAYER                                     │
+│                                                                                 │
+│   ┌─────────────────────────────────────────────────────────────────────────┐   │
+│   │                      api.js (Axios/Fetch Wrapper)                       │   │
+│   │   • Base URL configuration                                              │   │
+│   │   • JWT interceptors (auto-attach token)                               │   │
+│   │   • Response/Error interceptors                                        │   │
+│   │   • Refresh token logic                                                │   │
+│   └─────────────────────────────────────────────────────────────────────────┘   │
+│                                      │                                          │
+│                                      ▼                                          │
+│   ┌─────────────────────────────────────────────────────────────────────────┐   │
+│   │                         Backend API (NestJS)                            │   │
+│   │                    Render: milo-backend-4dga.onrender.com               │   │
+│   └─────────────────────────────────────────────────────────────────────────┘   │
+│                                                                                 │
+└─────────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│                          🛠️ BUILD & DEPLOY PIPELINE                            │
+│                                                                                 │
+│   Source Code ──▶ Vite Build ──▶ Static Assets ──▶ Vercel Edge Network         │
+│   (JSX/CSS)       (Bundle)       (dist/)           (Global CDN)                │
+│                                                                                 │
+└─────────────────────────────────────────────────────────────────────────────────┘
+```
+
+### 📦 Estructura del Proyecto
+
+```
+src/
+├── 🎯 main.jsx                   # Entry point
+├── 📱 App.jsx                    # Router + Providers
+│
+├── 📂 context/                   # Estado global (Context API)
+│   ├── AuthContext.jsx           # Autenticación y usuario
+│   ├── MessageContext.jsx        # Sistema de notificaciones
+│   └── ThemeContext.jsx          # Modo claro/oscuro
+│
+├── 📂 pages/                     # Vistas principales
+│   ├── Home.jsx                  # Landing page
+│   ├── Dashboard.jsx             # Panel principal + Chat
+│   ├── CalendarioPage.jsx        # Vista calendario
+│   ├── Login.jsx & Register.jsx  # Autenticación
+│   ├── ComoUsarMilo.jsx          # Tutorial/Ayuda
+│   └── Novedades.jsx             # Feed de actualizaciones
+│
+├── 📂 components/                # Componentes reutilizables
+│   ├── chat/                     # Componentes del chat
+│   │   ├── ChatMilo.jsx          # Chat principal
+│   │   └── ChatInput.jsx         # Input con IA
+│   ├── layout/                   # Estructura de página
+│   │   ├── PanelLayout.jsx       # Layout con sidebar
+│   │   └── Sidebar.jsx           # Navegación lateral
+│   ├── common/                   # Componentes genéricos
+│   │   ├── ThemeToggle.jsx       # Switch tema
+│   │   └── ConfirmDialog.jsx     # Modal confirmación
+│   ├── Message.jsx               # Mensajes del chat
+│   └── Plasma.jsx                # Efecto visual animado
+│
+├── 📂 features/                  # Módulos de funcionalidad
+│   ├── tasks/                    # Gestión de tareas
+│   ├── notes/                    # Sistema de notas
+│   ├── events/                   # Eventos/Calendario
+│   └── profile/                  # Perfil de usuario
+│
+├── 📂 hooks/                     # Custom hooks
+│   ├── useAuth.js                # Hook de autenticación
+│   ├── useTasks.js               # CRUD tareas
+│   ├── useNotes.js               # CRUD notas
+│   ├── useChatLogic.js           # Lógica del chat
+│   ├── useGoogleEvents.js        # Google Calendar
+│   └── geminiLogic.js            # Procesamiento IA
+│
+├── 📂 services/                  # Comunicación con API
+│   └── api.js                    # Cliente HTTP configurado
+│
+├── 📂 styles/                    # Estilos CSS modulares
+│   ├── index.css                 # Variables globales
+│   ├── dashboard.css             # Estilos del dashboard
+│   ├── chatMilo.css              # Estilos del chat
+│   └── [feature].css             # Estilos por módulo
+│
+└── 📂 utils/                     # Utilidades
+    ├── config.js                 # Configuración global
+    └── api.js                    # Helpers de API
+```
+
+---
+
+## 🏆 Retos Técnicos Superados
+
+### 1. 💬 Renderizado de Markdown en Tiempo Real
+
+**Problema:** Mostrar respuestas de la IA con formato Markdown (código, listas, tablas) sin sacrificar rendimiento ni seguridad.
+
+**Solución:**
+```jsx
+// Implementación con react-markdown + sanitización
+import ReactMarkdown from 'react-markdown';
+
+const MessageContent = ({ content }) => (
+  <ReactMarkdown
+    components={{
+      code: ({ inline, children, className }) => {
+        if (inline) return <code className="inline-code">{children}</code>;
+        return (
+          <pre className="code-block">
+            <code className={className}>{children}</code>
+          </pre>
+        );
+      }
+    }}
+    remarkPlugins={[remarkGfm]}
+  >
+    {content}
+  </ReactMarkdown>
+);
+```
+
+**Resultado:** Mensajes con formato rico, syntax highlighting y rendimiento fluido incluso en conversaciones largas.
+
+---
+
+### 2. 🎨 Sistema de Temas con CSS Variables
+
+**Problema:** Implementar modo oscuro/claro con transiciones suaves que persistan entre sesiones.
+
+**Solución:**
+```jsx
+// ThemeContext con persistencia en localStorage
+const ThemeProvider = ({ children }) => {
+  const [theme, setTheme] = useState(() => 
+    localStorage.getItem('milo-theme') || 'dark'
+  );
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('milo-theme', theme);
+  }, [theme]);
+
+  return (
+    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+      {children}
+    </ThemeContext.Provider>
+  );
+};
+```
+
+```css
+/* CSS Variables para theming */
+:root[data-theme="dark"] {
+  --bg-primary: #0a0a0f;
+  --text-primary: #ffffff;
+  --accent: #6366f1;
+}
+
+:root[data-theme="light"] {
+  --bg-primary: #ffffff;
+  --text-primary: #1f2937;
+  --accent: #4f46e5;
+}
+
+* { transition: background-color 0.3s, color 0.3s; }
+```
+
+**Resultado:** Cambio de tema instantáneo y suave con 0 FOUC (Flash of Unstyled Content).
+
+---
+
+### 3. 🔄 Gestión de Estado de Autenticación
+
+**Problema:** Manejar tokens JWT, refresh automático, y estados de carga sin race conditions.
+
+**Solución:**
+```jsx
+// AuthContext con manejo robusto de tokens
+const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  const refreshAuth = useCallback(async () => {
+    try {
+      const token = localStorage.getItem('accessToken');
+      if (!token) return setLoading(false);
+
+      const response = await api.get('/auth/me');
+      setUser(response.data);
+    } catch (error) {
+      // Token expirado - intentar refresh
+      await attemptTokenRefresh();
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // Interceptor para renovar tokens automáticamente
+  useEffect(() => {
+    api.interceptors.response.use(
+      response => response,
+      async error => {
+        if (error.response?.status === 401) {
+          return attemptTokenRefresh().then(() => 
+            api.request(error.config)
+          );
+        }
+        return Promise.reject(error);
+      }
+    );
+  }, []);
+};
+```
+
+**Resultado:** UX fluida sin logouts inesperados y manejo transparente de sesiones.
+
+---
+
+### 4. 📅 Integración de FullCalendar con Google Calendar
+
+**Problema:** Sincronizar eventos de Google Calendar con vista local, manejando zonas horarias y conflictos.
+
+**Solución:**
+```jsx
+// Hook personalizado para eventos de Google
+const useGoogleEvents = () => {
+  const [events, setEvents] = useState([]);
+  const [syncing, setSyncing] = useState(false);
+
+  const syncWithGoogle = async () => {
+    setSyncing(true);
+    try {
+      const googleEvents = await api.get('/google/events');
+      const formattedEvents = googleEvents.data.map(event => ({
+        id: event.id,
+        title: event.summary,
+        start: new Date(event.start.dateTime || event.start.date),
+        end: new Date(event.end.dateTime || event.end.date),
+        extendedProps: { googleId: event.id, source: 'google' }
+      }));
+      setEvents(prev => mergeEvents(prev, formattedEvents));
+    } finally {
+      setSyncing(false);
+    }
+  };
+};
+```
+
+**Resultado:** Calendario unificado con eventos locales y de Google, sincronización bidireccional.
+
+---
+
+### 5. ⚡ Animaciones de Alto Rendimiento con GSAP
+
+**Problema:** Crear animaciones fluidas (60fps) para efectos visuales sin bloquear el hilo principal.
+
+**Solución:**
+```jsx
+// Componente Plasma con GSAP optimizado
+const Plasma = () => {
+  const plasmaRef = useRef(null);
+
+  useLayoutEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.to('.plasma-circle', {
+        scale: 1.2,
+        opacity: 0.8,
+        duration: 3,
+        ease: 'sine.inOut',
+        repeat: -1,
+        yoyo: true,
+        stagger: { each: 0.5 }
+      });
+    }, plasmaRef);
+
+    return () => ctx.revert(); // Cleanup
+  }, []);
+
+  return (
+    <div ref={plasmaRef} className="plasma-container">
+      {[...Array(5)].map((_, i) => (
+        <div key={i} className="plasma-circle" />
+      ))}
+    </div>
+  );
+};
+```
+
+**Resultado:** Efectos visuales cinematográficos manteniendo 60fps en dispositivos móviles.
+
+---
+
+### 6. 🧠 Lógica de Chat con Procesamiento de Intenciones
+
+**Problema:** Interpretar comandos del usuario ("crear tarea para mañana", "mostrar mis notas") y ejecutar acciones.
+
+**Solución:**
+```jsx
+// geminiLogic.js - Parser de intenciones
+const parseUserIntent = (message) => {
+  const intents = {
+    CREATE_TASK: /crear?\s*(tarea|recordatorio|pendiente)/i,
+    LIST_TASKS: /(mostrar|ver|listar)\s*(mis)?\s*tareas/i,
+    CREATE_NOTE: /crear?\s*(nota|apunte)/i,
+    CREATE_EVENT: /crear?\s*(evento|cita|reunión)/i,
+  };
+
+  for (const [intent, pattern] of Object.entries(intents)) {
+    if (pattern.test(message)) {
+      return { intent, confidence: 0.9 };
+    }
+  }
+  return { intent: 'CHAT', confidence: 1.0 };
+};
+
+// chatFlows.js - Ejecución de flujos
+const executeChatFlow = async (intent, message, context) => {
+  switch (intent) {
+    case 'CREATE_TASK':
+      return await handleTaskCreation(message, context);
+    case 'LIST_TASKS':
+      return await handleTaskListing(context);
+    // ... más casos
+  }
+};
+```
+
+**Resultado:** Chat que entiende comandos en lenguaje natural y ejecuta acciones automáticamente.
+
+---
+
+### 7. 📱 Diseño Responsive con Mobile-First
+
+**Problema:** Crear experiencia óptima en móviles, tablets y desktop con una sola base de código.
+
+**Solución:**
+```css
+/* Mobile-first approach */
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+}
+
+/* Tablet */
+@media (min-width: 768px) {
+  .dashboard-container {
+    flex-direction: row;
+    padding: 1.5rem;
+  }
+  .sidebar { width: 280px; }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+  .dashboard-container {
+    padding: 2rem;
+    gap: 2rem;
+  }
+  .chat-panel { flex: 1; max-width: 800px; }
+  .side-panels { width: 400px; }
+}
+```
+
+**Resultado:** App que se siente nativa en cualquier dispositivo con código mantenible.
 
 ---
 
 ## 📋 Tabla de Contenidos
 
+- [🌐 Demo en Vivo](#-demo-en-vivo)
+- [📐 Arquitectura](#-arquitectura)
+- [🏆 Retos Técnicos Superados](#-retos-técnicos-superados)
 - [📖 Descripción](#-descripción)
 - [🔧 Requisitos Previos](#-requisitos-previos)
 - [🚀 Instalación](#-instalación)
@@ -29,22 +529,26 @@
 - [📝 Notas Importantes](#-notas-importantes)
 - [🐛 Solución de Problemas](#-solución-de-problemas)
 
+---
+
 ## 📖 Descripción
 
-Frontend de **MiloAssistant**, una aplicación web moderna y responsiva que ofrece una experiencia de usuario fluida y atractiva.
+Frontend de **MiloAssistant**, una aplicación web moderna y responsiva que ofrece una experiencia de usuario fluida y atractiva. Construida con las últimas tecnologías de React y optimizada para rendimiento.
 
 ### ✨ Características Principales
 
-- 💬 **Chat Inteligente** - Conversación con IA (Gemini) con formato Markdown
-- 🔐 **Autenticación Múltiple** - Login tradicional y Google OAuth 2.0
-- ✅ **Gestión de Tareas** - Crear, editar, priorizar y marcar tareas como completadas
-- 📝 **Sistema de Notas** - Organización avanzada con búsqueda y filtros
-- 📅 **Calendario Integrado** - Visualización y gestión de eventos de Google Calendar
-- 🌓 **Temas Personalizables** - Modo claro/oscuro con transiciones suaves
-- 📱 **Diseño Responsive** - Optimizado para móvil, tablet y desktop
-- ⚡ **Rendimiento Óptimo** - Carga rápida con React 19 y Vite
-- 🎨 **UI Moderna** - Animaciones con GSAP y efectos visuales atractivos
-- 🔔 **Notificaciones** - Sistema de mensajes toast para feedback inmediato
+| Característica | Descripción | Tecnología |
+|----------------|-------------|------------|
+| 💬 **Chat Inteligente** | Conversación con IA con formato Markdown | React-Markdown |
+| 🔐 **Autenticación** | Login tradicional y Google OAuth 2.0 | @react-oauth/google |
+| ✅ **Gestión de Tareas** | CRUD con prioridades y fechas | Custom Hooks |
+| 📝 **Sistema de Notas** | Organización con búsqueda avanzada | Full-text search |
+| 📅 **Calendario** | Integración con Google Calendar | FullCalendar |
+| 🌓 **Temas** | Modo claro/oscuro con persistencia | CSS Variables |
+| 📱 **Responsive** | Mobile-first design | CSS Grid/Flexbox |
+| ⚡ **Rendimiento** | Carga optimizada | Vite + Code Splitting |
+| 🎨 **Animaciones** | Efectos visuales suaves | GSAP |
+| 🔔 **Notificaciones** | Sistema toast | Context API |
 
 ## 🔧 Requisitos Previos
 
