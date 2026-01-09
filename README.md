@@ -2,11 +2,11 @@
 
 <div align="center">
 
-  ![React](https://img.shields.io/badge/React_19-61DAFB?style=for-the-badge&logo=react&logoColor=black)
-  ![Vite](https://img.shields.io/badge/Vite_7-646CFF?style=for-the-badge&logo=vite&logoColor=white)
-  ![TailwindCSS](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
-  ![GSAP](https://img.shields.io/badge/GSAP-88CE02?style=for-the-badge&logo=greensock&logoColor=black)
-  ![Vercel](https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)
+![React](https://img.shields.io/badge/React_19-61DAFB?style=for-the-badge&logo=react&logoColor=black)
+![Vite](https://img.shields.io/badge/Vite_7-646CFF?style=for-the-badge&logo=vite&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
+![GSAP](https://img.shields.io/badge/GSAP-88CE02?style=for-the-badge&logo=greensock&logoColor=black)
+![Vercel](https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)
 
   <p><strong>Interfaz de usuario moderna y reactiva para Milo, tu asistente personal inteligente potenciado por IA</strong></p>
 
@@ -20,9 +20,9 @@
 
   <br/>
 
-  | 🚀 Deploy | ⚡ Performance | 🎨 UI/UX |
-  |-----------|---------------|----------|
-  | Vercel Edge | React 19 + Vite 7 | GSAP + CSS Moderno |
+| 🚀 Deploy   | ⚡ Performance    | 🎨 UI/UX           |
+| ----------- | ----------------- | ------------------ |
+| Vercel Edge | React 19 + Vite 7 | GSAP + CSS Moderno |
 
 </div>
 
@@ -30,9 +30,9 @@
 
 ## 🌐 Demo en Vivo
 
-| Entorno | URL | Estado |
-|---------|-----|--------|
-| **🟢 Producción** | [https://milo-assistant.vercel.app](https://milo-assistant.vercel.app) | [![Vercel Status](https://img.shields.io/badge/Vercel-Online-success?logo=vercel)](https://vercel.com) |
+| Entorno            | URL                                                                              | Estado                                                                                                 |
+| ------------------ | -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| **🟢 Producción**  | [https://milo-assistant.vercel.app](https://milo-assistant.vercel.app)           | [![Vercel Status](https://img.shields.io/badge/Vercel-Online-success?logo=vercel)](https://vercel.com) |
 | **🔵 Backend API** | [https://milo-backend-4dga.onrender.com](https://milo-backend-4dga.onrender.com) | [![Render Status](https://img.shields.io/badge/Render-Online-success?logo=render)](https://render.com) |
 
 ### 📱 Preview
@@ -240,9 +240,10 @@ src/
 **Problema:** Mostrar respuestas de la IA con formato Markdown (código, listas, tablas) sin sacrificar rendimiento ni seguridad.
 
 **Solución:**
+
 ```jsx
 // Implementación con react-markdown + sanitización
-import ReactMarkdown from 'react-markdown';
+import ReactMarkdown from "react-markdown";
 
 const MessageContent = ({ content }) => (
   <ReactMarkdown
@@ -254,7 +255,7 @@ const MessageContent = ({ content }) => (
             <code className={className}>{children}</code>
           </pre>
         );
-      }
+      },
     }}
     remarkPlugins={[remarkGfm]}
   >
@@ -272,16 +273,17 @@ const MessageContent = ({ content }) => (
 **Problema:** Implementar modo oscuro/claro con transiciones suaves que persistan entre sesiones.
 
 **Solución:**
+
 ```jsx
 // ThemeContext con persistencia en localStorage
 const ThemeProvider = ({ children }) => {
-  const [theme, setTheme] = useState(() => 
-    localStorage.getItem('milo-theme') || 'dark'
+  const [theme, setTheme] = useState(
+    () => localStorage.getItem("milo-theme") || "dark"
   );
 
   useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('milo-theme', theme);
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("milo-theme", theme);
   }, [theme]);
 
   return (
@@ -306,7 +308,9 @@ const ThemeProvider = ({ children }) => {
   --accent: #4f46e5;
 }
 
-* { transition: background-color 0.3s, color 0.3s; }
+* {
+  transition: background-color 0.3s, color 0.3s;
+}
 ```
 
 **Resultado:** Cambio de tema instantáneo y suave con 0 FOUC (Flash of Unstyled Content).
@@ -318,6 +322,7 @@ const ThemeProvider = ({ children }) => {
 **Problema:** Manejar tokens JWT, refresh automático, y estados de carga sin race conditions.
 
 **Solución:**
+
 ```jsx
 // AuthContext con manejo robusto de tokens
 const AuthProvider = ({ children }) => {
@@ -326,10 +331,10 @@ const AuthProvider = ({ children }) => {
 
   const refreshAuth = useCallback(async () => {
     try {
-      const token = localStorage.getItem('accessToken');
+      const token = localStorage.getItem("accessToken");
       if (!token) return setLoading(false);
 
-      const response = await api.get('/auth/me');
+      const response = await api.get("/auth/me");
       setUser(response.data);
     } catch (error) {
       // Token expirado - intentar refresh
@@ -342,12 +347,10 @@ const AuthProvider = ({ children }) => {
   // Interceptor para renovar tokens automáticamente
   useEffect(() => {
     api.interceptors.response.use(
-      response => response,
-      async error => {
+      (response) => response,
+      async (error) => {
         if (error.response?.status === 401) {
-          return attemptTokenRefresh().then(() => 
-            api.request(error.config)
-          );
+          return attemptTokenRefresh().then(() => api.request(error.config));
         }
         return Promise.reject(error);
       }
@@ -365,6 +368,7 @@ const AuthProvider = ({ children }) => {
 **Problema:** Sincronizar eventos de Google Calendar con vista local, manejando zonas horarias y conflictos.
 
 **Solución:**
+
 ```jsx
 // Hook personalizado para eventos de Google
 const useGoogleEvents = () => {
@@ -374,15 +378,15 @@ const useGoogleEvents = () => {
   const syncWithGoogle = async () => {
     setSyncing(true);
     try {
-      const googleEvents = await api.get('/google/events');
-      const formattedEvents = googleEvents.data.map(event => ({
+      const googleEvents = await api.get("/google/events");
+      const formattedEvents = googleEvents.data.map((event) => ({
         id: event.id,
         title: event.summary,
         start: new Date(event.start.dateTime || event.start.date),
         end: new Date(event.end.dateTime || event.end.date),
-        extendedProps: { googleId: event.id, source: 'google' }
+        extendedProps: { googleId: event.id, source: "google" },
       }));
-      setEvents(prev => mergeEvents(prev, formattedEvents));
+      setEvents((prev) => mergeEvents(prev, formattedEvents));
     } finally {
       setSyncing(false);
     }
@@ -399,6 +403,7 @@ const useGoogleEvents = () => {
 **Problema:** Crear animaciones fluidas (60fps) para efectos visuales sin bloquear el hilo principal.
 
 **Solución:**
+
 ```jsx
 // Componente Plasma con GSAP optimizado
 const Plasma = () => {
@@ -406,14 +411,14 @@ const Plasma = () => {
 
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
-      gsap.to('.plasma-circle', {
+      gsap.to(".plasma-circle", {
         scale: 1.2,
         opacity: 0.8,
         duration: 3,
-        ease: 'sine.inOut',
+        ease: "sine.inOut",
         repeat: -1,
         yoyo: true,
-        stagger: { each: 0.5 }
+        stagger: { each: 0.5 },
       });
     }, plasmaRef);
 
@@ -439,6 +444,7 @@ const Plasma = () => {
 **Problema:** Interpretar comandos del usuario ("crear tarea para mañana", "mostrar mis notas") y ejecutar acciones.
 
 **Solución:**
+
 ```jsx
 // geminiLogic.js - Parser de intenciones
 const parseUserIntent = (message) => {
@@ -454,15 +460,15 @@ const parseUserIntent = (message) => {
       return { intent, confidence: 0.9 };
     }
   }
-  return { intent: 'CHAT', confidence: 1.0 };
+  return { intent: "CHAT", confidence: 1.0 };
 };
 
 // chatFlows.js - Ejecución de flujos
 const executeChatFlow = async (intent, message, context) => {
   switch (intent) {
-    case 'CREATE_TASK':
+    case "CREATE_TASK":
       return await handleTaskCreation(message, context);
-    case 'LIST_TASKS':
+    case "LIST_TASKS":
       return await handleTaskListing(context);
     // ... más casos
   }
@@ -478,6 +484,7 @@ const executeChatFlow = async (intent, message, context) => {
 **Problema:** Crear experiencia óptima en móviles, tablets y desktop con una sola base de código.
 
 **Solución:**
+
 ```css
 /* Mobile-first approach */
 .dashboard-container {
@@ -492,7 +499,9 @@ const executeChatFlow = async (intent, message, context) => {
     flex-direction: row;
     padding: 1.5rem;
   }
-  .sidebar { width: 280px; }
+  .sidebar {
+    width: 280px;
+  }
 }
 
 /* Desktop */
@@ -501,8 +510,13 @@ const executeChatFlow = async (intent, message, context) => {
     padding: 2rem;
     gap: 2rem;
   }
-  .chat-panel { flex: 1; max-width: 800px; }
-  .side-panels { width: 400px; }
+  .chat-panel {
+    flex: 1;
+    max-width: 800px;
+  }
+  .side-panels {
+    width: 400px;
+  }
 }
 ```
 
@@ -537,18 +551,18 @@ Frontend de **MiloAssistant**, una aplicación web moderna y responsiva que ofre
 
 ### ✨ Características Principales
 
-| Característica | Descripción | Tecnología |
-|----------------|-------------|------------|
-| 💬 **Chat Inteligente** | Conversación con IA con formato Markdown | React-Markdown |
-| 🔐 **Autenticación** | Login tradicional y Google OAuth 2.0 | @react-oauth/google |
-| ✅ **Gestión de Tareas** | CRUD con prioridades y fechas | Custom Hooks |
-| 📝 **Sistema de Notas** | Organización con búsqueda avanzada | Full-text search |
-| 📅 **Calendario** | Integración con Google Calendar | FullCalendar |
-| 🌓 **Temas** | Modo claro/oscuro con persistencia | CSS Variables |
-| 📱 **Responsive** | Mobile-first design | CSS Grid/Flexbox |
-| ⚡ **Rendimiento** | Carga optimizada | Vite + Code Splitting |
-| 🎨 **Animaciones** | Efectos visuales suaves | GSAP |
-| 🔔 **Notificaciones** | Sistema toast | Context API |
+| Característica           | Descripción                              | Tecnología            |
+| ------------------------ | ---------------------------------------- | --------------------- |
+| 💬 **Chat Inteligente**  | Conversación con IA con formato Markdown | React-Markdown        |
+| 🔐 **Autenticación**     | Login tradicional y Google OAuth 2.0     | @react-oauth/google   |
+| ✅ **Gestión de Tareas** | CRUD con prioridades y fechas            | Custom Hooks          |
+| 📝 **Sistema de Notas**  | Organización con búsqueda avanzada       | Full-text search      |
+| 📅 **Calendario**        | Integración con Google Calendar          | FullCalendar          |
+| 🌓 **Temas**             | Modo claro/oscuro con persistencia       | CSS Variables         |
+| 📱 **Responsive**        | Mobile-first design                      | CSS Grid/Flexbox      |
+| ⚡ **Rendimiento**       | Carga optimizada                         | Vite + Code Splitting |
+| 🎨 **Animaciones**       | Efectos visuales suaves                  | GSAP                  |
+| 🔔 **Notificaciones**    | Sistema toast                            | Context API           |
 
 ## 🔧 Requisitos Previos
 
